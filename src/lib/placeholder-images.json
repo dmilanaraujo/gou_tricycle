@@ -1,3 +1,64 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "car-1-1",
+      "description": "White sedan front view",
+      "imageUrl": "https://images.unsplash.com/photo-1602702102352-caad4c241565?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx3aGl0ZSUyMGNhcnxlbnwwfHx8fDE3NjQ4NjI2Mzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "white car"
+    },
+    {
+      "id": "car-1-2",
+      "description": "White sedan side view",
+      "imageUrl": "https://images.unsplash.com/photo-1714225632888-d0e2ad66fbc8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx3aGl0ZSUyMGNhciUyMHNpZGV8ZW58MHx8fHwxNzY0OTczNTcyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "white car side"
+    },
+    {
+      "id": "car-1-3",
+      "description": "White sedan interior",
+      "imageUrl": "https://images.unsplash.com/photo-1621639532859-8b26570b96fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjYXIlMjBpbnRlcmlvcnxlbnwwfHx8fDE3NjQ4NTgwMTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "car interior"
+    },
+    {
+      "id": "car-2-1",
+      "description": "Red sports car",
+      "imageUrl": "https://images.unsplash.com/photo-1614200179396-2bdb77ebf81b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxyZWQlMjBjYXJ8ZW58MHx8fHwxNzY0ODg4MTM2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "red car"
+    },
+    {
+      "id": "car-2-2",
+      "description": "Red sports car back",
+      "imageUrl": "https://images.unsplash.com/photo-1631798264391-f63e96c52fbd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cmVkJTIwY2FyJTIwYmFja3xlbnwwfHx8fDE3NjQ5NzM1NzF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "red car back"
+    },
+    {
+      "id": "car-3-1",
+      "description": "Blue SUV",
+      "imageUrl": "https://images.unsplash.com/photo-1658731041626-66334aad30be?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxibHVlJTIwc3V2fGVufDB8fHx8MTc2NDk3MzU3MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "blue suv"
+    },
+    {
+      "id": "car-4-1",
+      "description": "Black electric car charging",
+      "imageUrl": "https://images.unsplash.com/photo-1639302610362-4c86747e8680?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxlbGVjdHJpYyUyMGNhciUyMGNoYXJnaW5nfGVufDB8fHx8MTc2NDk3MzU3MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "electric car charging"
+    },
+    {
+      "id": "car-4-2",
+      "description": "Black electric car dashboard",
+      "imageUrl": "https://images.unsplash.com/photo-1611760357505-922600d8ffa6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjYXIlMjBkYXNoYm9hcmR8ZW58MHx8fHwxNzY0OTY1MjE2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "car dashboard"
+    },
+    {
+      "id": "car-5-1",
+      "description": "Silver hybrid car",
+      "imageUrl": "https://images.unsplash.com/photo-1597007030739-6d2e7172ee5b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzaWx2ZXIlMjBjYXJ8ZW58MHx8fHwxNzY0OTczNTcyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "silver car"
+    },
+    {
+      "id": "car-6-1",
+      "description": "Gray van",
+      "imageUrl": "https://images.unsplash.com/photo-1661098970259-d89ea2105d72?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxncmF5JTIwdmFufGVufDB8fHx8MTc2NDk3MzU3Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "gray van"
+    }
+  ]
 }
