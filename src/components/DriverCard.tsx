@@ -32,7 +32,7 @@ export function DriverCard({ driver }: DriverCardProps) {
             >
               <Image
                 src={driver.images[0] || 'https://picsum.photos/seed/placeholder/200/300'}
-                alt={`Vehicle of ${driver.alias}`}
+                alt={`Vehículo de ${driver.alias}`}
                 fill
                 sizes="(max-width: 640px) 100vw, 112px"
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
@@ -45,15 +45,15 @@ export function DriverCard({ driver }: DriverCardProps) {
               <h3 className="text-xl font-bold font-headline">{driver.alias}</h3>
               <div className="flex items-center gap-2 mt-2 sm:mt-0">
                 <Button asChild variant="outline" size="sm" className="bg-green-500 hover:bg-green-600 text-white border-green-600 flex-1 sm:flex-grow-0">
-                  <a href={`https://wa.me/${driver.phone}`} target="_blank" rel="noopener noreferrer" aria-label={`Message ${driver.alias} on WhatsApp`}>
+                  <a href={`https://wa.me/${driver.phone}`} target="_blank" rel="noopener noreferrer" aria-label={`Enviar mensaje a ${driver.alias} por WhatsApp`}>
                     <WhatsAppIcon />
                     WhatsApp
                   </a>
                 </Button>
                 <Button asChild variant="outline" size="sm" className="flex-1 sm:flex-grow-0">
-                  <a href={`tel:${driver.phone}`} aria-label={`Call ${driver.alias}`}>
+                  <a href={`tel:${driver.phone}`} aria-label={`Llamar a ${driver.alias}`}>
                     <Phone />
-                    Call
+                    Llamar
                   </a>
                 </Button>
               </div>

@@ -34,7 +34,7 @@ export function ImageCarouselModal({ images, isOpen, onOpenChange }: ImageCarous
                 <div className="aspect-[3/2] w-full relative">
                   <Image
                     src={src}
-                    alt={`Vehicle image ${index + 1}`}
+                    alt={`Imagen de vehículo ${index + 1}`}
                     fill
                     className="object-cover rounded-lg"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

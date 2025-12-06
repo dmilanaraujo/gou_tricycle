@@ -10,14 +10,14 @@ interface FilterControlsProps {
 
 export function FilterControls({ selectedTypes, onTypeChange }: FilterControlsProps) {
   const combustionTypes: { value: VehicleType; label: string }[] = [
-    { value: 'electric', label: 'Electric' },
-    { value: 'hybrid', label: 'Hybrid' },
-    { value: 'combustion', label: 'Combustion' },
+    { value: 'electric', label: 'Eléctrico' },
+    { value: 'hybrid', label: 'Híbrido' },
+    { value: 'combustion', label: 'Combustión' },
   ];
 
   return (
     <div className="w-full">
-      <h2 className="text-sm font-medium text-muted-foreground mb-2">Combustion Type</h2>
+      <h2 className="text-sm font-medium text-muted-foreground mb-2">Tipo de Combustible</h2>
       <ToggleGroup
         type="multiple"
         variant="outline"
@@ -31,7 +31,7 @@ export function FilterControls({ selectedTypes, onTypeChange }: FilterControlsPr
         className="w-full justify-start gap-2 flex-wrap"
       >
         {combustionTypes.map(({ value, label }) => (
-          <ToggleGroupItem key={value} value={value} aria-label={`Filter by ${label}`} className="flex-grow sm:flex-grow-0">
+          <ToggleGroupItem key={value} value={value} aria-label={`Filtrar por ${label}`} className="flex-grow sm:flex-grow-0">
             {label}
           </ToggleGroupItem>
         ))}

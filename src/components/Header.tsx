@@ -18,14 +18,6 @@ interface HeaderProps {
 }
 
 export function Header({ province, municipality, onProvinceChange, onMunicipalityChange }: HeaderProps) {
-  const handleProvinceChange = (newProvince: string) => {
-    onProvinceChange(newProvince);
-    // Auto-select first municipality of the new province
-    const newMunicipalities = municipalities[newProvince];
-    if (newMunicipalities && newMunicipalities.length > 0) {
-      onMunicipalityChange(newMunicipalities[0].value);
-    }
-  };
 
   return (
     <header className="w-full bg-card/80 backdrop-blur-sm sticky top-0 z-10 border-b shadow-sm">
@@ -33,9 +25,9 @@ export function Header({ province, municipality, onProvinceChange, onMunicipalit
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <Logo />
           <div className="flex gap-2 w-full sm:w-auto">
-            <Select value={province} onValueChange={handleProvinceChange}>
+            <Select value={province} onValueChange={onProvinceChange}>
               <SelectTrigger className="w-full sm:w-[180px]">
-                <SelectValue placeholder="Select Province" />
+                <SelectValue placeholder="Seleccionar Provincia" />
               </SelectTrigger>
               <SelectContent>
                 {provinces.map(p => (
@@ -45,7 +37,7 @@ export function Header({ province, municipality, onProvinceChange, onMunicipalit
             </Select>
             <Select value={municipality} onValueChange={onMunicipalityChange}>
               <SelectTrigger className="w-full sm:w-[180px]">
-                <SelectValue placeholder="Select Municipality" />
+                <SelectValue placeholder="Seleccionar Municipio" />
               </SelectTrigger>
               <SelectContent>
                 {(municipalities[province] || []).map(m => (

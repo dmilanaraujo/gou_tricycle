@@ -38,8 +38,8 @@ export function DriverList({ drivers, isLoading }: DriverListProps) {
     return (
       <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg mt-8 w-full">
         <Frown className="w-16 h-16 text-muted-foreground" />
-        <h2 className="mt-4 text-xl font-semibold">No drivers found</h2>
-        <p className="mt-1 text-muted-foreground">Try adjusting your location or filters.</p>
+        <h2 className="mt-4 text-xl font-semibold">No se encontraron conductores</h2>
+        <p className="mt-1 text-muted-foreground">Prueba a ajustar tu ubicación o los filtros.</p>
       </div>
     );
   }
