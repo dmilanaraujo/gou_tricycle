@@ -2,11 +2,12 @@
 
 import * as React from 'react';
 import Image from 'next/image';
-import { Phone } from 'lucide-react';
+import { Phone, MapPin } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { Driver } from '@/types';
 import { ImageCarouselModal } from './ImageCarouselModal';
+import { municipalities } from '@/lib/locations';
 
 interface DriverCardProps {
   driver: Driver;
@@ -21,10 +22,12 @@ const WhatsAppIcon = () => (
 export function DriverCard({ driver }: DriverCardProps) {
   const [isCarouselOpen, setIsCarouselOpen] = React.useState(false);
 
+  const municipalityLabel = municipalities[driver.province]?.find(m => m.value === driver.municipality)?.label || driver.municipality;
+
   return (
     <>
-      <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 w-full">
-        <CardContent className="p-4">
+      <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 w-full flex flex-col">
+        <CardContent className="p-4 flex-grow">
           <div className="flex flex-col sm:flex-row gap-4">
             <div
               className="relative w-full sm:w-28 h-40 sm:h-28 shrink-0 rounded-md overflow-hidden cursor-pointer group"
@@ -41,25 +44,29 @@ export function DriverCard({ driver }: DriverCardProps) {
               <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
             </div>
 
-            <div className="flex flex-col justify-between flex-grow">
+            <div className="flex flex-col flex-grow">
               <h3 className="text-xl font-bold font-headline">{driver.alias}</h3>
-              <div className="flex items-center gap-2 mt-2 sm:mt-0">
-                <Button asChild variant="outline" size="sm" className="bg-green-500 hover:bg-green-600 text-white border-green-600 flex-1 sm:flex-grow-0">
-                  <a href={`https://wa.me/${driver.phone}`} target="_blank" rel="noopener noreferrer" aria-label={`Enviar mensaje a ${driver.alias} por WhatsApp`}>
-                    <WhatsAppIcon />
-                    WhatsApp
-                  </a>
-                </Button>
-                <Button asChild variant="outline" size="sm" className="flex-1 sm:flex-grow-0">
-                  <a href={`tel:${driver.phone}`} aria-label={`Llamar a ${driver.alias}`}>
-                    <Phone />
-                    Llamar
-                  </a>
-                </Button>
+              <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-1">
+                <MapPin className="h-4 w-4" />
+                <span>{municipalityLabel}</span>
               </div>
             </div>
           </div>
         </CardContent>
+        <div className="flex items-center gap-2 p-4 pt-0">
+            <Button asChild variant="outline" size="sm" className="bg-green-500 hover:bg-green-600 text-white border-green-600 flex-1">
+                <a href={`https://wa.me/${driver.phone}`} target="_blank" rel="noopener noreferrer" aria-label={`Enviar mensaje a ${driver.alias} por WhatsApp`}>
+                <WhatsAppIcon />
+                WhatsApp
+                </a>
+            </Button>
+            <Button asChild variant="outline" size="sm" className="flex-1">
+                <a href={`tel:${driver.phone}`} aria-label={`Llamar a ${driver.alias}`}>
+                <Phone />
+                Llamar
+                </a>
+            </Button>
+        </div>
       </Card>
       <ImageCarouselModal
         images={driver.images}
