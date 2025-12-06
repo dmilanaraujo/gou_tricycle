@@ -9,7 +9,7 @@ export function Logo({ className }: LogoProps) {
   return (
     <div className={cn("flex items-center gap-2 text-xl font-bold text-slate-800", className)}>
       <Car className="h-6 w-6 text-accent" />
-      <span className="font-headline">LocalWheels</span>
+      <span className="font-headline">GouCycles</span>
     </div>
   );
 }

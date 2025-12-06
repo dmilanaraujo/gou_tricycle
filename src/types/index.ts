@@ -14,3 +14,11 @@ export type Location = {
   province: string;
   municipality: string;
 };
+
+export type ActionError = {
+  message: string;
+  path?: (string|number)[]
+}
+export type ActionResponse<T> =
+    | { success: true; data?: T }
+    | { success: false; errors?: ActionError[] };

@@ -17,7 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { municipalities } from "@/lib/locations";
+import { municipalities } from "@/lib/data/locations";
 
 interface MunicipalityFilterProps {
   province: string;

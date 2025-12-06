@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { provinces, municipalities } from "@/lib/locations";
+import { provinces, municipalities } from "@/lib/data/locations";
 import type { Location } from '@/types';
 
 interface LocationModalProps {

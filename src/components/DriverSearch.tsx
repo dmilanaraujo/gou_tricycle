@@ -2,13 +2,13 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { Driver, Location, VehicleType } from '@/types';
-import { getDrivers } from '@/app/actions';
 import { Header } from './Header';
 import { LocationModal } from './LocationModal';
 import { FilterControls } from './FilterControls';
 import { DriverList } from './DriverList';
-import { provinces, municipalities } from '@/lib/locations';
+import { provinces, municipalities } from '@/lib/data/locations';
 import { MunicipalityFilter } from './MunicipalityFilter';
+import {getDrivers} from '@/lib/actions/drivers';
 
 const LOCATION_STORAGE_KEY = 'localwheels-location';
 
@@ -40,7 +40,9 @@ export default function DriverSearch() {
     setIsLoading(true);
     if (searchMunicipalities.length > 0) {
       const result = await getDrivers(loc.province, loc.municipality, searchMunicipalities, types);
-      setDrivers(result);
+      if (result.success) {
+        setDrivers(result.data || []);
+      }
     } else {
       setDrivers([]);
     }

@@ -1,5 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import {PostgrestError} from '@supabase/supabase-js';
+import {ActionError} from '@/types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -20,4 +22,19 @@ export function shuffleArray<T>(array: T[]): T[] {
     [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
   }
   return newArray;
+}
+
+export const formatSupabaseFunctionErrors = async (error: PostgrestError): Promise<ActionError[]> => {
+  // if (error instanceof FunctionsHttpError) {
+  //   const errorMessage = await error.context.json()
+  //   console.log('Function returned an error', errorMessage)
+  //   return [{ message: errorMessage }]
+  // }
+  // else if (error instanceof FunctionsRelayError) {
+  //   return [{ message: 'customErrors.function_processing_error' }]
+  // }
+  // else if (error instanceof FunctionsFetchError) {
+  //   return [{ message: 'customErrors.fetch_error' }]
+  // }
+  return [{ message: 'customErrors.unspecified_error' }]
 }

@@ -2,12 +2,12 @@
 
 import * as React from 'react';
 import Image from 'next/image';
-import { Phone, MapPin } from 'lucide-react';
+import {Phone, MapPin, Fuel} from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { Driver } from '@/types';
 import { ImageCarouselModal } from './ImageCarouselModal';
-import { municipalities } from '@/lib/locations';
+import { municipalities } from '@/lib/data/locations';
 
 interface DriverCardProps {
   driver: Driver;
@@ -49,6 +49,10 @@ export function DriverCard({ driver }: DriverCardProps) {
               <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-1">
                 <MapPin className="h-4 w-4" />
                 <span>{municipalityLabel}</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-1">
+                <Fuel className="h-4 w-4" />
+                <span>{driver.vehicle_type}</span>
               </div>
               <div className="flex-grow" />
               <div className="flex items-center justify-end gap-2 pt-4">

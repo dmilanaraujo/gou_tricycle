@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { provinces, municipalities } from "@/lib/locations";
+import { provinces, municipalities } from "@/lib/data/locations";
 import { Logo } from "./Logo";
 
 interface HeaderProps {
