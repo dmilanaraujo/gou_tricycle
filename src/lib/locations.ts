@@ -1,3 +1,4 @@
+
 export const provinces = [
   { value: "pinar_del_rio", label: "Pinar del Río" },
   { value: "artemisa", label: "Artemisa" },
@@ -222,9 +223,10 @@ export const municipalities: { [key: string]: { value: string; label: string }[]
 export const municipalityDistances: { [province: string]: { [municipality: string]: { [neighbor: string]: number } } } = {
   la_habana: {
     plaza_de_la_revolucion: { plaza_de_la_revolucion: 0, centro_habana: 1, cerro: 1, playa: 2, la_habana_vieja: 2, diez_de_octubre: 3, marianao: 3 },
-    playa: { playa: 0, la_lisa: 1, marianao: 1, plaza_de_la_revolucion: 2, cerro: 3 },
+    playa: { playa: 0, marianao: 1, la_lisa: 2, plaza_de_la_revolucion: 2, cerro: 3 },
     centro_habana: { centro_habana: 0, la_habana_vieja: 1, plaza_de_la_revolucion: 1, cerro: 2 },
     la_habana_vieja: { la_habana_vieja: 0, centro_habana: 1, regla: 2, san_miguel_del_padron: 3, diez_de_octubre: 3 },
+    cerro: { cerro: 0, plaza_de_la_revolucion: 1, centro_habana: 2, diez_de_octubre: 2, boyeros: 3, arroyo_naranjo: 3 },
     // ... y así sucesivamente para todos los municipios de La Habana
   },
   matanzas: {

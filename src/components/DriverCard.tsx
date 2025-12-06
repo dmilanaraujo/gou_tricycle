@@ -50,23 +50,24 @@ export function DriverCard({ driver }: DriverCardProps) {
                 <MapPin className="h-4 w-4" />
                 <span>{municipalityLabel}</span>
               </div>
+              <div className="flex-grow" />
+              <div className="flex items-center justify-end gap-2 pt-4">
+                  <Button asChild variant="outline" size="sm" className="bg-green-500 hover:bg-green-600 text-white border-green-600">
+                      <a href={`https://wa.me/${driver.phone}`} target="_blank" rel="noopener noreferrer" aria-label={`Enviar mensaje a ${driver.alias} por WhatsApp`}>
+                      <WhatsAppIcon />
+                      WhatsApp
+                      </a>
+                  </Button>
+                  <Button asChild variant="outline" size="sm">
+                      <a href={`tel:${driver.phone}`} aria-label={`Llamar a ${driver.alias}`}>
+                      <Phone />
+                      Llamar
+                      </a>
+                  </Button>
+              </div>
             </div>
           </div>
         </CardContent>
-        <div className="flex items-center gap-2 p-4 pt-0">
-            <Button asChild variant="outline" size="sm" className="bg-green-500 hover:bg-green-600 text-white border-green-600 flex-1">
-                <a href={`https://wa.me/${driver.phone}`} target="_blank" rel="noopener noreferrer" aria-label={`Enviar mensaje a ${driver.alias} por WhatsApp`}>
-                <WhatsAppIcon />
-                WhatsApp
-                </a>
-            </Button>
-            <Button asChild variant="outline" size="sm" className="flex-1">
-                <a href={`tel:${driver.phone}`} aria-label={`Llamar a ${driver.alias}`}>
-                <Phone />
-                Llamar
-                </a>
-            </Button>
-        </div>
       </Card>
       <ImageCarouselModal
         images={driver.images}

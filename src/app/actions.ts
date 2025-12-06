@@ -25,20 +25,45 @@ export async function getDrivers(
 ): Promise<Driver[]> {
   await new Promise(resolve => setTimeout(resolve, 500));
 
-  const filteredDrivers = mockDrivers.filter(driver =>
+  let filteredDrivers = mockDrivers.filter(driver =>
     driver.province === province &&
     filterMunicipalities.includes(driver.municipality) &&
     vehicleTypes.includes(driver.vehicle_type)
   );
 
-  const distances = municipalityDistances[province];
+  const distances = municipalityDistances[province]?.[referenceMunicipality];
   if (distances) {
     filteredDrivers.sort((a, b) => {
-      const distanceA = distances[referenceMunicipality]?.[a.municipality] ?? Infinity;
-      const distanceB = distances[referenceMunicipality]?.[b.municipality] ?? Infinity;
+      const distanceA = distances[a.municipality] ?? Infinity;
+      const distanceB = distances[b.municipality] ?? Infinity;
       return distanceA - distanceB;
+    });
+  } else {
+    // Si no hay datos de distancia, al menos poner el del mismo municipio primero
+    filteredDrivers.sort((a, b) => {
+        if (a.municipality === referenceMunicipality && b.municipality !== referenceMunicipality) return -1;
+        if (a.municipality !== referenceMunicipality && b.municipality === referenceMunicipality) return 1;
+        return 0;
     });
   }
 
-  return shuffleArray(filteredDrivers);
+  // Barajar aleatoriamente los conductores que están a la misma distancia
+  if (distances) {
+    const groupedByDistance: { [key: number]: Driver[] } = {};
+    filteredDrivers.forEach(driver => {
+      const distance = distances[driver.municipality] ?? Infinity;
+      if (!groupedByDistance[distance]) {
+        groupedByDistance[distance] = [];
+      }
+      groupedByDistance[distance].push(driver);
+    });
+    
+    filteredDrivers = Object.values(groupedByDistance).flatMap(group => shuffleArray(group));
+  } else {
+    // Si no hay distancias, barajar todo el resultado
+    filteredDrivers = shuffleArray(filteredDrivers);
+  }
+
+
+  return filteredDrivers;
 }
