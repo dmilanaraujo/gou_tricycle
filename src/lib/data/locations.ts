@@ -1,8 +1,8 @@
 
 export const provinces = [
+  { value: "la_habana", label: "La Habana" },
   { value: "pinar_del_rio", label: "Pinar del Río" },
   { value: "artemisa", label: "Artemisa" },
-  { value: "la_habana", label: "La Habana" },
   { value: "mayabeque", label: "Mayabeque" },
   { value: "matanzas", label: "Matanzas" },
   { value: "cienfuegos", label: "Cienfuegos" },

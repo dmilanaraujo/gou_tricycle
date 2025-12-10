@@ -8,6 +8,8 @@ export type Driver = {
   province: string;
   municipality: string;
   vehicle_type: VehicleType;
+  online: boolean;
+  active_at: Date;
 };
 
 export type Location = {

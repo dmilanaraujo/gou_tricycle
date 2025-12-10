@@ -1,7 +1,7 @@
 'use server';
 import {ActionResponse, Driver, type VehicleType} from '@/types';
 import {createClient} from '@/lib/supabase/server';
-import {formatSupabaseFunctionErrors, shuffleArray} from '@/lib/utils';
+import {formatSupabaseFunctionErrors, formatSupabasePostgrestErrors, shuffleArray} from '@/lib/utils';
 import {cookies} from 'next/headers';
 import {municipalityDistances} from '@/lib/data/locations';
 
@@ -29,7 +29,7 @@ export const getDrivers = async (
       const errors = await formatSupabaseFunctionErrors(error);
       return { success: false, errors }
     }
-    console.log('drivers supabse', data);
+
     let filteredDrivers = data || [];
     const distances = municipalityDistances[province]?.[referenceMunicipality];
     if (distances) {
@@ -68,7 +68,36 @@ export const getDrivers = async (
     return { success: true, data: filteredDrivers };
   } catch (error) {
     console.log('Unexpected error in getDrivers:', error);
-    throw new Error('customErrors.unspecified_error');
+    throw new Error('Ha ocurrido un error no especificado');
   }
 };
+
+export const updateStatus = async (online: boolean) => {
+
+  try {
+    const supabase = await createClient();
+    
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    
+    if (userError || !user) {
+      return { success: false, errors: [{ message: 'Usuario no autenticado o no se pudo obtener el usuario.' }] };
+    }
+
+    const { data, error } = await supabase
+        .from("drivers")
+        .update({
+          online
+        })
+        .eq("id", user.id)
+        .select("*");
+    
+    if (error) {
+      return { success: false, errors: formatSupabasePostgrestErrors(error) }
+    }
+    return { success: true, data: data?.[0] };
+  } catch (error) {
+    console.log('Unexpected error in updateStatus:', error);
+    throw new Error('Error no especificado');
+  }
+}
 

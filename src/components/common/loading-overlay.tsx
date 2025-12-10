@@ -1,7 +1,7 @@
 "use client"
 
 import { Loader2 } from "lucide-react"
-import {useNavigationLoading} from '@/components/navigation-loading-provider';
+import {useNavigationLoading} from '@/providers/navigation-loading-provider';
 
 export function LoadingOverlay() {
     const { isNavigating } = useNavigationLoading()

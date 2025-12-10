@@ -1,4 +1,4 @@
-import DriverSearch from '@/components/DriverSearch';
+import DriverSearch from '@/components/client/driver-search';
 
 export default function Home() {
   return (
