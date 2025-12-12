@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import {
 	Form,
-	FormControl,
+	FormControl, FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -13,32 +13,37 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { UpdateUserSchema, UpdateUserValues} from '@/lib/schemas/auth';
-import {updateUser} from '@/lib/actions/auth';
+import { UpdateProfileSchema, UpdateProfileValues} from '@/lib/schemas/auth';
 import {toast} from 'sonner';
-import {User} from '@supabase/auth-js';
 import {LoaderCircle} from 'lucide-react';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useRouter} from 'next/navigation';
+import {Driver} from '@/types';
+import {updateProfile} from '@/lib/actions/profile';
+import {NativeSelect, NativeSelectOption} from '@/components/ui/native-select';
+import {municipalities, provinces} from '@/lib/data/locations';
+import {combustionTypes} from '@/lib/utils';
 
-export function ProfileForm({ user }: { user: User; }) {
+export function ProfileForm({ driver }: { driver: Driver; }) {
 	const router = useRouter();
-	const form = useForm<UpdateUserValues>({
-		resolver: zodResolver(UpdateUserSchema),
+	const form = useForm<UpdateProfileValues>({
+		resolver: zodResolver(UpdateProfileSchema),
 		defaultValues: {
-			phone: user.phone || '',
-			alias: user.user_metadata.first_name  || '',
+			alias: driver.alias  || '',
+			province: driver.province || '',
+			municipality: driver.municipality || '',
+			vehicle_type: driver.vehicle_type || '',
 		},
 	});
 	
-	const { isValid, isSubmitting, isDirty} = form.formState;
-	
+	const { isValid, isSubmitting, isDirty, errors} = form.formState;
+	const provinceValue = form.watch('province');
 	// 2. Define a submit handler.
-	async function onSubmit(values: UpdateUserValues) {
+	async function onSubmit(values: UpdateProfileValues) {
 		// Do something with the form values.
 		// ✅ This will be type-safe and validated.
 		try {
-			const response = await updateUser(values);
+			const response = await updateProfile(values);
 			if (!response.success) {
 				response.errors?.forEach((error) => {
 					toast.error('Error', {
@@ -60,6 +65,10 @@ export function ProfileForm({ user }: { user: User; }) {
 		
 	}
 	
+	useEffect(() => {
+		console.log('isValid, isSubmitting, isDirty, errors', {isValid, isSubmitting, isDirty, errors});
+	}, [isValid, isSubmitting, isDirty, errors]);
+	
 	return (
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
@@ -73,9 +82,72 @@ export function ProfileForm({ user }: { user: User; }) {
 									<FormControl>
 										<Input placeholder='Entre su alias' {...field} />
 									</FormControl>
-									{/*<FormDescription>*/}
-									{/*	This is your public display name.*/}
-									{/*</FormDescription>*/}
+									<FormDescription>
+										Nombre que saldrá visible en las búsquedas
+									</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name='province'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Provincia</FormLabel>
+									<FormControl>
+										<NativeSelect {...field} classNameContainer={'col-span-2 w-full'}>
+											<NativeSelectOption value="">Seleccione...</NativeSelectOption>
+											{provinces.map(p => (
+												<NativeSelectOption key={p.value} value={p.value}>{p.label}</NativeSelectOption>
+											))}
+										</NativeSelect>
+									</FormControl>
+									<FormDescription>
+										Provincia actual donde operará
+									</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name='municipality'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Municipio</FormLabel>
+									<FormControl>
+										<NativeSelect {...field} classNameContainer={'col-span-2 w-full'} >
+											<NativeSelectOption value="">Seleccione...</NativeSelectOption>
+											{(!!provinceValue && municipalities[provinceValue] || []).map(m => (
+												<NativeSelectOption key={m.value} value={m.value}>{m.label}</NativeSelectOption>
+											))}
+										</NativeSelect>
+									</FormControl>
+									<FormDescription>
+										Municipio actual donde operará
+									</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name='vehicle_type'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Tipo de combustible</FormLabel>
+									<FormControl>
+										<NativeSelect {...field} classNameContainer={'col-span-2 w-full'}>
+											<NativeSelectOption value="">Seleccione...</NativeSelectOption>
+											{combustionTypes.map(({ value, label }) => (
+												<NativeSelectOption key={value} value={value}>{label}</NativeSelectOption>
+											))}
+										</NativeSelect>
+									</FormControl>
+									<FormDescription>
+										Tipo de combustible de su vehículo
+									</FormDescription>
 									<FormMessage />
 								</FormItem>
 							)}
@@ -84,9 +156,9 @@ export function ProfileForm({ user }: { user: User; }) {
 					<Button type='submit' className='w-full' disabled={!isValid || isSubmitting || !isDirty}>
 						{isSubmitting ? (
 							<span className="flex items-center">
-							<LoaderCircle  className="mr-3 animate-spin"/>
+								<LoaderCircle  className="mr-3 animate-spin"/>
 								{'Enviando...'}
-						</span>
+							</span>
 						) : 'Actualizar'
 						}
 					</Button>

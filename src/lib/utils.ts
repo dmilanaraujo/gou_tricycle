@@ -1,8 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import {AuthError, PostgrestError} from '@supabase/supabase-js';
-import {ActionError, Driver} from '@/types';
-import {ZodError} from 'zod';
+import {ActionError, Driver, type VehicleType} from '@/types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -146,3 +145,9 @@ export const getTimeBySeconds = (secondsTime: number) => {
 export const isProfileComplete = (profile: Driver) => {
     return !(profile.images.length == 0 || !!profile.alias);
 }
+
+export const combustionTypes: { value: VehicleType; label: string }[] = [
+    { value: 'electric', label: 'Eléctrico' },
+    { value: 'hybrid', label: 'Híbrido' },
+    { value: 'combustion', label: 'Combustión' },
+];

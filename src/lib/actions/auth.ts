@@ -3,8 +3,7 @@ import {
   AvatarFormValues, LoginSchema, SignUpSchema, ForgotPasswordFormValues, ForgotPasswordSchema,
   UpdatePasswordSchema,
   UpdatePasswordValues,
-  UpdateUserSchema,
-  UpdateUserValues, VerifyOtpFormValues, VerifyOtpSchema
+  VerifyOtpFormValues, VerifyOtpSchema
 } from '@/lib/schemas/auth';
 import {createClient} from '@/lib/supabase/server';
 import {SignInWithPasswordCredentials, SignUpWithPasswordCredentials, User, UserAttributes} from '@supabase/auth-js';
@@ -138,33 +137,6 @@ export const updatePassword = async (params: UpdatePasswordValues): Promise<Acti
   }
 };
 
-export const updateUser = async (params: UpdateUserValues): Promise<ActionResponse<User>> => {
-  const validatedFields = UpdateUserSchema.safeParse(params);
-  if (!validatedFields.success) {
-    // const errors = formatZodErrors(validatedFields.error);
-    return { success: false, errors: [] };
-  }
-  try {
-    const supabase = await createClient();
-    const { phone, alias } = validatedFields.data;
-    const body: UserAttributes = {
-      phone,
-      data: {
-        first_name: alias
-      }
-    }
-    const { error, data } = await supabase.auth.updateUser(body);
-    if (error) {
-      const errors = formatSupabaseAuthErrors(error);
-      return { success: false, errors }
-    }
-    return { success: true, data: data.user };
-  } catch (error) {
-    console.log('Unexpected error in updateUser:', error);
-    throw new Error('Ha ocurrido un error no especificado');
-  }
-};
-
 export const forgotPassword = async (params: ForgotPasswordFormValues, redirectTo: string): Promise<ActionResponse<void>> => {
   const validatedFields = ForgotPasswordSchema.safeParse(params);
   if (!validatedFields.success) {
@@ -237,12 +209,6 @@ export const uploadAvatar = async (params: AvatarFormValues): Promise<ActionResp
     throw new Error('Ha ocurrido un error no especificado');
   }
 };
-
-export const getAuthUser = cache(async () => {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  return user;
-});
 
 export const verifyOtpSms = async (params: VerifyOtpFormValues): Promise<ActionResponse<void>> => {
   const validatedFields = VerifyOtpSchema.safeParse(params);

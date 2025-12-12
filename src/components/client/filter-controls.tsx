@@ -2,6 +2,7 @@
 
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import type { VehicleType } from "@/types";
+import {combustionTypes} from '@/lib/utils';
 
 interface FilterControlsProps {
   selectedTypes: VehicleType[];
@@ -9,11 +10,6 @@ interface FilterControlsProps {
 }
 
 export function FilterControls({ selectedTypes, onTypeChange }: FilterControlsProps) {
-  const combustionTypes: { value: VehicleType; label: string }[] = [
-    { value: 'electric', label: 'Eléctrico' },
-    { value: 'hybrid', label: 'Híbrido' },
-    { value: 'combustion', label: 'Combustión' },
-  ];
 
   return (
     <div className="w-full">

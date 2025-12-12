@@ -22,9 +22,12 @@ export const SignUpSchema = z.object({
 	path: ["confirm_password"],
 });
 
-export const UpdateUserSchema = z.object({
-	phone: PhoneSchema.optional(),
+export const UpdateProfileSchema = z.object({
 	alias: z.string().optional(),
+	province: z.string().optional(),
+	municipality: z.string().optional(),
+	vehicle_type: z.string().optional(),
+	images: z.array(z.string()).optional(),
 });
 
 export const UpdatePasswordSchema = z.object({
@@ -59,7 +62,7 @@ export const VerifyOtpSchema = z.object({
 })
 
 export type UpdatePasswordValues = z.infer<typeof UpdatePasswordSchema>;
-export type UpdateUserValues = z.infer<typeof UpdateUserSchema>;
+export type UpdateProfileValues = z.infer<typeof UpdateProfileSchema>;
 export type AvatarFormValues = z.infer<typeof AvatarSchema>;
 export type ForgotPasswordFormValues = z.infer<typeof ForgotPasswordSchema>;
 export type VerifyOtpFormValues = z.infer<typeof VerifyOtpSchema>;
