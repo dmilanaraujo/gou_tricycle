@@ -1,27 +1,23 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import {toast} from 'sonner';
-import {LoaderCircle} from 'lucide-react';
+import {CheckIcon, XIcon} from 'lucide-react';
 import React, { useState } from 'react';
 import {useRouter} from 'next/navigation';
 import { Switch } from '../ui/switch';
 import { updateStatus } from '@/lib/actions/drivers';
 import { Driver } from '@/types';
-import {Label} from '@/components/ui/label';
 
 export function StatusForm({ profile }: { profile: Driver; }) {
-	const [value, setValue] = useState(profile.online);
-	const [isSubmitting, setSubmitting] = useState(false);
+	const [checked, setChecked] = useState(profile.online);
 	const router = useRouter();
 	
 	async function onChange(newValue: boolean) {
-		setValue(newValue);
+		setChecked(newValue);
 		try {
-			setSubmitting(true);
 			const response = await updateStatus(newValue);
 			if (!response.success) {
-				setValue(!newValue)
+				setChecked(!newValue)
 				response.errors?.forEach((error) => {
 					toast.error('Error', {
 						description: error.message,
@@ -34,31 +30,28 @@ export function StatusForm({ profile }: { profile: Driver; }) {
 			});
 			router.refresh()
 		} catch (e) {
-			setValue(!newValue)
+			setChecked(!newValue)
 			toast.error('Error', {
 				// @ts-expect-error only
 				description: e.message
 			});
-		} finally {
-			setSubmitting(false);
 		}
-		
 	}
 	
 	return (
-		<div className='flex justify-center gap-4 space-y-8'>
-			
-			
-			<div className="flex items-center space-x-2">
-				{/*<Label>Fuera de línea</Label>*/}
-				<Switch
-					// className={'h-12 w-12'}
-					// value={value.toString()}
-					checked={value}
-					onCheckedChange={onChange}
-				/>
-				{/*<Label>En línea</Label>*/}
-			</div>
+		<div className="relative inline-grid h-7 grid-cols-[1fr_1fr] items-center text-sm font-medium">
+			<Switch
+				checked={checked}
+				onCheckedChange={setChecked}
+				className="peer data-[state=unchecked]:bg-input/50 absolute inset-0 h-[inherit] w-14 [&_span]:z-10 [&_span]:size-6.5 [&_span]:transition-transform [&_span]:duration-300 [&_span]:ease-[cubic-bezier(0.16,1,0.3,1)] [&_span]:data-[state=checked]:translate-x-7 [&_span]:data-[state=checked]:rtl:-translate-x-7"
+				aria-label="Cambiar mi estado"
+			/>
+			<span className="pointer-events-none relative ml-0.5 flex min-w-8 items-center justify-center text-center transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] peer-data-[state=checked]:invisible peer-data-[state=unchecked]:translate-x-6 peer-data-[state=unchecked]:rtl:-translate-x-6">
+	          <XIcon className="size-4" aria-hidden="true"/>
+	        </span>
+			<span className="peer-data-[state=checked]:text-background pointer-events-none relative flex min-w-8 items-center justify-center text-center transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] peer-data-[state=checked]:-translate-x-full peer-data-[state=unchecked]:invisible peer-data-[state=checked]:rtl:translate-x-full">
+	          <CheckIcon className="size-4" aria-hidden="true"/>
+	        </span>
 		</div>
 	);
 }

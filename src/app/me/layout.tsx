@@ -1,14 +1,11 @@
-// import { AppSidebar } from "@/components/app-sidebar"
 import * as React from 'react';
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
 import { User, AuthError } from '@supabase/supabase-js';
 import AppProvider from '@/providers/app-provider';
 import {createClient} from '@/lib/supabase/server';
 import {LoadingOverlay} from '@/components/common/loading-overlay';
+import {Button} from '@/components/ui/button';
+import Link from 'next/link';
+import {Home} from 'lucide-react';
 
 interface ManagerLayoutProps {
   children: React.ReactNode;
@@ -30,25 +27,21 @@ export default async function ManagerLayout({ children }: Readonly<ManagerLayout
 
   return (
       <AppProvider>
-        <SidebarProvider
-          style={
-            {
-              "--sidebar-width": "300px",
-            } as React.CSSProperties
-          }
-        >
-          {/*<AppSidebar user={user}/>*/}
-          <SidebarInset>
+        <div className={'flex min-h-svh w-full'}>
+          <main className={'flex w-full flex-1 flex-col'}>
             <header className="sticky top-0 flex shrink-0 items-center gap-2 border-b bg-background p-2">
-              <SidebarTrigger className="-ml-1" />
-              {/*<Separator orientation="vertical" className="mr-2 h-4" />*/}
+                <Button asChild>
+                    <Link href='/'>
+                        <Home/>
+                    </Link>
+                </Button>
             </header>
             <div className="flex flex-1 flex-col">
                 <LoadingOverlay />
                 {children}
             </div>
-          </SidebarInset>
-        </SidebarProvider>
+          </main>
+        </div>
       </AppProvider>
   )
 }
