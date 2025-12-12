@@ -29,12 +29,12 @@ export function Header({ province, municipality, onProvinceChange, onMunicipalit
               Dónde te encuentras?
             </span>
             <span className="grid grid-cols-2 md:flex gap-2">
-              <NativeSelect value={province} onChange={(evt) => onProvinceChange(evt.target.value)} >
+              <NativeSelect className={'md:min-w-[165px]'} value={province} onChange={(evt) => onProvinceChange(evt.target.value)} id={'header-select-province'} >
                 {provinces.map(p => (
                     <NativeSelectOption key={p.value} value={p.value}>{p.label}</NativeSelectOption>
                 ))}
               </NativeSelect>
-               <NativeSelect value={municipality} onChange={(evt) => onMunicipalityChange(evt.target.value)} >
+               <NativeSelect className={'md:min-w-[165px]'} value={municipality} onChange={(evt) => onMunicipalityChange(evt.target.value)}  id={'header-select-municipality'}>
                 {(municipalities[province] || []).map(m => (
                     <NativeSelectOption key={m.value} value={m.value}>{m.label}</NativeSelectOption>
                 ))}

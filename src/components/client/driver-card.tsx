@@ -3,11 +3,13 @@
 import * as React from 'react';
 import Image from 'next/image';
 import {Phone, MapPin, Fuel} from 'lucide-react';
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { Driver, VehicleType } from '@/types';
 import { ImageCarouselModal } from '@/components/client/image-carousel-modal';
 import { municipalities } from '@/lib/data/locations';
+import {Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle} from '@/components/ui/item';
+import { ImageIcon } from 'lucide-react';
+import Link from 'next/link';
 
 interface DriverCardProps {
   driver: Driver;
@@ -37,59 +39,57 @@ export function DriverCard({ driver }: DriverCardProps) {
   const municipalityLabel = municipalities[driver.province]?.find(m => m.value === driver.municipality)?.label || driver.municipality;
 
   return (
-    <>
-      <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 w-full flex flex-col">
-        <CardContent className="p-4 flex-grow">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div
-              className="relative w-full sm:w-28 h-40 sm:h-28 shrink-0 rounded-md overflow-hidden cursor-pointer group"
-              onClick={() => setIsCarouselOpen(true)}
-            >
-              <Image
-                src={driver.images[0] || 'https://picsum.photos/seed/placeholder/200/300'}
-                alt={`Vehículo de ${driver.alias}`}
-                fill
-                sizes="(max-width: 640px) 100vw, 112px"
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
-                data-ai-hint="car"
-              />
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
-            </div>
+      <>
+          <Item key={driver.id} variant="outline" role="listitem">
+              <ItemMedia variant="image" onClick={() => setIsCarouselOpen(true)}>
+                  {driver.images.length > 0 ? (
+                      <Image
+                          src={driver.images[0]}
+                          alt={`Vehículo de ${driver.alias}`}
+                          width={48}
+                          height={48}
+                          className="object-cover grayscale"
+                      />
+                  ) : (
+                      <ImageIcon className={'w-full'}/>
+                  )}
+              
+              </ItemMedia>
+              
+              <ItemContent>
+                  <ItemTitle className="line-clamp-1">
+                      {driver.alias}
+                      {/*<span className="text-muted-foreground">{song.album}</span>*/}
+                  </ItemTitle>
+                  <ItemDescription className={'flex items-center gap-2 text-xs'}>
+                      <MapPin className="h-4 w-4"/>
+                      <span className={'overflow-hidden'}>{municipalityLabel}</span>
+                  </ItemDescription>
+                  <ItemDescription className={'flex items-center gap-2 text-xs'}>
+                      <Fuel className="h-4 w-4"/>
+                      <span>{getVehicleTypeLabel(driver.vehicle_type)}</span></ItemDescription>
+              </ItemContent>
+              <ItemActions className="flex-col">
+                      <Button asChild variant="outline" size="sm" className="bg-green-500 hover:bg-green-600 text-white border-green-600 w-full">
+                          <Link href={`https://wa.me/${driver.phone}`} target="_blank" rel="noopener noreferrer" aria-label={`Enviar mensaje a ${driver.alias} por WhatsApp`}>
+                              <WhatsAppIcon />
+                              WhatsApp
+                          </Link>
+                      </Button>
+                      <Button asChild variant="outline" size="sm" className={'w-full'}>
+                          <Link href={`tel:${driver.phone}`} aria-label={`Llamar a ${driver.alias}`}>
+                              <Phone />
+                              Llamar
+                          </Link>
+                      </Button>
 
-            <div className="flex flex-col flex-grow">
-              <h3 className="text-xl font-bold font-headline">{driver.alias}</h3>
-              <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-1">
-                <MapPin className="h-4 w-4" />
-                <span>{municipalityLabel}</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-1">
-                <Fuel className="h-4 w-4" />
-                <span>{getVehicleTypeLabel(driver.vehicle_type)}</span>
-              </div>
-              <div className="flex-grow" />
-              <div className="flex items-center justify-end gap-2 pt-4">
-                  <Button asChild variant="outline" size="sm" className="bg-green-500 hover:bg-green-600 text-white border-green-600">
-                      <a href={`https://wa.me/${driver.phone}`} target="_blank" rel="noopener noreferrer" aria-label={`Enviar mensaje a ${driver.alias} por WhatsApp`}>
-                      <WhatsAppIcon />
-                      WhatsApp
-                      </a>
-                  </Button>
-                  <Button asChild variant="outline" size="sm">
-                      <a href={`tel:${driver.phone}`} aria-label={`Llamar a ${driver.alias}`}>
-                      <Phone />
-                      Llamar
-                      </a>
-                  </Button>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      <ImageCarouselModal
-        images={driver.images}
-        isOpen={isCarouselOpen}
-        onOpenChange={setIsCarouselOpen}
-      />
-    </>
-  );
+              </ItemActions>
+          </Item>
+          <ImageCarouselModal
+              images={driver.images}
+              isOpen={isCarouselOpen}
+              onOpenChange={setIsCarouselOpen}
+          />
+      </>
+  )
 }
