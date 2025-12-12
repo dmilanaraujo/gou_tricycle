@@ -714,16 +714,16 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 					
 					if (addedLabels.length === 1) {
 						announce(
-							`${addedLabels[0]} selected. ${selectedCount} of ${totalOptions} options selected.`
+							`${addedLabels[0]} seleccionado. ${selectedCount} de ${totalOptions} opciones seleccionadas.`
 						);
 					} else {
 						announce(
-							`${addedLabels.length} options selected. ${selectedCount} of ${totalOptions} total selected.`
+							`${addedLabels.length} opciones seleccionadas. ${selectedCount} de ${totalOptions} total seleccionado.`
 						);
 					}
 				} else if (diff < 0) {
 					announce(
-						`Option removed. ${selectedCount} of ${totalOptions} options selected.`
+						`Opción eliminada. ${selectedCount} de ${totalOptions} opciones seleccionadas.`
 					);
 				}
 				prevSelectedCount.current = selectedCount;
@@ -732,10 +732,10 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 			if (isPopoverOpen !== prevIsOpen.current) {
 				if (isPopoverOpen) {
 					announce(
-						`Dropdown opened. ${totalOptions} options available. Use arrow keys to navigate.`
+						`Dropdown abierto. ${totalOptions} opciones disponibles. Use las teclas de flecha para navegar.`
 					);
 				} else {
-					announce("Dropdown closed.");
+					announce("Dropdown cerrado.");
 				}
 				prevIsOpen.current = isPopoverOpen;
 			}
@@ -752,8 +752,8 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 					).length;
 					
 					announce(
-						`${filteredCount} option${
-							filteredCount === 1 ? "" : "s"
+						`${filteredCount} ${
+							filteredCount === 1 ? "opción" : "opciones"
 						} found for "${searchValue}"`
 					);
 				}
@@ -777,15 +777,15 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 					onOpenChange={setIsPopoverOpen}
 					modal={modalPopover}>
 					<div id={triggerDescriptionId} className="sr-only">
-						Multi-select dropdown. Use arrow keys to navigate, Enter to select,
-						and Escape to close.
+						Multi-select dropdown. Use las teclas de flecha para navegar, Enter para seleccionar,
+						y Escape para cerrar.
 					</div>
 					<div id={selectedCountId} className="sr-only" aria-live="polite">
 						{selectedValues.length === 0
-						 ? "No options selected"
-						 : `${selectedValues.length} option${
-								selectedValues.length === 1 ? "" : "s"
-							} selected: ${selectedValues
+						 ? "No hay opciones seleccionadas"
+						 : `${selectedValues.length} ${
+								selectedValues.length === 1 ? "opción" : "opciones"
+							} seleccionadas: ${selectedValues
 								.map((value) => getOptionByValue(value)?.label)
 								.filter(Boolean)
 								.join(", ")}`}
@@ -802,9 +802,9 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 							aria-haspopup="listbox"
 							aria-controls={isPopoverOpen ? listboxId : undefined}
 							aria-describedby={`${triggerDescriptionId} ${selectedCountId}`}
-							aria-label={`Multi-select: ${selectedValues.length} of ${
+							aria-label={`Multi-select: ${selectedValues.length} de ${
 								getAllOptions().length
-							} options selected. ${placeholder}`}
+							} opciones seleccionadas. ${placeholder}`}
 							className={cn(
 								"flex p-1 rounded-md border min-h-10 h-auto items-center justify-between bg-inherit hover:bg-inherit [&_svg]:pointer-events-auto",
 								autoSize ? "w-auto" : "w-full",
@@ -911,7 +911,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 																	toggleOption(value);
 																}
 															}}
-															aria-label={`Remove ${option.label} from selection`}
+															aria-label={`Quitar ${option.label} de la selección`}
 															className="ml-2 h-4 w-4 cursor-pointer hover:bg-white/20 rounded-sm p-0.5 -m-0.5 focus:outline-none focus:ring-1 focus:ring-white/50">
 															<XCircle
 																className={cn(
@@ -944,7 +944,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 												}}>
 												{`+ ${
 													selectedValues.length - responsiveSettings.maxCount
-												} more`}
+												} más`}
 												<XCircle
 													className={cn(
 														"ml-2 h-4 w-4 cursor-pointer",
@@ -973,7 +973,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 													handleClear();
 												}
 											}}
-											aria-label={`Clear all ${selectedValues.length} selected options`}
+											aria-label={`Limpiar las ${selectedValues.length} opciones seleccionadas`}
 											className="flex items-center justify-center h-4 w-4 mx-2 cursor-pointer text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 rounded-sm">
 											<XIcon className="h-4 w-4" />
 										</div>
@@ -1136,7 +1136,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 													 aria-selected={isSelected}
 													 aria-disabled={option.disabled}
 													 aria-label={`${option.label}${
-														 isSelected ? ", selected" : ", not selected"
+														 isSelected ? ", seleccionado" : ", no seleccionado"
 													 }${option.disabled ? ", disabled" : ""}`}
 													 className={cn(
 														 "cursor-pointer",
@@ -1173,7 +1173,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 												<CommandItem
 													onSelect={handleClear}
 													className="flex-1 justify-center cursor-pointer">
-													Clear
+													Limpiar
 												</CommandItem>
 												<Separator
 													orientation="vertical"
@@ -1184,7 +1184,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 										<CommandItem
 											onSelect={() => setIsPopoverOpen(false)}
 											className="flex-1 justify-center cursor-pointer max-w-full">
-											Close
+											Cerrar
 										</CommandItem>
 									</div>
 								</CommandGroup>
