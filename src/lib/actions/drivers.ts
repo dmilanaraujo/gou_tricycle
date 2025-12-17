@@ -109,10 +109,7 @@ export const setDefaultImage = async (path: string): Promise<ActionResponse<bool
     if (userError || !user) {
       return { success: false, errors: [{ message: 'Usuario no autenticado o no se pudo obtener el usuario.' }] };
     }
-    console.log('data params', {
-      driver_id: user.id,
-      path
-    });
+
     const { error: resetError } = await supabase
         .from("driver_images")
         .update({ primary: false })

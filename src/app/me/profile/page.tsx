@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { redirect} from 'next/navigation';
 import {ProfileForm} from '@/components/account/form-profile';
 import {UpdatePasswordForm} from '@/components/auth/form-update-password';
