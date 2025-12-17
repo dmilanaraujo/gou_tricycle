@@ -40,8 +40,8 @@ export const UpdatePasswordSchema = z.object({
 	path: ["confirm_password"],
 });
 
-export const AvatarSchema = z.object({
-	avatar: z
+export const ImageSchema = z.object({
+	image: z
 		.instanceof(File)
 		.refine((file) => file.size <= 5 * 1024 * 1024, 'El archivo debe ser menor a 5MB')
 		.refine(
@@ -63,6 +63,6 @@ export const VerifyOtpSchema = z.object({
 
 export type UpdatePasswordValues = z.infer<typeof UpdatePasswordSchema>;
 export type UpdateProfileValues = z.infer<typeof UpdateProfileSchema>;
-export type AvatarFormValues = z.infer<typeof AvatarSchema>;
+export type ImageFormValues = z.infer<typeof ImageSchema>;
 export type ForgotPasswordFormValues = z.infer<typeof ForgotPasswordSchema>;
 export type VerifyOtpFormValues = z.infer<typeof VerifyOtpSchema>;

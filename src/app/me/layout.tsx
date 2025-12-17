@@ -29,7 +29,7 @@ export default async function ManagerLayout({ children }: Readonly<ManagerLayout
       <AppProvider>
         <div className={'flex min-h-svh w-full'}>
           <main className={'flex w-full flex-1 flex-col'}>
-            <header className="sticky top-0 flex shrink-0 items-center gap-2 border-b bg-background p-2">
+            <header className="sticky top-0 flex shrink-0 items-center gap-2 border-b bg-background p-2 z-10">
                 <Button asChild>
                     <Link href='/'>
                         <Home/>

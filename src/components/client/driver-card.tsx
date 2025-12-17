@@ -10,6 +10,7 @@ import { municipalities } from '@/lib/data/locations';
 import {Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle} from '@/components/ui/item';
 import { ImageIcon } from 'lucide-react';
 import Link from 'next/link';
+import {getPublicImageUrl} from '@/lib/utils';
 
 interface DriverCardProps {
   driver: Driver;
@@ -37,17 +38,21 @@ export function DriverCard({ driver }: DriverCardProps) {
   const [isCarouselOpen, setIsCarouselOpen] = React.useState(false);
 
   const municipalityLabel = municipalities[driver.province]?.find(m => m.value === driver.municipality)?.label || driver.municipality;
-
+  const sortedImages = driver.images.sort((a, b) => {
+      if (a.primary === b.primary) return 0;
+      return a.primary ? -1 : 1;
+  });
   return (
       <>
           <Item key={driver.id} variant="outline" role="listitem">
               <ItemMedia variant="image" onClick={() => setIsCarouselOpen(true)}>
-                  {driver.images.length > 0 ? (
+                  {!!sortedImages[0]?.path_thumbnail ? (
                       <Image
-                          src={driver.images[0]}
+                          src={getPublicImageUrl(sortedImages[0].path_thumbnail)}
                           alt={`Vehículo de ${driver.alias}`}
                           width={48}
                           height={48}
+                          unoptimized
                           className="object-cover grayscale"
                       />
                   ) : (
@@ -86,7 +91,7 @@ export function DriverCard({ driver }: DriverCardProps) {
               </ItemActions>
           </Item>
           <ImageCarouselModal
-              images={driver.images}
+              images={sortedImages}
               isOpen={isCarouselOpen}
               onOpenChange={setIsCarouselOpen}
           />

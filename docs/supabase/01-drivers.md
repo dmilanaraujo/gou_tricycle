@@ -2,22 +2,24 @@
 
 CREATE TYPE vehicle_type_enum AS ENUM ('electric', 'combustion', 'hybrid');
 
-CREATE TABLE public.drivers (
-    id uuid not null,
-    phone         varchar NOT NULL,
-    online        boolean DEFAULT false,
-    active_at     timestamp with time zone,
-    alias         varchar,
-    images        varchar[] DEFAULT '{}',   -- array de path/nombres de imágenes
-    province      varchar,
-    municipality  varchar,
-    vehicle_type  vehicle_type_enum NOT NULL,
-    constraint drivers_id_fkey foreign KEY (id) references auth.users (id) on delete CASCADE,
-    constraint drivers_phone_check check (
-      (
-        (length((phone)::text) >= 8) and ((phone)::text ~ '^\+?[0-9\s\-\(\)]+$'::text)
-      )
+create table public.drivers (
+  id uuid not null,
+  phone character varying not null,
+  online boolean null default false,
+  active_at timestamp with time zone null,
+  alias character varying null,
+  images character varying[] null default '{}'::character varying[],
+  province character varying null,
+  municipality character varying null,
+  vehicle_type public.vehicle_type_enum null,
+  constraint drivers_pkey primary key (id),
+  constraint drivers_id_fkey foreign KEY (id) references auth.users (id) on delete CASCADE,
+  constraint drivers_phone_check check (
+    (
+      (length((phone)::text) >= 8)
+      and ((phone)::text ~ '^\+?[0-9\s\-\(\)]+$'::text)
     )
+  )
 ) TABLESPACE pg_default;
 
 

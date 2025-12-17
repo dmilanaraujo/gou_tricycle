@@ -4,7 +4,7 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   return (
-      <div className="py-16 px-8 md:px-0 flex items-center justify-center">
+      <div className="py-16 px-8 md:px-0 flex items-center justify-center h-screen">
         {children}
       </div>
   );

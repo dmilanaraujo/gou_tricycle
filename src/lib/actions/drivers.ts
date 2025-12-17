@@ -14,23 +14,23 @@ export const getDrivers = async (
 ): Promise<ActionResponse<Driver[]>> => {
   try {
     const supabase = await createClient(cStore);
-  
+
     const { data, error } = await supabase
         .from('drivers')
-        .select('*')
+        .select('*, images:driver_images(*)')
         .eq('online', true)
         .eq('province', province)
         .in('municipality', filterMunicipalities)
         .in('vehicle_type', vehicleTypes)
         .gte('active_at', new Date().toDateString());
-    
+
     if (error) {
       console.log('error supabase', error);
       const errors = await formatSupabaseFunctionErrors(error);
       return { success: false, errors }
     }
 
-    let filteredDrivers = data || [];
+    let filteredDrivers: Driver[] = data || [];
     const distances = municipalityDistances[province]?.[referenceMunicipality];
     if (distances) {
       filteredDrivers.sort((a, b) => {
@@ -46,7 +46,7 @@ export const getDrivers = async (
         return 0;
       });
     }
-    
+
     // Barajar aleatoriamente los conductores que están a la misma distancia
     if (distances) {
       const groupedByDistance: { [key: number]: Driver[] } = {};
@@ -57,14 +57,12 @@ export const getDrivers = async (
         }
         groupedByDistance[distance].push(driver);
       });
-      
+
       filteredDrivers = Object.values(groupedByDistance).flatMap(group => shuffleArray(group));
     } else {
       // Si no hay distancias, barajar todo el resultado
       filteredDrivers = shuffleArray(filteredDrivers);
     }
-    
-    
     return { success: true, data: filteredDrivers };
   } catch (error) {
     console.log('Unexpected error in getDrivers:', error);
@@ -101,3 +99,46 @@ export const updateStatus = async (online: boolean) => {
   }
 }
 
+export const setDefaultImage = async (path: string): Promise<ActionResponse<boolean>> => {
+  
+  try {
+    const supabase = await createClient();
+    
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    
+    if (userError || !user) {
+      return { success: false, errors: [{ message: 'Usuario no autenticado o no se pudo obtener el usuario.' }] };
+    }
+    console.log('data params', {
+      driver_id: user.id,
+      path
+    });
+    const { error: resetError } = await supabase
+        .from("driver_images")
+        .update({ primary: false })
+        .eq("driver_id", user.id);
+    
+    if (resetError) {
+      return {
+        success: false,
+        errors: formatSupabasePostgrestErrors(resetError),
+      };
+    }
+    
+    const { error } = await supabase
+        .from("driver_images")
+        .update({
+          primary: true
+        })
+        .eq("driver_id", user.id)
+        .eq("path", path);
+    
+    if (error) {
+      return { success: false, errors: formatSupabasePostgrestErrors(error) }
+    }
+    return { success: true, data: true };
+  } catch (error) {
+    console.log('Unexpected error in setDefaultImage:', error);
+    throw new Error('Error no especificado');
+  }
+}

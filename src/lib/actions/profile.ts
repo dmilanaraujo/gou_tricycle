@@ -14,7 +14,7 @@ export const getProfile = async (cStore?: ReturnType<typeof cookies>): Promise<A
     }
     const { data, error } = await supabase
         .from('drivers')
-        .select('*')
+        .select('*, images:driver_images(*)')
         .eq("id", user.id)
         .single();
     

@@ -3,8 +3,8 @@
 import Image from 'next/image';
 import {
   Dialog,
-  DialogContent,
-} from "@/components/ui/dialog";
+  DialogContent, DialogTitle,
+} from '@/components/ui/dialog';
 import {
   Carousel,
   CarouselContent,
@@ -12,9 +12,11 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import {getPublicImageUrl} from '@/lib/utils';
+import {DriverImage} from '@/components/ui/file-upload';
 
 interface ImageCarouselModalProps {
-  images: string[];
+  images: DriverImage[];
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
 }
@@ -26,6 +28,7 @@ export function ImageCarouselModal({ images, isOpen, onOpenChange }: ImageCarous
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogTitle className='sr-only'/>
       <DialogContent className="max-w-3xl p-0 bg-transparent border-0">
         <Carousel className="w-full">
           <CarouselContent>
@@ -33,9 +36,10 @@ export function ImageCarouselModal({ images, isOpen, onOpenChange }: ImageCarous
               <CarouselItem key={index}>
                 <div className="aspect-[3/2] w-full relative">
                   <Image
-                    src={src}
+                    src={getPublicImageUrl(src.path)}
                     alt={`Imagen de vehículo ${index + 1}`}
                     fill
+                    unoptimized
                     className="object-cover rounded-lg"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     priority={index === 0}

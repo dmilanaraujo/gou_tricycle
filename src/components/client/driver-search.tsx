@@ -9,6 +9,7 @@ import { DriverList } from './driver-list';
 import { provinces, municipalities } from '@/lib/data/locations';
 import { MunicipalityFilter } from './municipality-filter';
 import {getDrivers} from '@/lib/actions/drivers';
+import {Button} from '@/components/ui/button';
 
 const LOCATION_STORAGE_KEY = 'localwheels-location';
 
@@ -91,6 +92,11 @@ export default function DriverSearch() {
         console.error("No se pudo guardar en localStorage:", error);
     }
   };
+  
+  const handleReload = () => {
+    if (!location) return;
+    fetchAndSetDrivers(location, combustionTypes, selectedMunicipalities);
+  };
 
   return (
     <div className="w-full">
@@ -116,6 +122,18 @@ export default function DriverSearch() {
               />
           </div>
 
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm text-muted-foreground">
+              {drivers.length} conductores encontrados
+            </h2>
+            
+            <Button
+                onClick={handleReload}
+                disabled={isLoading}
+            >
+              {isLoading ? 'Recargando...' : 'Recargar'}
+            </Button>
+          </div>
           <DriverList drivers={drivers} isLoading={isLoading} />
         </div>
       )}

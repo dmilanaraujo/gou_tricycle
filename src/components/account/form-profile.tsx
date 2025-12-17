@@ -65,10 +65,6 @@ export function ProfileForm({ driver }: { driver: Driver; }) {
 		
 	}
 	
-	useEffect(() => {
-		console.log('isValid, isSubmitting, isDirty, errors', {isValid, isSubmitting, isDirty, errors});
-	}, [isValid, isSubmitting, isDirty, errors]);
-	
 	return (
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>

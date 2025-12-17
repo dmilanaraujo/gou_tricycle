@@ -1,10 +1,12 @@
+import {DriverImage} from '@/components/ui/file-upload';
+
 export type VehicleType = 'electric' | 'combustion' | 'hybrid';
 
 export type Driver = {
   id: string;
   phone: string;
   alias: string;
-  images: string[];
+  images: DriverImage[];
   province: string;
   municipality: string;
   vehicle_type: VehicleType;
@@ -24,3 +26,25 @@ export type ActionError = {
 export type ActionResponse<T> =
     | { success: true; data?: T }
     | { success: false; errors?: ActionError[] };
+
+export interface OptimizedImages {
+  thumbnail: File;
+  fullSize: File;
+  thumbnailUrl: string;
+  fullSizeUrl: string;
+}
+
+export interface UploadedImage {
+  thumbnailUrl: string;
+  fullSizeUrl: string;
+  path: string;
+  index?: number;
+}
+
+export class UploadFileError extends Error {
+  file: File;
+  constructor(message: string, file: File) {
+    super(message);
+    this.file = file;
+  }
+}

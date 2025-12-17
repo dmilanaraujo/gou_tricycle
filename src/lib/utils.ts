@@ -1,7 +1,8 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import {AuthError, PostgrestError} from '@supabase/supabase-js';
-import {ActionError, Driver, type VehicleType} from '@/types';
+import {ActionError, Driver, OptimizedImages, UploadFileError, type VehicleType} from '@/types';
+import imageCompression from 'browser-image-compression';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -143,7 +144,30 @@ export const getTimeBySeconds = (secondsTime: number) => {
 }
 
 export const isProfileComplete = (profile: Driver) => {
-    return !(profile.images.length == 0 || !!profile.alias);
+    return !(profile.images.length == 0 || !profile.alias || !profile.province || !profile.municipality || !profile.vehicle_type);
+}
+export const incompleteProfileData = (profile: Driver) => {
+    const incompleteData = [];
+    if (profile.images.length == 0) {
+        incompleteData.push('images');
+    }
+    if (!profile.alias) {
+        incompleteData.push('alias');
+    }
+    if (!profile.province) {
+        incompleteData.push('alias');
+    }
+    if (!profile.municipality) {
+        incompleteData.push('alias');
+    }
+    if (!profile.vehicle_type) {
+        incompleteData.push('alias');
+    }
+    return incompleteData;
+}
+
+export const isDriverActive = (driver: Driver) => {
+    return !!driver.active_at && driver.active_at >= new Date();
 }
 
 export const combustionTypes: { value: VehicleType; label: string }[] = [
@@ -151,3 +175,102 @@ export const combustionTypes: { value: VehicleType; label: string }[] = [
     { value: 'hybrid', label: 'Híbrido' },
     { value: 'combustion', label: 'Combustión' },
 ];
+
+export async function optimizeImage(
+    file: File,
+    userId: string,
+    imageIndex?: number
+): Promise<OptimizedImages> {
+    
+    // Validar tipo de archivo
+    if (!file.type.startsWith('image/')) {
+        throw new Error('El archivo debe ser una imagen');
+    }
+    
+    // Configuración para thumbnail (avatar en lista)
+    const thumbnailOptions = {
+        maxSizeMB: 0.08,
+        maxWidthOrHeight: 150,
+        useWebWorker: true,
+        fileType: 'image/webp',
+        initialQuality: 0.8
+    };
+    
+    // Configuración para imagen completa (carrusel)
+    const fullSizeOptions = {
+        maxSizeMB: 0.15, // 150KB máximo
+        maxWidthOrHeight: 1200,
+        useWebWorker: true,
+        fileType: 'image/webp',
+        initialQuality: 0.8
+    };
+    
+    try {
+        // Comprimir ambas versiones en paralelo
+        const [thumbnailBlob, fullSizeBlob] = await Promise.all([
+            imageCompression(file, thumbnailOptions),
+            imageCompression(file, fullSizeOptions)
+        ]);
+        
+        // Crear nombres únicos para Supabase
+        const timestamp = Date.now();
+        const thumbnailName = `${userId}/thumb_${!!imageIndex ? imageIndex + '_' : ''}${timestamp}.webp`;
+        const fullSizeName = `${userId}/full_${!!imageIndex ? imageIndex + '_' : ''}${timestamp}.webp`;
+        
+        // Convertir Blobs a Files
+        const thumbnailFile = new File([thumbnailBlob], thumbnailName, {
+            type: 'image/webp'
+        });
+        
+        const fullSizeFile = new File([fullSizeBlob], fullSizeName, {
+            type: 'image/webp'
+        });
+        
+        // Crear URLs temporales para preview (opcional)
+        const thumbnailUrl = URL.createObjectURL(thumbnailBlob);
+        const fullSizeUrl = URL.createObjectURL(fullSizeBlob);
+        
+        return {
+            thumbnail: thumbnailFile,
+            fullSize: fullSizeFile,
+            thumbnailUrl,
+            fullSizeUrl
+        };
+    } catch (error) {
+        console.error('Error al optimizar imagen:', error);
+        throw new UploadFileError('No se pudo optimizar la imagen', file);
+    }
+}
+
+/**
+ * Procesa múltiples imágenes (hasta 3 para el perfil)
+ */
+export async function optimizeMultipleImages(
+    files: File[],
+    userId: string
+): Promise<OptimizedImages[]> {
+    
+    // if (files.length > 3) {
+    //     throw new Error('Máximo 3 imágenes permitidas');
+    // }
+    
+    const optimizationPromises = files.map((file, index) =>
+        optimizeImage(file, userId, index)
+    );
+    
+    return Promise.all(optimizationPromises);
+}
+
+/**
+ * Limpia las URLs temporales creadas para preview
+ */
+export function revokeImageUrls(images: OptimizedImages[]): void {
+    images.forEach(img => {
+        URL.revokeObjectURL(img.thumbnailUrl);
+        URL.revokeObjectURL(img.fullSizeUrl);
+    });
+}
+
+export function getPublicImageUrl(path: string) {
+    return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/driver_images/${path}`;
+}
