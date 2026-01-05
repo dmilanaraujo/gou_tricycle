@@ -23,9 +23,10 @@ import {updateProfile} from '@/lib/actions/profile';
 import {NativeSelect, NativeSelectOption} from '@/components/ui/native-select';
 import {municipalities, provinces} from '@/lib/data/locations';
 import {combustionTypes} from '@/lib/utils';
+import {useLoadingRouter} from '@/providers/navigation-loading-provider';
 
 export function ProfileForm({ driver }: { driver: Driver; }) {
-	const router = useRouter();
+	const router = useLoadingRouter();
 	const form = useForm<UpdateProfileValues>({
 		resolver: zodResolver(UpdateProfileSchema),
 		defaultValues: {

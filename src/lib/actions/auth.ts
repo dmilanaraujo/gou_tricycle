@@ -1,6 +1,6 @@
 'use server';
 import {
-  AvatarFormValues, LoginSchema, SignUpSchema, ForgotPasswordFormValues, ForgotPasswordSchema,
+  LoginSchema, SignUpSchema, ForgotPasswordFormValues, ForgotPasswordSchema,
   UpdatePasswordSchema,
   UpdatePasswordValues,
   VerifyOtpFormValues, VerifyOtpSchema
@@ -161,51 +161,6 @@ export const forgotPassword = async (params: ForgotPasswordFormValues, redirectT
     return { success: true };
   } catch (error) {
     console.log('Unexpected error in forgotPassword:', error);
-    throw new Error('Ha ocurrido un error no especificado');
-  }
-};
-
-export const uploadAvatar = async (params: AvatarFormValues): Promise<ActionResponse<string>> => {
-  try {
-    const supabase = await createClient();
-    
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError) {
-      return { success: false, errors: [{ message: 'El usuario no está autenticado' }] };
-    }
-    const avatar_store_path = user?.user_metadata?.avatar_store_path || `${user?.id}-${Math.random().toString(36).substring(2)}`;
-
-    const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(avatar_store_path, params.avatar, {
-          contentType: params.avatar.type,
-          upsert: true,
-        });
-    
-    if (uploadError) {
-      return { success: false, errors: [{ message: 'Error subiendo imagen' }] };
-    }
-    
-    const { data: publicUrlData } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(avatar_store_path);
-
-    const body: UserAttributes = {
-      data: {
-        ...user?.user_metadata,
-        avatar_url: publicUrlData.publicUrl,
-        avatar_store_path
-      }
-    }
-    const { error: metaError } = await supabase.auth.updateUser(body);
-    
-    if (metaError) {
-      return { success: false, errors: [{ message: 'Error subiendo imagen' }] };
-    }
-
-    return { success: true,  data: publicUrlData.publicUrl };
-  } catch (e: unknown) {
-    console.log(e);
     throw new Error('Ha ocurrido un error no especificado');
   }
 };

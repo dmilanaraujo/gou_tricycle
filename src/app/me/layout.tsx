@@ -6,6 +6,7 @@ import {LoadingOverlay} from '@/components/common/loading-overlay';
 import {Button} from '@/components/ui/button';
 import Link from 'next/link';
 import {Home} from 'lucide-react';
+import {LogoutButton} from '@/components/auth/logout-button';
 
 interface ManagerLayoutProps {
   children: React.ReactNode;
@@ -29,17 +30,18 @@ export default async function ManagerLayout({ children }: Readonly<ManagerLayout
       <AppProvider>
         <div className={'flex min-h-svh w-full'}>
           <main className={'flex w-full flex-1 flex-col'}>
-            <header className="sticky top-0 flex shrink-0 items-center gap-2 border-b bg-background p-2 z-10">
-                <Button asChild>
-                    <Link href='/'>
-                        <Home/>
-                    </Link>
-                </Button>
-            </header>
-            <div className="flex flex-1 flex-col">
-                <LoadingOverlay />
-                {children}
-            </div>
+              <header className="sticky top-0 flex shrink-0 items-center gap-2 border-b bg-background p-2 z-10 justify-between">
+                  <Button asChild>
+                      <Link href='/'>
+                          <Home/>
+                      </Link>
+                  </Button>
+                  <LogoutButton/>
+              </header>
+              <div className="flex flex-1 flex-col">
+                  <LoadingOverlay/>
+                  {children}
+              </div>
           </main>
         </div>
       </AppProvider>

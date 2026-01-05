@@ -19,12 +19,14 @@ import {Button} from '@/components/ui/button';
 import {useImageUpload} from '@/hooks/use-image-upload';
 import {useConfirm} from '@/components/common/confirm-dialog-provider';
 import {setDefaultImage} from '@/lib/actions/drivers';
+import {useLoadingRouter} from '@/providers/navigation-loading-provider';
 
 interface ImagesFormProps {
 	driver: Driver;
 }
 
 export function ImagesForm({ driver }: ImagesFormProps) {
+	const router = useLoadingRouter();
 	const [files, setFiles] = React.useState<FileImage[]>(
 		driver.images.map(image => ({
 			image,
@@ -82,6 +84,7 @@ export function ImagesForm({ driver }: ImagesFormProps) {
 
 				// Wait for all uploads to complete
 				await Promise.all(uploadPromises);
+				router.refresh()
 				toast.success('Imágenes subidas correctamente', {
 					id: toastId
 				});

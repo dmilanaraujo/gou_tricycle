@@ -1,6 +1,22 @@
 import {DriverImage} from '@/components/ui/file-upload';
 
-export type VehicleType = 'electric' | 'combustion' | 'hybrid';
+export const VEHICLE_TYPES = ['electric', 'combustion', 'hybrid'] as const
+
+export type VehicleType = typeof VEHICLE_TYPES[number]
+
+export enum VehicleTypeEnum {
+  electric = 'electric',
+  combustion = 'combustion',
+  hybrid = 'hybrid',
+}
+
+// export type VehicleType = 'electric' | 'combustion' | 'hybrid';
+//
+// export enum VehicleTypeEnum {
+//   electric = 'electric',
+//   combustion = 'combustion',
+//   hybrid = 'hybrid',
+// }
 
 export type Driver = {
   id: string;
@@ -11,7 +27,7 @@ export type Driver = {
   municipality: string;
   vehicle_type: VehicleType;
   online: boolean;
-  active_at: Date;
+  active_at: string;
 };
 
 export type Location = {
@@ -21,11 +37,28 @@ export type Location = {
 
 export type ActionError = {
   message: string;
-  path?: (string|number)[]
+  path?: (string|number|PropertyKey)[]
 }
 export type ActionResponse<T> =
     | { success: true; data?: T }
     | { success: false; errors?: ActionError[] };
+
+export type PaginationRequest = {
+  page?: number;
+  limit: number;
+};
+
+export type Pagination = {
+  currentPage: number;
+  itemsPerPage: number;
+  totalItems: number;
+  hasMore?: boolean;
+};
+
+export type ResultList<TData> = {
+  data: TData[];
+  pagination?: Pagination;
+};
 
 export interface OptimizedImages {
   thumbnail: File;

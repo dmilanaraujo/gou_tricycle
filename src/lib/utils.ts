@@ -3,6 +3,8 @@ import { twMerge } from "tailwind-merge"
 import {AuthError, PostgrestError} from '@supabase/supabase-js';
 import {ActionError, Driver, OptimizedImages, UploadFileError, type VehicleType} from '@/types';
 import imageCompression from 'browser-image-compression';
+import {z} from 'zod';
+import {isAfter, parseISO, startOfDay} from 'date-fns';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -25,11 +27,11 @@ export function shuffleArray<T>(array: T[]): T[] {
   return newArray;
 }
 
-// export const formatZodErrors = (error: ZodError): ActionError[] =>
-//     error.issues.map((issue) => ({
-//       message: issue.message,
-//       path: issue.path.keys().map(p => p.toString()),
-//     }));
+export const formatZodErrors = (error: z.ZodError): ActionError[] =>
+    error.issues.map((issue) => ({
+        message: issue.message,
+        path: issue.path || [],
+    }));
 
 export const formatSupabaseFunctionErrors = async (error: PostgrestError): Promise<ActionError[]> => {
   // if (error instanceof FunctionsHttpError) {
@@ -149,25 +151,28 @@ export const isProfileComplete = (profile: Driver) => {
 export const incompleteProfileData = (profile: Driver) => {
     const incompleteData = [];
     if (profile.images.length == 0) {
-        incompleteData.push('images');
+        incompleteData.push('Imágenes');
     }
     if (!profile.alias) {
-        incompleteData.push('alias');
+        incompleteData.push('Alias');
     }
     if (!profile.province) {
-        incompleteData.push('alias');
+        incompleteData.push('Provincia');
     }
     if (!profile.municipality) {
-        incompleteData.push('alias');
+        incompleteData.push('Municipio');
     }
     if (!profile.vehicle_type) {
-        incompleteData.push('alias');
+        incompleteData.push('Tipo combustible');
     }
     return incompleteData;
 }
 
 export const isDriverActive = (driver: Driver) => {
-    return !!driver.active_at && driver.active_at >= new Date();
+    if (!driver.active_at) return false;
+    const inputDate = startOfDay(parseISO(driver.active_at))
+    const today = startOfDay(new Date())
+    return isAfter(inputDate, today)
 }
 
 export const combustionTypes: { value: VehicleType; label: string }[] = [

@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import { cn } from "@/lib/utils";
 import './globals.css';
 import { Toaster } from "@/components/ui/sonner";
+import AppQueryClientProvider from '@/providers/app-query-client-provider';
 
 
 export const metadata: Metadata = {
@@ -46,7 +47,9 @@ export default function RootLayout({
       </head>
       <body className={cn("font-body antialiased")}>
           <Toaster richColors={true}/>
-          {children}
+          <AppQueryClientProvider>
+            {children}
+          </AppQueryClientProvider>
       </body>
     </html>
   );
