@@ -6,7 +6,7 @@ export default async function AppProvider({ children }: { children: React.ReactN
   return (
       <NavigationLoadingProvider>
           <ConfirmProvider>
-              {children}
+             {children}
           </ConfirmProvider>
       </NavigationLoadingProvider>
   );

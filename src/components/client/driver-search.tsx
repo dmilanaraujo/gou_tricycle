@@ -1,25 +1,49 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import type { Driver, Location, VehicleType } from '@/types';
+import {useState, useEffect, useMemo} from 'react';
+import { Location, VehicleType, VehicleTypeEnum} from '@/types';
 import { Header } from '@/components/client/header';
 import { LocationModal } from './location-modal';
 import { FilterControls } from './filter-controls';
 import { DriverList } from './driver-list';
-import { provinces, municipalities } from '@/lib/data/locations';
+import { municipalities } from '@/lib/data/locations';
 import { MunicipalityFilter } from './municipality-filter';
-import {getDrivers} from '@/lib/actions/drivers';
 import {Button} from '@/components/ui/button';
+import {useInView} from 'react-intersection-observer';
+import {useInfinityDrivers} from '@/hooks/api/driver';
+import {Loader2, RefreshCw} from 'lucide-react'
 
 const LOCATION_STORAGE_KEY = 'localwheels-location';
 
 export default function DriverSearch() {
   const [location, setLocation] = useState<Location | null>(null);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
-  const [drivers, setDrivers] = useState<Driver[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [combustionTypes, setCombustionTypes] = useState<VehicleType[]>(['electric', 'hybrid', 'combustion']);
   const [selectedMunicipalities, setSelectedMunicipalities] = useState<string[]>([]);
+  
+  const { ref, inView } = useInView()
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    refetch
+  } = useInfinityDrivers({
+    province: location?.province!,
+    referenceMunicipality: location?.municipality!,
+    filterMunicipalities: selectedMunicipalities,
+    vehicleTypes: combustionTypes.map(v => v as VehicleTypeEnum),
+    limit: 20
+  }, {
+    enabled: !!location?.province && !!location?.municipality && combustionTypes.length > 0 && selectedMunicipalities.length > 0
+  })
+  
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage().then()
+    }
+  }, [inView, hasNextPage, fetchNextPage])
 
   useEffect(() => {
     try {
@@ -36,28 +60,6 @@ export default function DriverSearch() {
         setIsLocationModalOpen(true);
     }
   }, []);
-
-  const fetchAndSetDrivers = useCallback(async (loc: Location, types: VehicleType[], searchMunicipalities: string[]) => {
-    setIsLoading(true);
-    if (searchMunicipalities.length > 0) {
-      const result = await getDrivers(loc.province, loc.municipality, searchMunicipalities, types);
-      if (result.success) {
-        setDrivers(result.data || []);
-      }
-    } else {
-      setDrivers([]);
-    }
-    setIsLoading(false);
-  }, []);
-
-  useEffect(() => {
-    if (location && selectedMunicipalities.length > 0) {
-      fetchAndSetDrivers(location, combustionTypes, selectedMunicipalities);
-    } else if (location && selectedMunicipalities.length === 0) {
-        // if no municipalities are selected, clear the list
-        setDrivers([]);
-    }
-  }, [location, combustionTypes, selectedMunicipalities, fetchAndSetDrivers]);
 
   const handleLocationSave = (newLocation: Location) => {
     setLocation(newLocation);
@@ -95,9 +97,13 @@ export default function DriverSearch() {
   
   const handleReload = () => {
     if (!location) return;
-    fetchAndSetDrivers(location, combustionTypes, selectedMunicipalities);
+    refetch().then();
   };
 
+  const drivers = useMemo(() => {
+    return data?.pages.flatMap(p => p.data || []) || [];
+  }, [data?.pages])
+  
   return (
     <div className="w-full">
       {location && (
@@ -112,30 +118,49 @@ export default function DriverSearch() {
       <LocationModal isOpen={isLocationModalOpen} onSave={handleLocationSave} />
 
       {location && (
-        <div className="container mx-auto px-4 py-6 space-y-6">
-          <div className="grid grid-cols-1 md:flex justify-between md:py-6 space-y-6">
-              <FilterControls selectedTypes={combustionTypes} onTypeChange={setCombustionTypes} />
+          <div className="container mx-auto px-4 py-6 space-y-6">
+            <div className="grid grid-cols-1 md:flex justify-between md:py-6 space-y-6">
+              <FilterControls selectedTypes={combustionTypes} onTypeChange={setCombustionTypes}/>
               <MunicipalityFilter
-                province={location.province}
-                selectedMunicipalities={selectedMunicipalities}
-                onSelectionChange={setSelectedMunicipalities}
+                  province={location.province}
+                  selectedMunicipalities={selectedMunicipalities}
+                  onSelectionChange={setSelectedMunicipalities}
               />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm text-muted-foreground">
-              {drivers.length} conductores encontrados
-            </h2>
+            </div>
             
-            <Button
-                onClick={handleReload}
-                disabled={isLoading}
-            >
-              {isLoading ? 'Recargando...' : 'Recargar'}
-            </Button>
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm text-muted-foreground">
+                {drivers.length || 0} conductores encontrados
+              </h2>
+              
+              <Button
+                  onClick={handleReload}
+                  disabled={isLoading}
+                  className={'cursor-pointer'}
+              >
+                {isLoading ? (
+                    <>
+                      <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                      Recargando...
+                    </>
+                ) : (
+                    <>
+                      <RefreshCw/>
+                      Recargar
+                    </>
+                )}
+              </Button>
+            </div>
+            <DriverList drivers={drivers} isLoading={isLoading}/>
+            <div ref={ref} className="h-10 w-full flex justify-center items-center">
+              {isFetchingNextPage && <Loader2 className="w-6 h-6 animate-spin text-primary" />}
+              {!hasNextPage && drivers.length > 0 && (
+                  <p className="text-muted-foreground text-sm py-4">
+                    No hay más elementos para mostrar
+                  </p>
+              )}
+            </div>
           </div>
-          <DriverList drivers={drivers} isLoading={isLoading} />
-        </div>
       )}
     </div>
   );

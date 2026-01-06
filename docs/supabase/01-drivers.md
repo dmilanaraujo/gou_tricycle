@@ -8,7 +8,6 @@ create table public.drivers (
   online boolean null default false,
   active_at timestamp with time zone null,
   alias character varying null,
-  images character varying[] null default '{}'::character varying[],
   province character varying null,
   municipality character varying null,
   vehicle_type public.vehicle_type_enum null,
