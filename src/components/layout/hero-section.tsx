@@ -28,7 +28,7 @@ const HeroSection = ({ blogdata }: { blogdata: BlogData[] }) => {
             <p className='text-muted-foreground mx-auto max-w-2xl text-xl'>
                 Le hacemos mas simple la vida y lo conectamos con proveedores de servicios y productos en Cuba.
             </p>
-            <div className='z-10 w-full flex items-center'>
+            <div className='w-full flex items-center'>
                 <ServiceSearch/>
             </div>
         </section>

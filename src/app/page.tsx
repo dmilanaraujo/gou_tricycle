@@ -31,12 +31,12 @@ const blogdata = [
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center">
-      {/*<DriverSearch />*/}
-        <NavBar />
-        <HeroSection blogdata={blogdata} />
-        <CategorySection blogdata={blogdata} />
-        <SearchResultSection blogdata={blogdata} />
-    </main>
+      <main className="flex min-h-screen flex-col items-center">
+          {/*<DriverSearch />*/}
+          <NavBar/>
+          <HeroSection blogdata={blogdata}/>
+          <CategorySection blogdata={blogdata}/>
+          <SearchResultSection blogdata={blogdata}/>
+      </main>
   );
 }
