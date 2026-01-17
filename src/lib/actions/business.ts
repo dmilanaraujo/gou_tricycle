@@ -6,65 +6,85 @@ import {municipalityDistances} from '@/lib/data/locations';
 import {Business, BusinessCategory, BusinessSection} from "@/types/business";
 import {BusinessFiltersSchema, BusinessFiltersValues} from "@/lib/schemas/business";
 
-  export const getBusinesses = async (params: BusinessFiltersValues & PaginationRequest): Promise<ActionResponse<ResultList<Business>>> => {
-    try {
-      const validatedFields = BusinessFiltersSchema.safeParse(params);
+export const getBusinesses = async (
+    params: BusinessFiltersValues & PaginationRequest
+): Promise<ActionResponse<ResultList<Business>>> => {
 
-      if (!validatedFields.success) {
-        const errors = formatZodErrors(validatedFields.error);
-        return { success: false, errors };
-      }
+  // 🔹 Solo validamos filtros (no paginación)
+  const filtersParsed = BusinessFiltersSchema.safeParse({
+    province: params.province,
+    municipality: params.municipality,
+    rating: params.rating,
+    vehicleType: params.vehicleType,
+  })
 
-      const supabase = await createClient();
+  if (!filtersParsed.success) {
+    return { success: false, errors: formatZodErrors(filtersParsed.error) }
+  }
 
-      const {
-        page,
-        limit
-      } = params;
+  const supabase = await createClient()
 
-      const from = (page || 0) * limit;
-      const to = from + limit - 1;
+  // 🔹 page y limit salen directo de params
+  const page = params.page ?? 0
+  const limit = params.limit
 
-      const { data, error, count } = await supabase
-          .from('businesses')
-          .select('*, sections:business_sections(section:sections(id, name, slug)), categories:business_categories(category:categories(id, name, slug))', { count: 'exact' })
-          .gte('is_active', true)
-          .range(from, to);
+  const { province, municipality, rating, vehicleType } = filtersParsed.data
 
-      if (error) {
-        console.log('error supabase', error);
-        const errors = await formatSupabaseFunctionErrors(error);
-        return { success: false, errors }
-      }
+  const from = page * limit
+  const to = from + limit - 1
 
-      const flattened = data.map(business => ({
-        ...business,
-        sections: business.sections?.map(
-            (s: { section: BusinessSection }) => s.section
-        ) ?? [],
-        categories: business.categories?.map(
-            (c: { category: BusinessCategory }) => c.category
-        ) ?? [],
-      }))
+  let query = supabase
+      .from("businesses")
+      .select(
+          `
+      *,
+      vehicles:vehicles!inner(
+        id,
+        vehicle_type
+      ),
+      sections:business_sections(section:sections(id, name, slug)),
+      categories:business_categories(category:categories(id, name, slug))
+    `,
+          { count: "exact" }
+      )
+      .eq("is_active", true)
 
-      let filteredBusinesses: Business[] = flattened || [];
+  if (province) query = query.eq("province", province)
+  if (municipality) query = query.eq("municipality", municipality)
+  if (rating) query = query.gte("rating", rating)
 
-      const result = {
-        data: filteredBusinesses || [],
-        pagination: {
-          currentPage: page || 1,
-          itemsPerPage: limit,
-          totalItems: count || 0,
-          hasMore: filteredBusinesses.length === limit,
-        },
-      };
+  // 🔥 Filtro por tabla relacionada
+  if (vehicleType) {
+    query = query.eq("vehicles.vehicle_type", vehicleType)
+  }
 
-      return { success: true, data: result };
-    } catch (error) {
-      console.log('Unexpected error in getDrivers:', error);
-      throw new Error('Ha ocurrido un error no especificado');
-    }
+  const { data, error, count } = await query.range(from, to)
+
+  if (error) {
+    return { success: false, errors: await formatSupabaseFunctionErrors(error) }
+  }
+
+  const flattened = (data ?? []).map(b => ({
+    ...b,
+    vehicles: b.vehicles ?? [],
+    sections: b.sections?.map((s: any) => s.section) ?? [],
+    categories: b.categories?.map((c: any) => c.category) ?? [],
+  }))
+
+  return {
+    success: true,
+    data: {
+      data: flattened,
+      pagination: {
+        currentPage: page + 1,
+        itemsPerPage: limit,
+        totalItems: count || 0,
+        hasMore: flattened.length === limit,
+      },
+    },
+  }
 }
+
 
 // export const updateStatus = async (online: boolean) => {
 //

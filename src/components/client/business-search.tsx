@@ -7,6 +7,7 @@ import {Location, VehicleType, VehicleTypeEnum} from "@/types";
 import {useInfinityBusinesses} from "@/hooks/api/business";
 import {DriverList} from "@/components/client/driver-list";
 import {BusinessList} from "@/components/client/business-list";
+import {ServiceFilters} from "@/components/service-browser/service-filters";
 
 const sampleData = [
     {
@@ -57,8 +58,14 @@ const sampleData = [
 
 const LOCATION_STORAGE_KEY = 'localwheels-location';
 
-export default function BusinessSearch() {
+export default function BusinessSearch({ activeTab }: { activeTab: string | null }) {
     const [results, setResults] = useState(sampleData)
+
+    const [province, setProvince] = useState<string | null>(null)
+    const [municipality, setMunicipality] = useState<string | null>(null)
+    const [rating, setRating] = useState<number | null>(null)
+    const [vehicleType, setVehicleType] = useState<VehicleTypeEnum | null>(null)
+
 
     const handleReset = () => {
         setResults(sampleData)
@@ -85,34 +92,43 @@ export default function BusinessSearch() {
         }
     }, []);
 
-    const {
-        data,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage,
-        isLoading,
-        refetch
-    } = useInfinityBusinesses({
-        province: location?.province!,
-        referenceMunicipality: location?.municipality!,
-        filterMunicipalities: selectedMunicipalities,
-        vehicleTypes: combustionTypes.map(v => v as VehicleTypeEnum),
-        limit: 20
+    const { data, isLoading } = useInfinityBusinesses({
+        province: province ?? undefined,
+        municipality: municipality ?? undefined,
+        rating: rating ?? undefined,
+        vehicleType: vehicleType ?? undefined,
+        limit: 20,
     }, {
-        enabled: !!location?.province && !!location?.municipality && combustionTypes.length > 0 && selectedMunicipalities.length > 0
+        enabled: !!province
     })
+
+
     const businesses = useMemo(() => {
         return data?.pages.flatMap(p => p.data || []) || [];
     }, [data?.pages])
 
     return (
-        <div className="space-y-0">
-            <div className="flex items-center justify-between px-4 sm:px-0">
+        <div className="pt-8">
+            <div className="flex max-w-4xl flex-col items-start self-center text-left">
+                {/*<ServiceFilters activeTab={activeTab}/>*/}
+                <ServiceFilters
+                    activeTab={activeTab}
+                    onLocationChange={(p, m) => {
+                        setProvince(p)
+                        setMunicipality(m)
+                    }}
+                    onRatingChange={setRating}
+                    onVehicleTypeChange={setVehicleType}
+                />
+
+            </div>
+
+            <div className="flex items-center justify-between py-2 px-4 sm:px-0">
                 <h2 className="font-normal text-foreground">
                     {businesses.length || 0} resultados encontrados
                 </h2>
-                <Button variant="secondary" size="sm" onClick={handleReset}>
-                    Reset
+                <Button variant="secondary" className="rounded-full hover:bg-primary hover:text-white hover:cursor-pointer" onClick={handleReset}>
+                        Limpiar
                 </Button>
             </div>
 

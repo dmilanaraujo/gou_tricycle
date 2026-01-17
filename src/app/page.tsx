@@ -1,8 +1,10 @@
-import DriverSearch from '@/components/client/driver-search';
+"use client";
+
 import NavBar from "@/components/layout/nav-bar";
 import HeroSection from "@/components/layout/hero-section";
 import CategorySection from "@/components/layout/category-section";
 import SearchResultSection from "@/components/layout/search-result-section";
+import {useState} from "react";
 
 const blogdata = [
     {
@@ -30,13 +32,21 @@ const blogdata = [
 ]
 
 export default function Home() {
+    const [activeTab, setActiveTab] = useState<string | null>(null)
+
   return (
       <main className="flex min-h-screen flex-col items-center">
-          {/*<DriverSearch />*/}
           <NavBar/>
           <HeroSection blogdata={blogdata}/>
-          <CategorySection blogdata={blogdata}/>
-          <SearchResultSection blogdata={blogdata}/>
+          {/*<CategorySection blogdata={blogdata}/>*/}
+          <CategorySection
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+          />
+          {/*<SearchResultSection blogdata={blogdata}/>*/}
+          <SearchResultSection
+              activeTab={activeTab}
+          />
       </main>
   );
 }

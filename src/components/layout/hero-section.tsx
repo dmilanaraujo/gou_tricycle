@@ -1,11 +1,11 @@
-import { ArrowUpRightIcon, CalendarDaysIcon } from 'lucide-react'
+// import { ArrowUpRightIcon, CalendarDaysIcon } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
+// import { Button } from '@/components/ui/button'
+// import { Badge } from '@/components/ui/badge'
+// import { Card, CardContent } from '@/components/ui/card'
 import {ServiceSearch} from "@/components/search/service-search";
-import ServiceBrowser from "@/components/service-browser/service-browser";
-import SearchResults from "@/components/search/search-result";
+// import ServiceBrowser from "@/components/service-browser/service-browser";
+// import SearchResults from "@/components/search/search-result";
 
 export type BlogData = {
     img: string

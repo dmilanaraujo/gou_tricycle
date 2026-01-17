@@ -4,6 +4,7 @@ import { getDrivers } from '@/lib/actions/drivers';
 import {DriverFiltersValues} from '@/lib/schemas/driver';
 import {Business} from "@/types/business";
 import {getBusinesses} from "@/lib/actions/business";
+import {BusinessFiltersValues} from "@/lib/schemas/business";
 
 type TDataResultBusiness = {
   pageParams: number[];
@@ -11,11 +12,11 @@ type TDataResultBusiness = {
 }
 
 export const useInfinityBusinesses = (
-  params: DriverFiltersValues & PaginationRequest,
+  params: BusinessFiltersValues & PaginationRequest,
   options?: Partial<UseInfiniteQueryOptions<ResultList<Business>, Error, TDataResultBusiness, QueryKey, number>>
 ) => {
   return useInfiniteQuery({
-    queryKey: ['businesses'],
+    queryKey: ['businesses', params],
     queryFn: async ({ pageParam = 0 }) => {
       const response = await getBusinesses(({...params, page: pageParam}));
       return response.success ?  response.data! : { data: [] };

@@ -10,14 +10,6 @@ export enum VehicleTypeEnum {
   hybrid = 'hybrid',
 }
 
-// export type VehicleType = 'electric' | 'combustion' | 'hybrid';
-//
-// export enum VehicleTypeEnum {
-//   electric = 'electric',
-//   combustion = 'combustion',
-//   hybrid = 'hybrid',
-// }
-
 export type Driver = {
   id: string;
   phone: string;

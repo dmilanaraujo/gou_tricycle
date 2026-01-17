@@ -1,3 +1,5 @@
+import {VehicleTypeEnum} from "@/types/index";
+
 export const PROMOTION_TYPES = ['nuevo', 'destacado', 'popular', 'recomendado', 'en_oferta', 'envio_gratis', 'top_valorado'] as const
 
 export type PromotionType = typeof PROMOTION_TYPES[number]
@@ -21,6 +23,10 @@ export type Business = {
     is_active: boolean;
     sections: BusinessSection[];
     categories: BusinessCategory[];
+    vehicles?: {
+        id: string
+        vehicle_type: VehicleTypeEnum
+    }[];
 };
 
 export const promotions = [
@@ -44,19 +50,3 @@ export type BusinessCategory = {
         name: string
         slug: string
 }
-
-// export type BusinessSection = {
-//     section: {
-//         id: string
-//         name: string
-//         slug: string
-//     }
-// }
-//
-// export type BusinessCategory = {
-//     category: {
-//         id: string
-//         name: string
-//         slug: string
-//     }
-// }
