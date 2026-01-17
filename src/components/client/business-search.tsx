@@ -58,14 +58,20 @@ const sampleData = [
 
 const LOCATION_STORAGE_KEY = 'localwheels-location';
 
-export default function BusinessSearch({ activeTab }: { activeTab: string | null }) {
+export default function BusinessSearch({
+                                           activeTab,
+                                           category,
+                                       }: {
+    activeTab: string | null
+    category: string | null
+}) {
     const [results, setResults] = useState(sampleData)
 
     const [province, setProvince] = useState<string | null>(null)
     const [municipality, setMunicipality] = useState<string | null>(null)
     const [rating, setRating] = useState<number | null>(null)
     const [vehicleType, setVehicleType] = useState<VehicleTypeEnum | null>(null)
-
+    // const [category, setCategory] = useState<string | null>(null)
 
     const handleReset = () => {
         setResults(sampleData)
@@ -97,9 +103,11 @@ export default function BusinessSearch({ activeTab }: { activeTab: string | null
         municipality: municipality ?? undefined,
         rating: rating ?? undefined,
         vehicleType: vehicleType ?? undefined,
+        section: activeTab,
+        category: category,
         limit: 20,
     }, {
-        enabled: !!province
+        enabled: !!activeTab,
     })
 
 
@@ -110,7 +118,6 @@ export default function BusinessSearch({ activeTab }: { activeTab: string | null
     return (
         <div className="pt-8">
             <div className="flex max-w-4xl flex-col items-start self-center text-left">
-                {/*<ServiceFilters activeTab={activeTab}/>*/}
                 <ServiceFilters
                     activeTab={activeTab}
                     onLocationChange={(p, m) => {
@@ -119,6 +126,7 @@ export default function BusinessSearch({ activeTab }: { activeTab: string | null
                     }}
                     onRatingChange={setRating}
                     onVehicleTypeChange={setVehicleType}
+                    // onCategoryChange={setCategory}
                 />
 
             </div>

@@ -16,6 +16,8 @@ export const getBusinesses = async (
     municipality: params.municipality,
     rating: params.rating,
     vehicleType: params.vehicleType,
+    section: params.section,
+    category: params.category,
   })
 
   if (!filtersParsed.success) {
@@ -28,7 +30,7 @@ export const getBusinesses = async (
   const page = params.page ?? 0
   const limit = params.limit
 
-  const { province, municipality, rating, vehicleType } = filtersParsed.data
+  const { province, municipality, rating, vehicleType, section, category } = filtersParsed.data
 
   const from = page * limit
   const to = from + limit - 1
@@ -42,8 +44,12 @@ export const getBusinesses = async (
         id,
         vehicle_type
       ),
-      sections:business_sections(section:sections(id, name, slug)),
-      categories:business_categories(category:categories(id, name, slug))
+      sections:business_sections!inner(
+        section:sections!inner(id, name, slug)
+      ),
+      categories:business_categories!inner(
+        category:categories!inner(id, name, slug)
+      )
     `,
           { count: "exact" }
       )
@@ -52,6 +58,15 @@ export const getBusinesses = async (
   if (province) query = query.eq("province", province)
   if (municipality) query = query.eq("municipality", municipality)
   if (rating) query = query.gte("rating", rating)
+
+  // 🔹 Filtro por sección (TAB)
+  if (section) {
+    query = query.eq("sections.section.slug", section)
+  }
+
+  if (category) {
+    query = query.eq("categories.category.slug", category)
+  }
 
   // 🔥 Filtro por tabla relacionada
   if (vehicleType) {

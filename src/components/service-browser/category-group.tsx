@@ -13,9 +13,14 @@ type CategoryOption = {
     icon: React.ReactNode
 }
 
+// type Props = {
+//     section: "transport" | "market" | "beauty" | "restaurant"
+// }
 type Props = {
     section: "transport" | "market" | "beauty" | "restaurant"
+    onCategoryChange: (value: string | null) => void
 }
+
 
 const sectionColorClasses: Record<Props["section"], string> = {
     transport: "data-[state=on]:*:[svg]:fill-yellow-500 data-[state=on]:*:[svg]:stroke-yellow-500",
@@ -53,12 +58,19 @@ const categories: Record<"transport" | "market" | "beauty" | "restaurant", Categ
     ],
 }
 
-export function CategoryGroup({ section }: Props) {
+export function CategoryGroup({ section, onCategoryChange }: Props) {
     const options = categories[section]
 
     return (
-        <ToggleGroup type="single" variant="outline" size="sm" spacing={2} onValueChange={(values) => console.log(values)}>
-            {options.map(({ value, label, icon }) => (
+        // <ToggleGroup type="single" variant="outline" size="sm" spacing={2} onValueChange={(values) => console.log(values)}>
+        <ToggleGroup
+            type="single"
+            variant="outline"
+            size="sm"
+            spacing={2}
+            onValueChange={(value) => onCategoryChange(value || null)}
+        >
+        {options.map(({ value, label, icon }) => (
                 <ToggleGroupItem
                     key={value}
                     value={value}

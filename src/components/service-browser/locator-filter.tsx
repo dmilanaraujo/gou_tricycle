@@ -16,18 +16,6 @@ type Option = {
     value: string
 }
 
-const MUNICIPALITIES: Record<string, Option[]> = {
-    la_habana: [
-        { label: "La Lisa", value: "la_lisa" },
-        { label: "Playa", value: "playa" },
-        { label: "Centro Habana", value: "centro_habana" },
-    ],
-    matanzas: [
-        { label: "Varadero", value: "varadero" },
-        { label: "Cárdenas", value: "cardenas" },
-    ],
-}
-
 export const LocationFilter = ({
                                    onChange,
                                }: {
@@ -36,9 +24,6 @@ export const LocationFilter = ({
     const [province, setProvince] = useState<Option | null>(null)
     const [municipality, setMunicipality] = useState<Option | null>(null)
 
-    // const municipalityOptions = province
-    //     ? MUNICIPALITIES[province.value] ?? []
-    //     : []
     const municipalityOptions = province
         ? municipalities[province.value] ?? []
         : []

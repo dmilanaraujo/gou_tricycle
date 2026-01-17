@@ -1,7 +1,5 @@
 import { QueryKey, useInfiniteQuery, UseInfiniteQueryOptions } from '@tanstack/react-query';
 import {PaginationRequest, ResultList} from '@/types';
-import { getDrivers } from '@/lib/actions/drivers';
-import {DriverFiltersValues} from '@/lib/schemas/driver';
 import {Business} from "@/types/business";
 import {getBusinesses} from "@/lib/actions/business";
 import {BusinessFiltersValues} from "@/lib/schemas/business";
