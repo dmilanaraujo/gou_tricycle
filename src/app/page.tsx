@@ -9,11 +9,13 @@ import {useState} from "react";
 export default function Home() {
   const [activeTab, setActiveTab] = useState<string | null>(null)
   const [category, setCategory] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState<string | null>(null)
+
 
     return (
       <main className="flex min-h-screen flex-col items-center">
           <NavBar/>
-          <HeroSection />
+          <HeroSection onSearch={setSearchQuery} />
           <CategorySection
               activeTab={activeTab}
               onTabChange={(tab) => {
@@ -25,6 +27,7 @@ export default function Home() {
           <SearchResultSection
               activeTab={activeTab}
               category={category}
+              searchQuery={searchQuery}
           />
       </main>
   );

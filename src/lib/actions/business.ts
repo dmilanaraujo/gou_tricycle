@@ -18,6 +18,7 @@ export const getBusinesses = async (
     vehicleType: params.vehicleType,
     section: params.section,
     category: params.category,
+    q: params.q,
   })
 
   if (!filtersParsed.success) {
@@ -30,7 +31,7 @@ export const getBusinesses = async (
   const page = params.page ?? 0
   const limit = params.limit
 
-  const { province, municipality, rating, vehicleType, section, category } = filtersParsed.data
+  const { province, municipality, rating, vehicleType, section, category, q } = filtersParsed.data
 
   const from = page * limit
   const to = from + limit - 1
@@ -72,6 +73,11 @@ export const getBusinesses = async (
   if (vehicleType) {
     query = query.eq("vehicles.vehicle_type", vehicleType)
   }
+
+  if (q) {
+    query = query.or(`name.ilike.%${q}%,description.ilike.%${q}%,phone::text.ilike.%${q}%,whatsapp::text.ilike.%${q}%`)
+  }
+
 
   const { data, error, count } = await query.range(from, to)
 

@@ -1,118 +1,64 @@
-'use client'
+"use client"
 
-import {useEffect, useMemo, useState} from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Button } from "@/components/ui/button"
-// import {SearchResultCard} from "@/components/search/search-result-card";
-import {Location, VehicleType, VehicleTypeEnum} from "@/types";
-import {useInfinityBusinesses} from "@/hooks/api/business";
-import {DriverList} from "@/components/client/driver-list";
-import {BusinessList} from "@/components/client/business-list";
-import {ServiceFilters} from "@/components/service-browser/service-filters";
-
-const sampleData = [
-    {
-        id: 1,
-        images: "/pizza.jpg",
-        name: "Domino's (4539 Wisconsin Ave NW)",
-        rating: 4.2,
-        reviews: 470,
-        deliveryTime: "19 min",
-        deliveryFee: "$2.49 Delivery Fee",
-    },
-    {
-        id: 2,
-        images: "/heritage.jpg",
-        name: "Heritage India (3238 Wisconsin Ave)",
-        rating: 4.6,
-        reviews: 1000,
-        deliveryTime: "10 min",
-    },
-    {
-        id: 3,
-        images: "/duccinis.jpg",
-        name: "Duccini's Pizza",
-        rating: 4.7,
-        reviews: 1000,
-        deliveryTime: "50 min",
-        deliveryFee: "$2.99 Delivery Fee",
-    },
-    {
-        id: 4,
-        images: "/duccinis.jpg",
-        name: "Duccini's Pizza",
-        rating: 4.7,
-        reviews: 1000,
-        deliveryTime: "50 min",
-        deliveryFee: "$2.99 Delivery Fee",
-    },
-    {
-        id: 5,
-        images: "/duccinis.jpg",
-        name: "Duccini's Pizza",
-        rating: 4.7,
-        reviews: 1000,
-        deliveryTime: "50 min",
-        deliveryFee: "$2.99 Delivery Fee",
-    },
-]
+import { Location, VehicleType, VehicleTypeEnum } from "@/types"
+import { useInfinityBusinesses } from "@/hooks/api/business"
+import { BusinessList } from "@/components/client/business-list"
+import { ServiceFilters } from "@/components/service-browser/service-filters"
 
 const LOCATION_STORAGE_KEY = 'localwheels-location';
 
 export default function BusinessSearch({
                                            activeTab,
                                            category,
+                                           searchQuery,
                                        }: {
     activeTab: string | null
     category: string | null
+    searchQuery: string | null
 }) {
-    const [results, setResults] = useState(sampleData)
-
     const [province, setProvince] = useState<string | null>(null)
     const [municipality, setMunicipality] = useState<string | null>(null)
     const [rating, setRating] = useState<number | null>(null)
     const [vehicleType, setVehicleType] = useState<VehicleTypeEnum | null>(null)
-    // const [category, setCategory] = useState<string | null>(null)
 
-    const handleReset = () => {
-        setResults(sampleData)
-    }
-
-    const [location, setLocation] = useState<Location | null>(null);
-    const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
-    const [combustionTypes, setCombustionTypes] = useState<VehicleType[]>(['electric', 'hybrid', 'combustion']);
-    const [selectedMunicipalities, setSelectedMunicipalities] = useState<string[]>([]);
+    const [location, setLocation] = useState<Location | null>(null)
 
     useEffect(() => {
         try {
-            const savedLocation = localStorage.getItem(LOCATION_STORAGE_KEY);
+            const savedLocation = localStorage.getItem(LOCATION_STORAGE_KEY)
             if (savedLocation) {
-                const parsedLocation = JSON.parse(savedLocation);
-                setLocation(parsedLocation);
-                setSelectedMunicipalities([parsedLocation.municipality]);
-            } else {
-                setIsLocationModalOpen(true);
+                setLocation(JSON.parse(savedLocation))
             }
-        } catch (error) {
-            console.error("No se pudo acceder a localStorage:", error);
-            setIsLocationModalOpen(true);
-        }
-    }, []);
+        } catch {}
+    }, [])
 
-    const { data, isLoading } = useInfinityBusinesses({
+    const params = useMemo(() => ({
         province: province ?? undefined,
         municipality: municipality ?? undefined,
         rating: rating ?? undefined,
         vehicleType: vehicleType ?? undefined,
-        section: activeTab,
-        category: category,
+        section: activeTab ?? undefined,
+        category: category ?? undefined,
+        q: searchQuery ?? undefined,
         limit: 20,
-    }, {
-        enabled: !!activeTab,
+    }), [
+        province,
+        municipality,
+        rating,
+        vehicleType,
+        activeTab,
+        category,
+        searchQuery,
+    ])
+
+    const { data, isLoading } = useInfinityBusinesses(params, {
+        enabled: !!(activeTab || category || searchQuery),
     })
 
-
     const businesses = useMemo(() => {
-        return data?.pages.flatMap(p => p.data || []) || [];
+        return data?.pages.flatMap(p => p.data || []) || []
     }, [data?.pages])
 
     return (
@@ -126,22 +72,16 @@ export default function BusinessSearch({
                     }}
                     onRatingChange={setRating}
                     onVehicleTypeChange={setVehicleType}
-                    // onCategoryChange={setCategory}
                 />
-
             </div>
 
             <div className="flex items-center justify-between py-2 px-4 sm:px-0">
                 <h2 className="font-normal text-foreground">
-                    {businesses.length || 0} resultados encontrados
+                    {businesses.length} resultados encontrados
                 </h2>
-                <Button variant="secondary" className="rounded-full hover:bg-primary hover:text-white hover:cursor-pointer" onClick={handleReset}>
-                        Limpiar
-                </Button>
             </div>
 
-            {/* Grid de resultados */}
-            <BusinessList businesses={businesses} isLoading={isLoading}/>
+            <BusinessList businesses={businesses} isLoading={isLoading} />
         </div>
     )
 }

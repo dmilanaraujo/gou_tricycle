@@ -24,7 +24,7 @@ const ServiceBrowser = ({ activeTab, onTabChange, onCategoryChange }: ServiceBro
                     <TabsTrigger
                         key={tab.value}
                         value={tab.value}
-                        className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                        className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground hover:cursor-pointer"
                     >
                         {tab.name}
                     </TabsTrigger>

@@ -8,6 +8,7 @@ export const BusinessFiltersSchema = z.object({
 	vehicleType: z.enum(VehicleTypeEnum).optional(),
 	section: z.string().optional().nullable(),
 	category: z.string().optional().nullable(),
+	q: z.string().optional().nullable(),
 })
 
 
