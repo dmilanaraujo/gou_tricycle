@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import * as React from 'react';
+import {useRouter} from "next/navigation";
 
 const WhatsAppIcon = () => (
     <svg
@@ -39,6 +40,7 @@ export function BusinessCard({business}: BusinessCardProps) {
     // const municipalityLabel =
     //     municipalities[business.province]?.find((m) => m.value === business.municipality)?.label + provinces[business.province].label ||
     //     business.municipality + ', ' + business.province;
+    const router = useRouter();
 
     const provinceLabel = provinces.find(p => p.value === business.province)?.label || business.province;
     const municipalityLabel =
@@ -56,7 +58,7 @@ export function BusinessCard({business}: BusinessCardProps) {
             : categoryName ?? sectionName;
 
     return (
-        <Card className="max-w-md pt-0 shadow-none border-none hover:cursor-pointer">
+        <Card onClick={() => router.push(`/business/${business.id}`)} className="max-w-md pt-0 shadow-none border-none hover:cursor-pointer">
             <CardContent className="px-0 pb-0">
                 <div className="relative w-full aspect-video h-[180px] rounded-xl overflow-hidden">
                     <Image
@@ -113,12 +115,14 @@ export function BusinessCard({business}: BusinessCardProps) {
                             href={`https://wa.me/${business.phone}`}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
                             aria-label={`Enviar mensaje a ${business.name} por WhatsApp`}
                         >
-                            <WhatsAppIcon/>
+                            <WhatsAppIcon />
                             WhatsApp
                         </a>
                     </Button>
+
                 </div>
             </CardContent>
         </Card>

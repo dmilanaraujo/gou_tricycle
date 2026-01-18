@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import './globals.css';
 import { Toaster } from "@/components/ui/sonner";
 import AppQueryClientProvider from '@/providers/app-query-client-provider';
+import NavBar from "@/components/layout/nav-bar";
 
 
 export const metadata: Metadata = {
@@ -48,6 +49,7 @@ export default function RootLayout({
       <body className={cn("font-body antialiased")}>
           <Toaster richColors={true}/>
           <AppQueryClientProvider>
+              <NavBar/>
             {children}
           </AppQueryClientProvider>
       </body>

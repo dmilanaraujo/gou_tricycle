@@ -69,16 +69,37 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse;
 }
 
+// const isPublicRoute = (route: string) => {
+//     const exactRoutes = [
+//         '',
+//         '/',
+//         '/sign-in',
+//         '/sign-up',
+//         '/forgot-password',
+//         '/confirm-signup',
+//         '/business/**'
+//     ];
+//     const startsWith = ['/api'];
+//     return exactRoutes.includes(route) || startsWith.some(r => route.startsWith(r));
+// };
 const isPublicRoute = (route: string) => {
     const exactRoutes = [
-        '',
         '/',
         '/sign-in',
         '/sign-up',
         '/forgot-password',
-        '/confirm-signup'
+        '/confirm-signup',
     ];
-    const startsWith = ['/api'];
-    return exactRoutes.includes(route) || startsWith.some(r => route.startsWith(r));
+
+    const startsWith = [
+        '/api',
+        '/business',
+    ];
+
+    return (
+        exactRoutes.includes(route) ||
+        startsWith.some(prefix => route.startsWith(prefix))
+    );
 };
+
 

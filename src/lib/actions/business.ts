@@ -106,6 +106,44 @@ export const getBusinesses = async (
   }
 }
 
+export const getBusinessById = async (id: string) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+      .from("businesses")
+      .select(`
+      *,
+      vehicles:vehicles(
+        id,
+        vehicle_type
+      ),
+      sections:business_sections(
+        section:sections(id, name, slug)
+      ),
+      categories:business_categories(
+        category:categories(id, name, slug)
+      )
+    `)
+      .eq("id", id)
+      .eq("is_active", true)
+      .single();
+
+  if (error || !data) {
+    return { success: false, data: null };
+  }
+
+  return {
+    success: true,
+    data: {
+      ...data,
+      vehicles: data.vehicles ?? [],
+      sections: data.sections?.map((s: any) => s.section) ?? [],
+      categories: data.categories?.map((c: any) => c.category) ?? [],
+    },
+  };
+};
+
+
 
 // export const updateStatus = async (online: boolean) => {
 //
