@@ -63,9 +63,9 @@ export default async function BusinessDetailPage(
             <section className="w-full pt-8 pb-6">
                 <h2 className="text-4xl font-semibold">{business.name}</h2>
 
-                <div className="mt-2 flex flex-wrap gap-2 text-sm text-muted-foreground">
+                <div className="mt-2 flex flex-wrap gap-2 text-lg text-muted-foreground">
                     <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-1 text-lg text-muted-foreground">
                                 <StarIcon className="w-4 h-4"/>
                                 <span className="font-bold">
                                     {business.rating}
@@ -79,11 +79,11 @@ export default async function BusinessDetailPage(
                     <span>• {business.categories?.[0]?.name}</span>
                 </div>
 
-                <p className="mt-1 text-sm text-muted-foreground">
+                <p className="text-md text-muted-foreground">
                     {business.description}
                 </p>
 
-                <p className="flex gap-1 mt-1 text-sm text-muted-foreground">
+                <p className="flex gap-1 items-center text-md text-muted-foreground">
                     <MapPin className="w-4 h-4" />{business.address}
                 </p>
             </section>
