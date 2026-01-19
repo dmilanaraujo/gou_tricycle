@@ -1,7 +1,7 @@
 import {ServiceSearch} from "@/components/search/service-search";
 
 type HeroSectionProps = {
-    onSearch: (value: string | null) => void
+    onSearch: (value: string | null, id?: string | null) => void
 }
 
 const HeroSection = ({ onSearch }: HeroSectionProps) => {

@@ -16,8 +16,9 @@ const TABS = [
 ];
 
 type ServiceSearchProps = {
-    onSearch: (value: string | null) => void;
-};
+    onSearch: (value: string | null, id?: string | null) => void
+}
+
 
 export function ServiceSearch({ onSearch }: ServiceSearchProps) {
     const [query, setQuery] = useState("");
@@ -93,9 +94,9 @@ export function ServiceSearch({ onSearch }: ServiceSearchProps) {
             {query && (
                 <button
                     onClick={() => {
-                        setQuery("");
-                        setItems([]);
-                        onSearch(null);
+                        setQuery("")
+                        setItems([])
+                        onSearch(null, null)
                     }}
                     className="rounded-full p-1 bg-black/10 hover:bg-primary hover:text-white cursor-pointer"
                 >
@@ -168,11 +169,11 @@ export function ServiceSearch({ onSearch }: ServiceSearchProps) {
                                             <button
                                                 key={b.id}
                                                 onClick={() => {
-                                                    onSearch(b.name);
+                                                    onSearch(b.name, b.id)
                                                     setQuery(b.name);
                                                     setOpen(false);
                                                 }}
-                                                className="flex w-full flex-col gap-1 px-6 py-4 hover:bg-muted text-left"
+                                                className="flex w-full flex-col gap-1 px-6 py-4 hover:bg-muted hover:cursor-pointer text-left"
                                             >
                                                 <div className="flex items-center gap-3">
                                                     <Search className="h-4 w-4 text-muted-foreground"/>
@@ -191,8 +192,8 @@ export function ServiceSearch({ onSearch }: ServiceSearchProps) {
                                             <div className="flex justify-center py-4">
                                                 <Button
                                                     onClick={() => {
-                                                        onSearch(query);
-                                                        setOpen(false);
+                                                        onSearch(query, null)   // ⬅️ IMPORTANTE
+                                                        setOpen(false)
                                                     }}
                                                     variant="secondary"
                                                     className="px-3 py-1 rounded-full transition hover:cursor-pointer bg-muted hover:bg-primary hover:text-white"

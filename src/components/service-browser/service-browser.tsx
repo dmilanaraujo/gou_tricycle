@@ -12,13 +12,14 @@ const tabs = [
 
 type ServiceBrowserProps = {
     activeTab: string | null
+    category: string | null
     onTabChange: (value: string) => void
     onCategoryChange: (value: string | null) => void
 }
 
-const ServiceBrowser = ({ activeTab, onTabChange, onCategoryChange }: ServiceBrowserProps) => {
+const ServiceBrowser = ({ activeTab, category, onTabChange, onCategoryChange }: ServiceBrowserProps) => {
     return (
-        <Tabs value={activeTab ?? undefined} onValueChange={onTabChange} className="gap-4">
+        <Tabs value={activeTab ?? ""} onValueChange={onTabChange} className="gap-4">
             <TabsList className="bg-background gap-1 flex justify-center">
                 {tabs.map(tab => (
                     <TabsTrigger
@@ -41,6 +42,7 @@ const ServiceBrowser = ({ activeTab, onTabChange, onCategoryChange }: ServiceBro
                 <TabsContent key={tab.value} value={tab.value}>
                     <CategoryGroup
                         section={tab.value as any}
+                        value={activeTab === tab.value ? category : null}
                         onCategoryChange={onCategoryChange}
                     />
                 </TabsContent>

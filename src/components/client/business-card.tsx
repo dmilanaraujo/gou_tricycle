@@ -37,9 +37,6 @@ interface BusinessCardProps {
 }
 
 export function BusinessCard({business}: BusinessCardProps) {
-    // const municipalityLabel =
-    //     municipalities[business.province]?.find((m) => m.value === business.municipality)?.label + provinces[business.province].label ||
-    //     business.municipality + ', ' + business.province;
     const router = useRouter();
 
     const provinceLabel = provinces.find(p => p.value === business.province)?.label || business.province;

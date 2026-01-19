@@ -17,18 +17,16 @@ export async function searchBusinesses(query: string): Promise<SearchBusinessIte
 
     const { data, error } = await supabase
         .from("businesses")
-        .select(
-            `
-      id,
-      name,
-      description,
-      business_sections(
-        section:sections(slug)
-      )
-    `
-        )
+        .select(`
+          id,
+          name,
+          description,
+          business_sections(
+            section:sections(slug)
+          )
+        `)
         .eq("is_active", true)
-        .or(`name.ilike.%${q}%,description.ilike.%${q}%`)
+        .or(`name.ilike.%${q}%,description.ilike.%${q}%,phone.ilike.%${q}%,whatsapp.ilike.%${q}%`)
         .limit(25);
 
     if (error || !data) return [];

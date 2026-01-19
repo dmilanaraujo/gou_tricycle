@@ -15,9 +15,11 @@ type CategoryOption = {
 
 // type Props = {
 //     section: "transport" | "market" | "beauty" | "restaurant"
+//     onCategoryChange: (value: string | null) => void
 // }
 type Props = {
     section: "transport" | "market" | "beauty" | "restaurant"
+    value: string | null
     onCategoryChange: (value: string | null) => void
 }
 
@@ -58,16 +60,16 @@ const categories: Record<"transport" | "market" | "beauty" | "restaurant", Categ
     ],
 }
 
-export function CategoryGroup({ section, onCategoryChange }: Props) {
+export function CategoryGroup({ section, value, onCategoryChange }: Props) {
     const options = categories[section]
 
     return (
-        // <ToggleGroup type="single" variant="outline" size="sm" spacing={2} onValueChange={(values) => console.log(values)}>
         <ToggleGroup
             type="single"
             variant="outline"
             size="sm"
             spacing={2}
+            value={value ?? ""}
             onValueChange={(value) => onCategoryChange(value || null)}
         >
         {options.map(({ value, label, icon }) => (

@@ -1,65 +1,108 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Location, VehicleType, VehicleTypeEnum } from "@/types"
+import { Location, VehicleTypeEnum } from "@/types"
 import { useInfinityBusinesses } from "@/hooks/api/business"
 import { BusinessList } from "@/components/client/business-list"
 import { ServiceFilters } from "@/components/service-browser/service-filters"
+import { Business } from "@/types/business"
+import { getBusinessById } from "@/lib/actions/business"
 
-const LOCATION_STORAGE_KEY = 'localwheels-location';
+const LOCATION_STORAGE_KEY = "localwheels-location"
 
 export default function BusinessSearch({
                                            activeTab,
                                            category,
                                            searchQuery,
+                                           selectedBusinessId,
                                        }: {
     activeTab: string | null
     category: string | null
     searchQuery: string | null
+    selectedBusinessId: string | null
 }) {
     const [province, setProvince] = useState<string | null>(null)
     const [municipality, setMunicipality] = useState<string | null>(null)
     const [rating, setRating] = useState<number | null>(null)
     const [vehicleType, setVehicleType] = useState<VehicleTypeEnum | null>(null)
 
-    const [location, setLocation] = useState<Location | null>(null)
+    const [singleBusiness, setSingleBusiness] = useState<Business | null>(null)
+    const [singleBusinessLoading, setSingleBusinessLoading] = useState(false)
 
     useEffect(() => {
         try {
             const savedLocation = localStorage.getItem(LOCATION_STORAGE_KEY)
             if (savedLocation) {
-                setLocation(JSON.parse(savedLocation))
+                JSON.parse(savedLocation)
             }
         } catch {}
     }, [])
 
-    const params = useMemo(() => ({
-        province: province ?? undefined,
-        municipality: municipality ?? undefined,
-        rating: rating ?? undefined,
-        vehicleType: vehicleType ?? undefined,
-        section: activeTab ?? undefined,
-        category: category ?? undefined,
-        q: searchQuery ?? undefined,
-        limit: 20,
-    }), [
-        province,
-        municipality,
-        rating,
-        vehicleType,
-        activeTab,
-        category,
-        searchQuery,
-    ])
+    // 🔹 Cargar negocio por ID (sugerencia)
+    useEffect(() => {
+        if (!selectedBusinessId) {
+            setSingleBusiness(null)
+            return
+        }
+
+        const load = async () => {
+            setSingleBusinessLoading(true)
+            try {
+                const res = await getBusinessById(selectedBusinessId)
+                if (res?.success) {
+                    setSingleBusiness(res.data)
+                }
+            } finally {
+                setSingleBusinessLoading(false)
+            }
+        }
+
+        load()
+    }, [selectedBusinessId])
+
+    useEffect(() => {
+        if (!selectedBusinessId) return
+
+        // 🔥 Resetear TODOS los filtros
+        setProvince(null)
+        setMunicipality(null)
+        setRating(null)
+        setVehicleType(null)
+    }, [selectedBusinessId])
+
+    useEffect(() => {
+        if (searchQuery && !selectedBusinessId) {
+            setProvince(null)
+            setMunicipality(null)
+            setRating(null)
+            setVehicleType(null)
+        }
+    }, [searchQuery, selectedBusinessId])
+
+
+    // 🔹 Parámetros para búsqueda normal
+    const params = useMemo(
+        () => ({
+            province: province ?? undefined,
+            municipality: municipality ?? undefined,
+            rating: rating ?? undefined,
+            vehicleType: vehicleType ?? undefined,
+            section: activeTab ?? undefined,
+            category: category ?? undefined,
+            q: searchQuery ?? undefined,
+            limit: 20,
+        }),
+        [province, municipality, rating, vehicleType, activeTab, category, searchQuery]
+    )
 
     const { data, isLoading } = useInfinityBusinesses(params, {
-        enabled: !!(activeTab || category || searchQuery),
+        enabled: !selectedBusinessId && (!!activeTab || !!category || !!searchQuery),
     })
 
     const businesses = useMemo(() => {
+        if (singleBusiness) return [singleBusiness]
         return data?.pages.flatMap(p => p.data || []) || []
-    }, [data?.pages])
+    }, [data, singleBusiness])
 
     return (
         <div className="pt-8">
@@ -81,7 +124,11 @@ export default function BusinessSearch({
                 </h2>
             </div>
 
-            <BusinessList businesses={businesses} isLoading={isLoading} />
+            {/* ⬇️ IMPORTANTE */}
+            <BusinessList
+                businesses={businesses}
+                isLoading={isLoading || singleBusinessLoading}
+            />
         </div>
     )
 }

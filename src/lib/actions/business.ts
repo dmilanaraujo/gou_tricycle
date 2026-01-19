@@ -38,22 +38,12 @@ export const getBusinesses = async (
 
   let query = supabase
       .from("businesses")
-      .select(
-          `
-      *,
-      vehicles:vehicles!inner(
-        id,
-        vehicle_type
-      ),
-      sections:business_sections!inner(
-        section:sections!inner(id, name, slug)
-      ),
-      categories:business_categories!inner(
-        category:categories!inner(id, name, slug)
-      )
-    `,
-          { count: "exact" }
-      )
+      .select(`
+        *,
+        vehicles:vehicles(id, vehicle_type),
+        sections:business_sections!inner(section:sections!inner(id, name, slug)),
+        categories:business_categories!inner(category:categories!inner(id, name, slug))
+      `, { count: "exact" })
       .eq("is_active", true)
 
   if (province) query = query.eq("province", province)
@@ -75,9 +65,10 @@ export const getBusinesses = async (
   }
 
   if (q) {
-    query = query.or(`name.ilike.%${q}%,description.ilike.%${q}%,phone::text.ilike.%${q}%,whatsapp::text.ilike.%${q}%`)
+    query = query.or(
+        `name.ilike.%${q}%,description.ilike.%${q}%,phone.ilike.%${q}%,whatsapp.ilike.%${q}%`
+    )
   }
-
 
   const { data, error, count } = await query.range(from, to)
 
@@ -142,75 +133,3 @@ export const getBusinessById = async (id: string) => {
     },
   };
 };
-
-
-
-// export const updateStatus = async (online: boolean) => {
-//
-//   try {
-//     const supabase = await createClient();
-//
-//     const { data: { user }, error: userError } = await supabase.auth.getUser();
-//
-//     if (userError || !user) {
-//       return { success: false, errors: [{ message: 'Usuario no autenticado o no se pudo obtener el usuario.' }] };
-//     }
-//
-//     const { data, error } = await supabase
-//         .from("drivers")
-//         .update({
-//           online
-//         })
-//         .eq("id", user.id)
-//         .select("*");
-//
-//     if (error) {
-//       return { success: false, errors: formatSupabasePostgrestErrors(error) }
-//     }
-//     return { success: true, data: data?.[0] };
-//   } catch (error) {
-//     console.log('Unexpected error in updateStatus:', error);
-//     throw new Error('Error no especificado');
-//   }
-// }
-
-// export const setDefaultImage = async (path: string): Promise<ActionResponse<boolean>> => {
-//
-//   try {
-//     const supabase = await createClient();
-//
-//     const { data: { user }, error: userError } = await supabase.auth.getUser();
-//
-//     if (userError || !user) {
-//       return { success: false, errors: [{ message: 'Usuario no autenticado o no se pudo obtener el usuario.' }] };
-//     }
-//
-//     const { error: resetError } = await supabase
-//         .from("driver_images")
-//         .update({ primary: false })
-//         .eq("driver_id", user.id);
-//
-//     if (resetError) {
-//       return {
-//         success: false,
-//         errors: formatSupabasePostgrestErrors(resetError),
-//       };
-//     }
-//
-//     const { error } = await supabase
-//         .from("driver_images")
-//         .update({
-//           primary: true
-//         })
-//         .eq("driver_id", user.id)
-//         .eq("path", path);
-//
-//     if (error) {
-//       return { success: false, errors: formatSupabasePostgrestErrors(error) }
-//     }
-//     return { success: true, data: true };
-//   } catch (error) {
-//     console.log('Unexpected error in setDefaultImage:', error);
-//     throw new Error('Error no especificado');
-//   }
-// }

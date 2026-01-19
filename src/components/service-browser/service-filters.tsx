@@ -27,8 +27,15 @@ export const ServiceFilters = ({
         onRatingChange(val)
     }
 
-    if (!activeTab) return null
+    // 🔹 FILTROS POR DEFECTO (cuando NO hay sección)
+    const DEFAULT_FILTERS = (
+        <div className="flex flex-wrap gap-2">
+            <LocationFilter onChange={onLocationChange} />
+            <RatingFilter value={rating ?? undefined} onChange={handleRatingChange} />
+        </div>
+    )
 
+    // 🔹 FILTROS POR SECCIÓN
     const FILTERS_BY_TAB: Record<string, React.ReactNode> = {
         transport: (
             <div className="flex flex-wrap gap-2">
@@ -72,5 +79,9 @@ export const ServiceFilters = ({
         ),
     }
 
-    return <div className="flex flex-wrap justify-start gap-2">{FILTERS_BY_TAB[activeTab]}</div>
+    return (
+        <div className="flex flex-wrap justify-start gap-2">
+            {activeTab ? FILTERS_BY_TAB[activeTab] : DEFAULT_FILTERS}
+        </div>
+    )
 }
