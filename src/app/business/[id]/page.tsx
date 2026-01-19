@@ -63,7 +63,7 @@ export default async function BusinessDetailPage(
             <section className="w-full pt-8 pb-6">
                 <h2 className="text-4xl font-semibold">{business.name}</h2>
 
-                <div className="mt-1 flex flex-wrap gap-2 text-sm text-muted-foreground">
+                <div className="mt-2 flex flex-wrap gap-2 text-sm text-muted-foreground">
                     <div className="flex items-center justify-between">
                             <div className="flex items-center gap-1 text-sm text-muted-foreground">
                                 <StarIcon className="w-4 h-4"/>
@@ -116,60 +116,6 @@ export default async function BusinessDetailPage(
                         </span>
                     </div>
 
-                    {/* Columna derecha – Reviews */}
-                    {/*<div className="flex-1 space-y-4">*/}
-
-                    {/*    /!* Review 1 (mock por ahora) *!/*/}
-                    {/*    <div>*/}
-                    {/*        <p className="text-sm">*/}
-                    {/*            "Food was very delicious especially the chicken and lamb over rice.*/}
-                    {/*            The fries was enough to feed a family lol"*/}
-                    {/*        </p>*/}
-
-                    {/*        <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">*/}
-                    {/*            <div className="flex">*/}
-                    {/*                {[1,2,3,4,5].map(i => (*/}
-                    {/*                    <StarIcon*/}
-                    {/*                        key={i}*/}
-                    {/*                        className="w-4 h-4 fill-amber-500 stroke-amber-500"*/}
-                    {/*                    />*/}
-                    {/*                ))}*/}
-                    {/*            </div>*/}
-                    {/*            <span>Michael M.</span>*/}
-                    {/*            <span>· 11/27/25</span>*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-
-                    {/*    /!* Review 2 *!/*/}
-                    {/*    <div>*/}
-                    {/*        <p className="text-sm">*/}
-                    {/*            "1st time, won't be the last! Loved all the sauces, thanks for putting*/}
-                    {/*            them on the side. Delicious food!"*/}
-                    {/*        </p>*/}
-
-                    {/*        <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">*/}
-                    {/*            <div className="flex">*/}
-                    {/*                {[1,2,3,4,5].map(i => (*/}
-                    {/*                    <StarIcon*/}
-                    {/*                        key={i}*/}
-                    {/*                        className="w-4 h-4 fill-amber-500 stroke-amber-500"*/}
-                    {/*                    />*/}
-                    {/*                ))}*/}
-                    {/*            </div>*/}
-                    {/*            <span>Naomi B.</span>*/}
-                    {/*            <span>· 01/10/26</span>*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-
-                    {/*/!* Botón Show more *!/*/}
-                    {/*<Button*/}
-                    {/*    variant="secondary"*/}
-                    {/*    className="px-3 py-1 rounded-full font-semibold transition hover:cursor-pointer bg-muted hover:bg-primary hover:text-white"*/}
-                    {/*>*/}
-                    {/*    <ArrowDownIcon className="w-4 h-4" />*/}
-                    {/*    Mostrar más*/}
-                    {/*</Button>*/}
-                    {/*</div>*/}
                     <div className="flex-1 space-y-4">
                         {reviews && reviews.length > 0 ? (
                             reviews.slice(0, 2).map((review) => (
