@@ -133,3 +133,16 @@ export const getBusinessById = async (id: string) => {
     },
   };
 };
+
+export const getBusinessReviews = async (businessId: string) => {
+  const supabase = await createClient()
+
+  return supabase
+      .from("business_reviews")
+      .select("id, rating, comment, created_at, user_display_name")
+      .eq("business_id", businessId)
+      .eq("is_approved", true)
+      .order("created_at", { ascending: false })
+      .limit(10)
+}
+

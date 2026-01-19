@@ -12,40 +12,40 @@ interface BusinessListProps {
 }
 
 const BusinessListSkeleton = () => (
-  <>
-    {[...Array(3)].map((_, i) => (
-        <Item key={i} variant="outline" role="status" className="animate-pulse">
-            <ItemMedia variant="image">
-                <Skeleton className="h-12 w-12 rounded-md" />
-            </ItemMedia>
-            <ItemContent className="space-y-2">
-                <ItemTitle>
-                    <Skeleton className="h-4 w-32" />
-                </ItemTitle>
-                
-                <div className="flex items-center gap-2 text-xs">
-                    <Skeleton className="h-4 w-4 rounded-full" />
-                    <Skeleton className="h-3 w-24" />
+    <>
+        {[...Array(4)].map((_, i) => (
+            <div
+                key={i}
+                className="max-w-md pt-0 shadow-none border-none animate-pulse"
+            >
+                {/* Imagen */}
+                <div className="relative w-full aspect-video h-[180px] rounded-xl overflow-hidden bg-muted" />
+
+                {/* Contenido */}
+                <div className="px-0 py-3 space-y-2">
+                    {/* Nombre */}
+                    <Skeleton className="h-5 w-2/3" />
+
+                    {/* Rating + ubicación */}
+                    <div className="flex items-center justify-between">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-5 w-32 rounded-full" />
+                    </div>
                 </div>
-                
-                <div className="flex items-center gap-2 text-xs">
-                    <Skeleton className="h-4 w-4 rounded-full" />
-                    <Skeleton className="h-3 w-20" />
+
+                {/* Botón */}
+                <div className="px-0 pb-3">
+                    <Skeleton className="h-9 w-28 rounded-md" />
                 </div>
-            </ItemContent>
-            <ItemActions className="flex-col">
-                <Skeleton className="h-8 w-full rounded-md" />
-                <Skeleton className="h-8 w-full rounded-md" />
-            </ItemActions>
-        </Item>
-    ))}
-  </>
-);
+            </div>
+        ))}
+    </>
+)
 
 export function BusinessList({ businesses, isLoading }: BusinessListProps) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
         <BusinessListSkeleton />
       </div>
     );

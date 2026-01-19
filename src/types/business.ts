@@ -14,6 +14,7 @@ export type Business = {
     banner: string;
     province: string;
     municipality: string;
+    address: string;
     reviews: number;
     rating: number;
     deliveryTime?: number;
