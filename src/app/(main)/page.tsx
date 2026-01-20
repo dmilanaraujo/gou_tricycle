@@ -1,6 +1,5 @@
 "use client";
 
-import NavBar from "@/components/layout/nav-bar";
 import HeroSection from "@/components/layout/hero-section";
 import CategorySection from "@/components/layout/category-section";
 import SearchResultSection from "@/components/layout/search-result-section";

@@ -5,6 +5,7 @@ import {ActionError, Driver, OptimizedImages, UploadFileError, type VehicleType}
 import imageCompression from 'browser-image-compression';
 import {z} from 'zod';
 import {isAfter, parseISO, startOfDay} from 'date-fns';
+import {Business} from '@/types/business';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -95,41 +96,42 @@ export const formatSupabasePostgrestErrors = (error: PostgrestError, constraintM
 export const formatSupabaseAuthErrors = (error: AuthError): ActionError[] => {
 
     console.log('formatSupabaseAuthErrors', error);
+    const code = error.code;
     switch (error.code) {
         case "email_exists":
-            return [{ message: 'El correo electrónico ya existe.' }]
+            return [{ code, message: 'El correo electrónico ya existe.' }]
         case "captcha_failed": // not_null_violation
-            return [{ message: 'La verificación del captcha ha fallado.' }]
+            return [{ code, message: 'La verificación del captcha ha fallado.' }]
         case "email_address_invalid": // foreign_key_violation
-            return [{ message: 'Use otro correo electrónico.' }]
+            return [{ code, message: 'Use otro correo electrónico.' }]
         case "email_address_not_authorized": // unique_violation
-            return [{ message: 'Este correo electrónico no está autorizado.' }]
+            return [{ code, message: 'Este correo electrónico no está autorizado.' }]
         case "email_not_confirmed": // unique_violation
-            return [{ message: 'Este correo electrónico no ha sido confirmado.' }]
+            return [{ code, message: 'Este correo electrónico no ha sido confirmado.' }]
         
         case "phone_exists":
-            return [{ message: 'El teléfono ya existe.' }]
+            return [{ code, message: 'El teléfono ya existe.' }]
         case "phone_not_confirmed": // unique_violation
-            return [{ message: 'Este teléfono no ha sido confirmado.' }]
+            return [{ code, message: 'Este teléfono no ha sido confirmado.' }]
         
         case "invalid_credentials": // check_violation
-            return [{ message: 'Credenciales incorrectas' }]
+            return [{ code, message: 'Credenciales incorrectas' }]
         case "invite_not_found": // check_violation
-            return [{ message: 'La invitación no existe o expiró' }]
+            return [{ code, message: 'La invitación no existe o expiró' }]
         case "otp_expired": // check_violation
-            return [{ message: 'El código expiró' }]
+            return [{ code, message: 'El código expiró' }]
         case "same_password": // check_violation
-            return [{ message: 'No puede usar la misma contraseña' }]
+            return [{ code, message: 'No puede usar la misma contraseña' }]
         case "session_expired": // check_violation
-            return [{ message: 'Sesión expiró' }]
+            return [{ code, message: 'Sesión expiró' }]
         case "sms_send_failed": // check_violation
-            return [{ message: 'El envio del SMS ha fallado' }]
+            return [{ code, message: 'El envio del SMS ha fallado' }]
         case "user_already_exists": // check_violation
-            return [{ message: 'El usuario ya existe' }]
+            return [{ code, message: 'El usuario ya existe' }]
         case "user_banned": // check_violation
-            return [{ message: 'El usuario ha sido desabilitado' }]
+            return [{ code, message: 'El usuario ha sido desabilitado' }]
         case "user_not_found": // check_violation
-            return [{ message: 'El usuario no existe' }]
+            return [{ code, message: 'El usuario no existe' }]
        
         default:
             if (error.message == "fetch failed") {
@@ -145,16 +147,16 @@ export const getTimeBySeconds = (secondsTime: number) => {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 }
 
-export const isProfileComplete = (profile: Driver) => {
-    return !(profile.images.length == 0 || !profile.alias || !profile.province || !profile.municipality || !profile.vehicle_type);
+export const isProfileComplete = (profile: Business) => {
+    return profile.name && profile.province && profile.municipality;
 }
-export const incompleteProfileData = (profile: Driver) => {
+export const incompleteProfileData = (profile: Business) => {
     const incompleteData = [];
-    if (profile.images.length == 0) {
-        incompleteData.push('Imágenes');
-    }
-    if (!profile.alias) {
-        incompleteData.push('Alias');
+    // if (profile.images.length == 0) {
+    //     incompleteData.push('Imágenes');
+    // }
+    if (!profile.name) {
+        incompleteData.push('Nombre');
     }
     if (!profile.province) {
         incompleteData.push('Provincia');
@@ -162,17 +164,18 @@ export const incompleteProfileData = (profile: Driver) => {
     if (!profile.municipality) {
         incompleteData.push('Municipio');
     }
-    if (!profile.vehicle_type) {
-        incompleteData.push('Tipo combustible');
-    }
+    // if (!profile.vehicle_type) {
+    //     incompleteData.push('Tipo combustible');
+    // }
     return incompleteData;
 }
 
-export const isDriverActive = (driver: Driver) => {
-    if (!driver.active_at) return false;
-    const inputDate = startOfDay(parseISO(driver.active_at))
-    const today = startOfDay(new Date())
-    return isAfter(inputDate, today)
+export const isBusinessActive = (business: Business) => {
+    // if (!business.active_at) return false;
+    // const inputDate = startOfDay(parseISO(business.active_at))
+    // const today = startOfDay(new Date())
+    // return isAfter(inputDate, today)
+    return true;
 }
 
 export const combustionTypes: { value: VehicleType; label: string }[] = [

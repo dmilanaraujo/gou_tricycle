@@ -29,6 +29,7 @@ export type Location = {
 
 export type ActionError = {
   message: string;
+  code?: string;
   path?: (string|number|PropertyKey)[]
 }
 export type ActionResponse<T> =

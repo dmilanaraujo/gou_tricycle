@@ -14,6 +14,7 @@ export const LoginSchema = z.object({
 });
 export const SignUpSchema = z.object({
 	phone: PhoneSchema,
+	name: z.string({ error: "El nombre es requerido" }).min(1, 'El nombre es requerido'),
 	password: PasswordSchema,
 	confirm_password: z.string({ error: "Valor requerido" })
 		.min(6, "Debe tener un mínimo de 6 caracteres"),
@@ -23,11 +24,13 @@ export const SignUpSchema = z.object({
 });
 
 export const UpdateProfileSchema = z.object({
-	alias: z.string().optional(),
-	province: z.string().optional(),
-	municipality: z.string().optional(),
-	vehicle_type: z.string().optional(),
-	images: z.array(z.string()).optional(),
+	name: z.string(),
+	section: z.string(),
+	whatsapp: PhoneSchema,
+	province: z.string(),
+	municipality: z.string(),
+	description: z.string().optional(),
+	address: z.string().optional(),
 });
 
 export const UpdatePasswordSchema = z.object({

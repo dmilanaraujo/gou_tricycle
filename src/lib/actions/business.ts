@@ -16,7 +16,7 @@ export const getBusinesses = async (
     municipality: params.municipality,
     rating: params.rating,
     vehicleType: params.vehicleType,
-    section: params.section,
+    section_id: params.section_id,
     category: params.category,
     q: params.q,
   })
@@ -31,7 +31,7 @@ export const getBusinesses = async (
   const page = params.page ?? 0
   const limit = params.limit
 
-  const { province, municipality, rating, vehicleType, section, category, q } = filtersParsed.data
+  const { province, municipality, rating, vehicleType, section_id, category, q } = filtersParsed.data
 
   const from = page * limit
   const to = from + limit - 1
@@ -41,7 +41,7 @@ export const getBusinesses = async (
       .select(`
         *,
         vehicles:vehicles(id, vehicle_type),
-        sections:business_sections!inner(section:sections!inner(id, name, slug)),
+        section:sections!inner(id, name, slug),
         categories:business_categories!inner(category:categories!inner(id, name, slug))
       `, { count: "exact" })
       .eq("is_active", true)
@@ -51,8 +51,8 @@ export const getBusinesses = async (
   if (rating) query = query.gte("rating", rating)
 
   // 🔹 Filtro por sección (TAB)
-  if (section) {
-    query = query.eq("sections.section.slug", section)
+  if (section_id) {
+    query = query.eq("section_id", section_id)
   }
 
   if (category) {
@@ -79,7 +79,6 @@ export const getBusinesses = async (
   const flattened = (data ?? []).map(b => ({
     ...b,
     vehicles: b.vehicles ?? [],
-    sections: b.sections?.map((s: any) => s.section) ?? [],
     categories: b.categories?.map((c: any) => c.category) ?? [],
   }))
 
@@ -108,9 +107,7 @@ export const getBusinessById = async (id: string) => {
         id,
         vehicle_type
       ),
-      sections:business_sections(
-        section:sections(id, name, slug)
-      ),
+      section:sections!inner(id, name, slug),
       categories:business_categories(
         category:categories(id, name, slug)
       )

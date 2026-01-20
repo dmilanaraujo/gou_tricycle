@@ -18,22 +18,24 @@ import {toast} from 'sonner';
 import {LoaderCircle} from 'lucide-react';
 import React, {useEffect} from 'react';
 import {useRouter} from 'next/navigation';
-import {Driver} from '@/types';
 import {updateProfile} from '@/lib/actions/profile';
 import {NativeSelect, NativeSelectOption} from '@/components/ui/native-select';
 import {municipalities, provinces} from '@/lib/data/locations';
 import {combustionTypes} from '@/lib/utils';
 import {useLoadingRouter} from '@/providers/navigation-loading-provider';
+import {Business} from '@/types/business';
+import {Textarea} from '@/components/ui/textarea';
 
-export function ProfileForm({ driver }: { driver: Driver; }) {
+export function ProfileForm({ business }: { business: Business; }) {
 	const router = useLoadingRouter();
 	const form = useForm<UpdateProfileValues>({
 		resolver: zodResolver(UpdateProfileSchema),
 		defaultValues: {
-			alias: driver.alias  || '',
-			province: driver.province || '',
-			municipality: driver.municipality || '',
-			vehicle_type: driver.vehicle_type || '',
+			name: business.name  || '',
+			province: business.province || '',
+			municipality: business.municipality || '',
+			address: business.address || '',
+			whatsapp: business.whatsapp || '',
 		},
 	});
 	
@@ -72,7 +74,7 @@ export function ProfileForm({ driver }: { driver: Driver; }) {
 					<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 						<FormField
 							control={form.control}
-							name='alias'
+							name='name'
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>Alias</FormLabel>
@@ -81,6 +83,22 @@ export function ProfileForm({ driver }: { driver: Driver; }) {
 									</FormControl>
 									<FormDescription>
 										Nombre que saldrá visible en las búsquedas
+									</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name='description'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Descripción</FormLabel>
+									<FormControl>
+										<Textarea placeholder='Entre la descripción' {...field} />
+									</FormControl>
+									<FormDescription>
+										Descripción de su negocio
 									</FormDescription>
 									<FormMessage />
 								</FormItem>
@@ -130,25 +148,41 @@ export function ProfileForm({ driver }: { driver: Driver; }) {
 						/>
 						<FormField
 							control={form.control}
-							name='vehicle_type'
+							name='address'
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Tipo de combustible</FormLabel>
+									<FormLabel>Dirección</FormLabel>
 									<FormControl>
-										<NativeSelect {...field} classNameContainer={'col-span-2 w-full'}>
-											<NativeSelectOption value="">Seleccione...</NativeSelectOption>
-											{combustionTypes.map(({ value, label }) => (
-												<NativeSelectOption key={value} value={value}>{label}</NativeSelectOption>
-											))}
-										</NativeSelect>
+										<Textarea placeholder='Entre la dirección' {...field} />
 									</FormControl>
 									<FormDescription>
-										Tipo de combustible de su vehículo
+										Dirección física de su negocio si la tiene
 									</FormDescription>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
+						{/*<FormField*/}
+						{/*	control={form.control}*/}
+						{/*	name='vehicle_type'*/}
+						{/*	render={({ field }) => (*/}
+						{/*		<FormItem>*/}
+						{/*			<FormLabel>Tipo de combustible</FormLabel>*/}
+						{/*			<FormControl>*/}
+						{/*				<NativeSelect {...field} classNameContainer={'col-span-2 w-full'}>*/}
+						{/*					<NativeSelectOption value="">Seleccione...</NativeSelectOption>*/}
+						{/*					{combustionTypes.map(({ value, label }) => (*/}
+						{/*						<NativeSelectOption key={value} value={value}>{label}</NativeSelectOption>*/}
+						{/*					))}*/}
+						{/*				</NativeSelect>*/}
+						{/*			</FormControl>*/}
+						{/*			<FormDescription>*/}
+						{/*				Tipo de combustible de su vehículo*/}
+						{/*			</FormDescription>*/}
+						{/*			<FormMessage />*/}
+						{/*		</FormItem>*/}
+						{/*	)}*/}
+						{/*/>*/}
 					</div>
 					<Button type='submit' className='w-full' disabled={!isValid || isSubmitting || !isDirty}>
 						{isSubmitting ? (

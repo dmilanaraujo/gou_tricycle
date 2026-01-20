@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import {
     Form,
-    FormControl,
+    FormControl, FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -30,6 +30,7 @@ export function SignupForm() {
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
+        name: '',
         phone: '',
         password: '',
         confirm_password: '',
@@ -44,7 +45,7 @@ export function SignupForm() {
       // Do something with the form values.
       // ✅ This will be type-safe and validated.
       try {
-          const response = await signUp(values, `${process.env.NEXT_PUBLIC_SITE_URL}/confirm-signup`);
+          const response = await signUp(values);
           if (!response.success) {
               response.errors?.forEach((error) => {
                   toast.error('Error', {
@@ -71,38 +72,51 @@ export function SignupForm() {
         <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="grid gap-4">
                 <div className="flex flex-col items-center gap-2 text-center">
-                    <h1 className="text-4xl font-bold text-slate-900 mb-2">Regístrese</h1>
-                    <p className="text-muted-foreground text-sm text-balance">
-                        Introduzca número de teléfono y contraseña para crear a su cuenta como chofer.
-                    </p>
+                    <h1 className="text-4xl font-bold text-slate-900 mb-8">Crea tu negocio</h1>
+                    {/*<p className="text-muted-foreground text-sm text-balance">*/}
+                    {/*    Introduzca número de teléfono y contraseña para crear a su cuenta como chofer.*/}
+                    {/*</p>*/}
                 </div>
-                <div className="grid">
+                    <FormField
+                        control={form.control}
+                        name='name'
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Nombre del negocio</FormLabel>
+                                <FormControl>
+                                    <Input placeholder='Entre el nombre' {...field} />
+                                </FormControl>
+                                {/*<FormDescription>*/}
+                                {/*    Nombre del negocio*/}
+                                {/*</FormDescription>*/}
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                     <FormField
                         control={form.control}
                         name="phone"
                         render={({field}) => (
                             <FormItem className="space-y-0 mt-0">
-                                <FormLabel className="sr-only">Teléfono</FormLabel>
+                                <FormLabel>Teléfono</FormLabel>
                                 <FormControl>
                                     <PhoneInput value={field.value} onChange={field.onChange} defaultCountry="CU"
-                                                international={false} placeholder='Entre el teléfono'
-                                                className={'!text-lg !h-12'}/>
+                                                international={false} placeholder='Entre el teléfono'/>
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
                         )}
                     />
-                </div>
+               
                 <div className="grid">
                     <FormField
                         control={form.control}
                         name="password"
                         render={({field}) => (
                             <FormItem className="space-y-0 mt-0">
-                                <FormLabel className="sr-only">Contraseña</FormLabel>
+                                <FormLabel>Contraseña</FormLabel>
                                 <FormControl>
-                                    <Input placeholder='Entre la contraseña' {...field}
-                                           type={'password'} className={'!text-lg h-12'}/>
+                                    <Input placeholder='Entre la contraseña' {...field} type={'password'}/>
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
@@ -115,10 +129,9 @@ export function SignupForm() {
                         name="confirm_password"
                         render={({field}) => (
                             <FormItem className="space-y-0 mt-0">
-                                <FormLabel className="sr-only">Confirmar contraseña</FormLabel>
+                                <FormLabel>Confirmar contraseña</FormLabel>
                                 <FormControl>
-                                    <Input placeholder='Confirmar contraseña' {...field} type={'password'}
-                                           className={'!text-lg h-12'}/>
+                                    <Input placeholder='Confirmar contraseña' {...field} type={'password'}/>
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
@@ -172,7 +185,7 @@ export function SignupForm() {
                 {/*        )}*/}
                 {/*    />*/}
                 {/*</div>*/}
-                <Button type="submit" className="w-full !text-lg h-12" disabled={isSubmitting}>
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
                     {isSubmitting ? (
                         <span className="flex items-center">
                       <LoaderCircle className="mr-3 animate-spin"/>
@@ -184,7 +197,7 @@ export function SignupForm() {
                     ¿Ya tienes una cuenta?
                 </div>
                 <Button asChild>
-                      <Link href='/sign-in' className={'w-full !text-lg h-12 bg-success'}>
+                      <Link href='/sign-in' className={'w-full bg-success'}>
                         Iniciar sesión
                     </Link>
                 </Button>

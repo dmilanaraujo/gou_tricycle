@@ -5,7 +5,7 @@ import {getProfile} from '@/lib/actions/profile';
 import { StatusForm } from "@/components/account/form-status";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import {isDriverActive, isProfileComplete} from '@/lib/utils';
+import {isBusinessActive, isProfileComplete} from '@/lib/utils';
 import {Alert, AlertDescription, AlertTitle} from '@/components/ui/alert';
 import {AlertCircleIcon} from 'lucide-react';
 
@@ -25,8 +25,9 @@ export default async function AccountPage() {
     if (!isComplete) {
         redirect("/me/profile");
     }
-    const isActive = isDriverActive(driver)
-    const { online } = driver;
+    const isActive = isBusinessActive(driver)
+    // const { online } = driver;
+    const online = true;
     return (
         <div className="flex flex-col justify-between h-full pb-12 md:mx-auto md:max-w-6xl">
             <div className={'h-full'}>

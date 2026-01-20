@@ -6,7 +6,7 @@ export const BusinessFiltersSchema = z.object({
 	municipality: z.string().optional(),
 	rating: z.number().optional(),
 	vehicleType: z.enum(VehicleTypeEnum).optional(),
-	section: z.string().optional().nullable(),
+	section_id: z.string().optional().nullable(),
 	category: z.string().optional().nullable(),
 	q: z.string().optional().nullable(),
 })

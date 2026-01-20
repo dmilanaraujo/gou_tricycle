@@ -1,9 +1,8 @@
 import { ConfirmSignupForm } from "@/components/auth/form-confirm-signup";
-import Link from 'next/link';
 import React from 'react';
 import {cookies} from 'next/headers';
 import {redirect} from 'next/navigation';
-import {Button} from '@/components/ui/button';
+import {StepProgress} from '@/components/common/step-progress';
 
 
 export default async function ConfirmSignupPage() {
@@ -12,7 +11,7 @@ export default async function ConfirmSignupPage() {
 	const confirmPhone = cookieStore.get('confirm-signup')?.value;
 	
 	if (!confirmPhone) {
-		redirect('/');
+		redirect('/me');
 	}
 
 	return (
@@ -24,23 +23,10 @@ export default async function ConfirmSignupPage() {
 						<div className={'md:max-w-md text-center mt-2'}>Entre el código de verificación que fue enviado a su WhatsApp</div>
 					</div>
 					<div className='space-y-5 px-0 pb-0 pt-8'>
+						<StepProgress/>
 						<ConfirmSignupForm phone={confirmPhone}/>
 					</div>
 				</div>
-				{/*<div className='flex justify-center mt-4 text-sm space-x-2'>*/}
-				{/*	¿No está registrado?*/}
-				{/*</div>*/}
-
-				{/*<div className="flex justify-center mt-4 text-sm space-x-2">*/}
-					
-					{/*¿Ya tienes una cuenta?*/}
-					{/*/!*<Link*!/*/}
-					{/*/!*	href="/sign-in"*!/*/}
-					{/*/!*	className="underline underline-offset-4 ml-2"*!/*/}
-					{/*/!*>*!/*/}
-					{/*/!*	Iniciar sesión*!/*/}
-					{/*/!*</Link>*!/*/}
-				{/*</div>*/}
 			</div>
 		</div>
 	)

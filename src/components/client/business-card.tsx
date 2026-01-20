@@ -47,7 +47,7 @@ export function BusinessCard({business}: BusinessCardProps) {
     const promotionLabel = promotions.find(pr => pr.value === business.promotion)?.label || business.promotion;
 
     const categoryName = business.categories?.[0]?.name
-    const sectionName = business.sections?.[0]?.name
+    const sectionName = business.section?.name
 
     const badgeLabel =
         categoryName && sectionName
@@ -84,7 +84,7 @@ export function BusinessCard({business}: BusinessCardProps) {
                     )}
 
                     {/* Chip de sección o categoría */}
-                    {(business.sections?.length || business.categories?.length) && (
+                    {(business.section || business.categories?.length) && (
                         <div className="absolute bottom-2 left-2">
                             <Badge className="text-xs bg-primary/40 text-white backdrop-blur">
                                 {badgeLabel}
@@ -96,7 +96,7 @@ export function BusinessCard({business}: BusinessCardProps) {
                 <div className="px-0 py-2">
                     <span className="text-lg">{business.name}</span>
                     <div>
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-start md:items-center justify-between flex-col md:flex-row gap-1">
                             <span className="flex items-center gap-1 text-sm text-muted-foreground">
                                 <StarIcon className="w-4 h-4 fill-amber-500 stroke-amber-500"/>
                                 {business.rating} ({business.reviews || 0}+)
@@ -107,7 +107,7 @@ export function BusinessCard({business}: BusinessCardProps) {
                 </div>
 
                 <div className="gap-3 max-sm:flex-col max-sm:items-stretch px-0 pt-0 pb-0">
-                    <Button asChild variant="outline">
+                    <Button asChild variant="outline" className={'w-full md:w-auto'}>
                         <a
                             href={`https://wa.me/${business.phone}`}
                             target="_blank"

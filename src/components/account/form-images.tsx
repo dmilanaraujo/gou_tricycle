@@ -1,9 +1,8 @@
 'use client';
 
 import React from 'react';
-import { toast, useSonner } from 'sonner';
+import { toast } from 'sonner';
 import {Check, Upload, X} from 'lucide-react';
-import {Driver} from '@/types';
 import {
 	FileImage,
 	FileUpload,
@@ -20,19 +19,20 @@ import {useImageUpload} from '@/hooks/use-image-upload';
 import {useConfirm} from '@/components/common/confirm-dialog-provider';
 import {setDefaultImage} from '@/lib/actions/drivers';
 import {useLoadingRouter} from '@/providers/navigation-loading-provider';
+import {Business} from '@/types/business';
 
 interface ImagesFormProps {
-	driver: Driver;
+	business: Business;
 }
 
-export function ImagesForm({ driver }: ImagesFormProps) {
+export function ImagesForm({ business }: ImagesFormProps) {
 	const router = useLoadingRouter();
-	const [files, setFiles] = React.useState<FileImage[]>(
-		driver.images.map(image => ({
-			image,
-			path: image.path,
-			primary: image.primary
-		}))
+	const [files, setFiles] = React.useState<FileImage[]>([]
+		// business.images.map(image => ({
+		// 	image,
+		// 	path: image.path,
+		// 	primary: image.primary
+		// }))
 	);
 
 	const { uploadImage, removeImage } = useImageUpload();
@@ -66,7 +66,7 @@ export function ImagesForm({ driver }: ImagesFormProps) {
 					try {
 						const result = await uploadImage(
 							file.file!,
-							driver.id,
+							business.id,
 							(file, progress) => onProgress({ file, path: file.name, primary: false }, progress)
 						);
 						file.path = result.path;

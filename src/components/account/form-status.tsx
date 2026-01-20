@@ -6,13 +6,14 @@ import React, { useState } from 'react';
 import {useRouter} from 'next/navigation';
 import { Switch } from '../ui/switch';
 import { updateStatus } from '@/lib/actions/drivers';
-import { Driver } from '@/types';
-import {isDriverActive} from '@/lib/utils';
+import {isBusinessActive} from '@/lib/utils';
+import {Business} from '@/types/business';
 
-export function StatusForm({ profile }: { profile: Driver; }) {
-	const [checked, setChecked] = useState(profile.online);
+export function StatusForm({ profile }: { profile: Business; }) {
+	// const [checked, setChecked] = useState(profile.online);
+	const [checked, setChecked] = useState(false);
 	const router = useRouter();
-	const isActive = isDriverActive(profile);
+	const isActive = isBusinessActive(profile);
 	async function onChange(newValue: boolean) {
 		setChecked(newValue);
 		try {

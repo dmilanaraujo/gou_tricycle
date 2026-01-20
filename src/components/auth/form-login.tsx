@@ -45,7 +45,10 @@ export function LoginForm() {
       const response = await login(values);
         if (!response.success) {
             response.errors?.forEach((error) => {
-                if (error.message == 'Phone not confirmed') {
+                if (error.code == 'phone_not_confirmed') {
+                    toast.success('Información', {
+                        description: 'Un código de verificación ha sido enviado a su WhatsApp',
+                    });
                     router.push("/confirm-signup");
                     return;
                 }
@@ -55,7 +58,7 @@ export function LoginForm() {
             });
             return;
         }
-      router.push("/");
+      router.push("/me");
     } catch (e) {
 	  toast.error('Error', {
           // @ts-expect-error only
@@ -103,7 +106,6 @@ export function LoginForm() {
                                       placeholder='Entre la contraseña'
                                       {...field}
                                       disabled={form.formState.isLoading}
-                                      className="!text-lg h-12"
                                       type={'password'}
                                   />
                               </FormControl>
@@ -154,7 +156,7 @@ export function LoginForm() {
                       </span>
                   </div>
               )}
-              <Button type='submit' className='w-full !text-lg h-12' disabled={isSubmitting}>
+              <Button type='submit' className='w-full' disabled={isSubmitting}>
                   {isSubmitting ? (
                       <span className="flex items-center">
                             <LoaderCircle className="mr-3 animate-spin"/>
@@ -166,7 +168,7 @@ export function LoginForm() {
                     ¿No está registrado?
                 </div>
                 <Button asChild>
-                    <Link href='/sign-up' className={'w-full !text-lg h-12 bg-success'}>
+                    <Link href='/sign-up' className={'w-full bg-success'}>
                         Regístrese aquí
                     </Link>
                 </Button>

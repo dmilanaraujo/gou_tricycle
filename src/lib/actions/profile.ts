@@ -4,8 +4,9 @@ import {createClient} from '@/lib/supabase/server';
 import {formatSupabaseFunctionErrors, formatSupabasePostgrestErrors} from '@/lib/utils';
 import {cookies} from 'next/headers';
 import {UpdateProfileSchema, UpdateProfileValues} from '@/lib/schemas/auth';
+import {Business} from '@/types/business';
 
-export const getProfile = async (cStore?: ReturnType<typeof cookies>): Promise<ActionResponse<Driver>> => {
+export const getProfile = async (cStore?: ReturnType<typeof cookies>): Promise<ActionResponse<Business>> => {
   try{
     const supabase = await createClient(cStore);
     const { data: { user } } = await supabase.auth.getUser();
@@ -13,8 +14,18 @@ export const getProfile = async (cStore?: ReturnType<typeof cookies>): Promise<A
       return { success: false, errors: [{ message: 'El usuario no está autenticado' }] }
     }
     const { data, error } = await supabase
-        .from('drivers')
-        .select('*, images:driver_images(*)')
+        .from('businesses')
+        .select(`
+            *,
+            vehicles:vehicles(
+              id,
+              vehicle_type
+            ),
+            section:sections(id, name, slug),
+            categories:business_categories(
+              category:categories(id, name, slug)
+            )
+        `)
         .eq("id", user.id)
         .single();
     
@@ -29,7 +40,7 @@ export const getProfile = async (cStore?: ReturnType<typeof cookies>): Promise<A
   }
 };
 
-export const updateProfile = async (params: UpdateProfileValues): Promise<ActionResponse<Driver>> => {
+export const updateProfile = async (params: UpdateProfileValues): Promise<ActionResponse<Business>> => {
   const validatedFields = UpdateProfileSchema.safeParse(params);
   if (!validatedFields.success) {
     // const errors = formatZodErrors(validatedFields.error);
@@ -49,7 +60,7 @@ export const updateProfile = async (params: UpdateProfileValues): Promise<Action
     );
     
     const { data, error } = await supabase
-        .from("drivers")
+        .from("businesses")
         .update(cleanData)
         .eq("id", user.id)
         .select("*");

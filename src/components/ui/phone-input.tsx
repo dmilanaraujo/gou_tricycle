@@ -63,7 +63,7 @@ const InputComponent = React.forwardRef<
 	React.ComponentProps<"input">
 >(({ className, ...props }, ref) => (
 	<Input
-		className={cn("rounded-e-lg rounded-s-none !text-lg h-12", className)}
+		className={cn("rounded-e-lg rounded-s-none", className)}
 		{...props}
 		ref={ref}
 	/>

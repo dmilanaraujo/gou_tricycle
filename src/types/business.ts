@@ -22,7 +22,7 @@ export type Business = {
     promotion: PromotionType;
     featured: boolean;
     is_active: boolean;
-    sections: BusinessSection[];
+    section: BusinessSection;
     categories: BusinessCategory[];
     vehicles?: {
         id: string

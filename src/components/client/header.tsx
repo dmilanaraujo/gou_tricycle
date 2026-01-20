@@ -2,7 +2,7 @@
 
 import { provinces, municipalities } from "@/lib/data/locations";
 import { Logo } from "@/components/client/brand";
-import { DriverButton } from "./driver-button";
+import { UserButton } from "../auth/user-button";
 import {NativeSelect, NativeSelectOption} from '@/components/ui/native-select';
 
 interface HeaderProps {
@@ -21,7 +21,7 @@ export function Header({ province, municipality, onProvinceChange, onMunicipalit
           <span className="flex justify-between w-full md:w-auto">
             <Logo />
             <span className="md:hidden">
-               <DriverButton/>
+               <UserButton/>
             </span>
           </span>
           <div className="flex gap-2 w-full sm:w-auto items-center flex-col md:flex-row">
@@ -40,7 +40,7 @@ export function Header({ province, municipality, onProvinceChange, onMunicipalit
                 ))}
               </NativeSelect>
               <span className="hidden md:block">
-                <DriverButton/>
+                <UserButton/>
               </span>
             </span>
           </div>

@@ -48,7 +48,7 @@ const categories: Record<"transport" | "market" | "beauty" | "restaurant", Categ
         { label: "Cosméticos", value: "cosmeticos", icon: <HeartIcon className="mr-1" /> },
         { label: "Cuidado Personal", value: "cuidado", icon: <StarIcon className="mr-1" /> },
         { label: "Perfumería", value: "perfumeria", icon: <BookmarkIcon className="mr-1" /> },
-        { label: "Pestañs", value: "electro-belleza", icon: <PlugIcon className="mr-1" /> },
+        { label: "Pestañas", value: "electro-belleza", icon: <PlugIcon className="mr-1" /> },
         { label: "Manicury", value: "bienestar", icon: <LeafIcon className="mr-1" /> },
     ],
     restaurant: [
@@ -62,7 +62,7 @@ const categories: Record<"transport" | "market" | "beauty" | "restaurant", Categ
 
 export function CategoryGroup({ section, value, onCategoryChange }: Props) {
     const options = categories[section]
-
+    
     return (
         <ToggleGroup
             type="single"
@@ -71,6 +71,7 @@ export function CategoryGroup({ section, value, onCategoryChange }: Props) {
             spacing={2}
             value={value ?? ""}
             onValueChange={(value) => onCategoryChange(value || null)}
+            className={'w-full'}
         >
         {options.map(({ value, label, icon }) => (
                 <ToggleGroupItem

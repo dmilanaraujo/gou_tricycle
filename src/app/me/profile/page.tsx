@@ -19,8 +19,8 @@ export default async function ProfilePage() {
     if (!profileRes.success || !profileRes.data) {
         redirect("/sign-in");
     }
-    const { data: driver } = profileRes;
-    const incompleteData = incompleteProfileData(driver);
+    const { data: business } = profileRes;
+    const incompleteData = incompleteProfileData(business);
     return (
         <div className="relative py-4 mx-auto px-4 max-w-full md:max-w-6xl">
             <h2 className="text-2xl leading-10 sm:text-4xl md:text-[40px] md:leading-[3.25rem] font-bold tracking-tight flex items-center gap-3">
@@ -29,7 +29,7 @@ export default async function ProfilePage() {
                         <ArrowLeft/>
                     </Link>
                 </Button>
-                {driver.phone.slice(-8)}
+                {business.phone.slice(-8)}
             </h2>
             
             <div className="mt-4 flex flex-col lg:flex-row gap-6">
@@ -58,7 +58,7 @@ export default async function ProfilePage() {
                             <CardDescription>Datos personales</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <ProfileForm driver={driver}/>
+                            <ProfileForm business={business}/>
                         </CardContent>
                     </Card>
                     
@@ -76,7 +76,7 @@ export default async function ProfilePage() {
                             <CardDescription>Fotos que muestren en varios ángulos su vehículo, máximo 3 imágenes.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <ImagesForm driver={driver}/>
+                            <ImagesForm business={business}/>
                         </CardContent>
                     </Card>
                     
