@@ -65,15 +65,15 @@ export default async function BusinessDetailPage(
 
                 <div className="mt-2 flex flex-wrap gap-2 text-lg text-muted-foreground">
                     <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1 text-lg text-muted-foreground">
-                                <StarIcon className="w-4 h-4"/>
-                                <span className="font-bold">
+                        <div className="flex items-center gap-1 text-lg text-muted-foreground">
+                            <StarIcon className="w-4 h-4"/>
+                            <span className="font-bold">
                                     {business.rating}
                                 </span>
-                                <span>
+                            <span>
                                     ({business.reviews || 0}+)
                                 </span>
-                            </div>
+                        </div>
                     </div>
                     <span>• {business.sections?.[0]?.name}</span>
                     <span>• {business.categories?.[0]?.name}</span>
@@ -84,81 +84,189 @@ export default async function BusinessDetailPage(
                 </p>
 
                 <p className="flex gap-1 items-center text-md text-muted-foreground">
-                    <MapPin className="w-4 h-4" />{business.address}
+                    <MapPin className="w-4 h-4"/>{business.address}
                 </p>
             </section>
 
             {/* Ratings & Reviews */}
+            {/*<section className="w-full">*/}
+            {/*    <h3 className="text-2xl font-semibold mb-4">Valoraciones y Comentarios</h3>*/}
+
+            {/*    <div className="rounded-xl border bg-card p-6 flex flex-col md:flex-row gap-6">*/}
+
+            {/*        /!* Columna izquierda – Rating *!/*/}
+            {/*        <div className="flex flex-col items-center justify-center w-full md:w-1/4 border-r md:pr-6">*/}
+            {/*            <span className="text-5xl font-bold">{business.rating}</span>*/}
+
+            {/*            <div className="flex mt-2">*/}
+            {/*                {[1, 2, 3, 4, 5].map(i => (*/}
+            {/*                    <StarIcon*/}
+            {/*                        key={i}*/}
+            {/*                        className={`w-5 h-5 ${*/}
+            {/*                            i <= Math.round(business.rating)*/}
+            {/*                                ? "fill-amber-500 stroke-amber-500"*/}
+            {/*                                : "stroke-muted-foreground"*/}
+            {/*                        }`}*/}
+            {/*                    />*/}
+            {/*                ))}*/}
+            {/*            </div>*/}
+
+            {/*            <span className="mt-2 text-sm text-muted-foreground">*/}
+            {/*                {business.reviews}+ Votos*/}
+            {/*            </span>*/}
+            {/*        </div>*/}
+
+            {/*        <div className="flex-1 space-y-4">*/}
+            {/*            {reviews && reviews.length > 0 ? (*/}
+            {/*                reviews.slice(0, 2).map((review) => (*/}
+            {/*                    <div key={review.id}>*/}
+            {/*                        <p className="text-sm">"{review.comment}"</p>*/}
+
+            {/*                        <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">*/}
+            {/*                            <div className="flex">*/}
+            {/*                                {[1, 2, 3, 4, 5].map(i => (*/}
+            {/*                                    <StarIcon*/}
+            {/*                                        key={i}*/}
+            {/*                                        className={`w-4 h-4 ${*/}
+            {/*                                            i <= review.rating*/}
+            {/*                                                ? "fill-amber-500 stroke-amber-500"*/}
+            {/*                                                : "stroke-muted-foreground"*/}
+            {/*                                        }`}*/}
+            {/*                                    />*/}
+            {/*                                ))}*/}
+            {/*                            </div>*/}
+
+            {/*                            <span>{review.user_display_name ?? "Usuario"}</span>*/}
+            {/*                            <span>· {new Date(review.created_at).toLocaleDateString()}</span>*/}
+            {/*                        </div>*/}
+            {/*                    </div>*/}
+            {/*                ))*/}
+            {/*            ) : (*/}
+            {/*                <p className="text-sm text-muted-foreground">*/}
+            {/*                    Este negocio aún no tiene valoraciones.*/}
+            {/*                </p>*/}
+            {/*            )}*/}
+
+            {/*            {reviews && reviews.length > 2 && (*/}
+            {/*                <Button*/}
+            {/*                    variant="secondary"*/}
+            {/*                    className="px-3 py-1 rounded-full font-semibold transition hover:cursor-pointer bg-muted hover:bg-primary hover:text-white"*/}
+            {/*                >*/}
+            {/*                    <ArrowDownIcon className="w-4 h-4"/>*/}
+            {/*                    Mostrar más*/}
+            {/*                </Button>*/}
+            {/*            )}*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*</section>*/}
             <section className="w-full">
                 <h3 className="text-2xl font-semibold mb-4">Valoraciones y Comentarios</h3>
 
-                <div className="rounded-xl border bg-card p-6 flex flex-col md:flex-row gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                    {/* Columna izquierda – Rating */}
-                    <div className="flex flex-col items-center justify-center w-full md:w-1/4 border-r md:pr-6">
-                        <span className="text-5xl font-bold">{business.rating}</span>
+                    {/* Columna izquierda (Reviews) */}
+                    <div className="lg:col-span-2">
+                        <div className="rounded-xl border bg-card p-6 flex flex-col md:flex-row gap-6">
 
-                        <div className="flex mt-2">
-                            {[1, 2, 3, 4, 5].map(i => (
-                                <StarIcon
-                                    key={i}
-                                    className={`w-5 h-5 ${
-                                        i <= Math.round(business.rating)
-                                            ? "fill-amber-500 stroke-amber-500"
-                                            : "stroke-muted-foreground"
-                                    }`}
-                                />
-                            ))}
-                        </div>
+                            {/* Rating resumen */}
+                            <div className="flex flex-col items-center justify-center w-full md:w-1/4 border-r md:pr-6">
+                                <span className="text-5xl font-bold">{business.rating}</span>
 
-                        <span className="mt-2 text-sm text-muted-foreground">
-                            {business.reviews}+ Votos
-                        </span>
-                    </div>
-
-                    <div className="flex-1 space-y-4">
-                        {reviews && reviews.length > 0 ? (
-                            reviews.slice(0, 2).map((review) => (
-                                <div key={review.id}>
-                                    <p className="text-sm">"{review.comment}"</p>
-
-                                    <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
-                                        <div className="flex">
-                                            {[1, 2, 3, 4, 5].map(i => (
-                                                <StarIcon
-                                                    key={i}
-                                                    className={`w-4 h-4 ${
-                                                        i <= review.rating
-                                                            ? "fill-amber-500 stroke-amber-500"
-                                                            : "stroke-muted-foreground"
-                                                    }`}
-                                                />
-                                            ))}
-                                        </div>
-
-                                        <span>{review.user_display_name ?? "Usuario"}</span>
-                                        <span>· {new Date(review.created_at).toLocaleDateString()}</span>
-                                    </div>
+                                <div className="flex mt-2">
+                                    {[1, 2, 3, 4, 5].map(i => (
+                                        <StarIcon
+                                            key={i}
+                                            className={`w-5 h-5 ${
+                                                i <= Math.round(business.rating)
+                                                    ? "fill-amber-500 stroke-amber-500"
+                                                    : "stroke-muted-foreground"
+                                            }`}
+                                        />
+                                    ))}
                                 </div>
-                            ))
-                        ) : (
-                            <p className="text-sm text-muted-foreground">
-                                Este negocio aún no tiene valoraciones.
-                            </p>
-                        )}
 
-                        {reviews && reviews.length > 2 && (
-                            <Button
-                                variant="secondary"
-                                className="px-3 py-1 rounded-full font-semibold transition hover:cursor-pointer bg-muted hover:bg-primary hover:text-white"
-                            >
-                                <ArrowDownIcon className="w-4 h-4"/>
-                                Mostrar más
-                            </Button>
-                        )}
+                                <span className="mt-2 text-sm text-muted-foreground">
+            {business.reviews}+ Votos
+          </span>
+                            </div>
+
+                            {/* Reviews */}
+                            <div className="flex-1 space-y-4">
+                                {reviews && reviews.length > 0 ? (
+                                    reviews.slice(0, 2).map((review) => (
+                                        <div key={review.id}>
+                                            <p className="text-sm">"{review.comment}"</p>
+
+                                            <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
+                                                <div className="flex">
+                                                    {[1, 2, 3, 4, 5].map(i => (
+                                                        <StarIcon
+                                                            key={i}
+                                                            className={`w-4 h-4 ${
+                                                                i <= review.rating
+                                                                    ? "fill-amber-500 stroke-amber-500"
+                                                                    : "stroke-muted-foreground"
+                                                            }`}
+                                                        />
+                                                    ))}
+                                                </div>
+
+                                                <span>{review.user_display_name ?? "Usuario"}</span>
+                                                <span>· {new Date(review.created_at).toLocaleDateString()}</span>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-sm text-muted-foreground">
+                                        Este negocio aún no tiene valoraciones.
+                                    </p>
+                                )}
+
+                                {reviews && reviews.length > 2 && (
+                                    <Button
+                                        variant="secondary"
+                                        className="px-3 py-1 rounded-full font-semibold bg-muted hover:bg-primary hover:text-white"
+                                    >
+                                        <ArrowDownIcon className="w-4 h-4"/>
+                                        Mostrar más
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
                     </div>
+
+                    {/* Columna derecha (Destacado) */}
+                    <div className="lg:col-span-1">
+                        <div className="rounded-xl border bg-card p-6 h-full flex flex-col justify-between">
+
+                            <div>
+                                <Badge className="mb-3 bg-primary text-white">Destacado</Badge>
+
+                                <h4 className="text-lg font-semibold mb-2">
+                                    {business.name}
+                                </h4>
+
+                                <p className="text-sm text-muted-foreground mb-4">
+                                    {business.promotion
+                                        ? `Promoción activa: ${business.promotion}`
+                                        : "Este negocio es uno de los más recomendados de la zona."}
+                                </p>
+
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                    <StarIcon className="w-4 h-4 fill-amber-500 stroke-amber-500"/>
+                                    <span>{business.rating} ({business.reviews}+)</span>
+                                </div>
+                            </div>
+
+                            <Button className="mt-6 w-full">
+                                Ver ofertas
+                            </Button>
+                        </div>
+                    </div>
+
                 </div>
             </section>
+
 
         </main>
     );

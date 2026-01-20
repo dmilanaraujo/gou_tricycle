@@ -21,9 +21,7 @@ export async function searchBusinesses(query: string): Promise<SearchBusinessIte
           id,
           name,
           description,
-          business_sections(
-            section:sections(slug)
-          )
+          section:sections(slug)
         `)
         .eq("is_active", true)
         .or(`name.ilike.%${q}%,description.ilike.%${q}%,phone.ilike.%${q}%,whatsapp.ilike.%${q}%`)
