@@ -51,8 +51,8 @@ export function UpdatePasswordForm() {
 	
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+				<div className="grid grid-cols-1 gap-4">
 					<FormField
 						control={form.control}
 						name="password"
@@ -60,7 +60,7 @@ export function UpdatePasswordForm() {
 							<FormItem>
 								<FormLabel>Nueva contraseña</FormLabel>
 								<FormControl>
-									<Input type="password" placeholder='Ingrese la nueva contraseña' {...field} />
+									<Input type="password" placeholder="Ingrese la nueva contraseña" {...field} />
 								</FormControl>
 								<FormMessage/>
 							</FormItem>
@@ -73,14 +73,14 @@ export function UpdatePasswordForm() {
 							<FormItem>
 								<FormLabel>Confirmar contraseña</FormLabel>
 								<FormControl>
-									<Input type="password" placeholder='Confirme la nueva contraseña' {...field} />
+									<Input type="password" placeholder="Confirme la nueva contraseña" {...field} />
 								</FormControl>
 								<FormMessage/>
 							</FormItem>
 						)}
 					/>
 				</div>
-				<Button type='submit' className='w-full' disabled={!isValid || isSubmitting}>
+				<Button type="submit" className="w-full" disabled={!isValid || isSubmitting}>
 					{isSubmitting ? (
 						<span className="flex items-center">
 						<LoaderCircle  className="mr-3 animate-spin"/>

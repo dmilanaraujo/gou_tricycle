@@ -12,7 +12,7 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { UpdateProfileSchema, UpdateProfileValues} from '@/lib/schemas/auth';
+import { CompleteProfileSchema, CompleteProfileValues} from '@/lib/schemas/auth';
 import {toast} from 'sonner';
 import {LoaderCircle} from 'lucide-react';
 import React from 'react';
@@ -27,8 +27,8 @@ import {useGetSections} from '@/hooks/api/section';
 
 export function FormProfileForm({ business }: { business: Business; }) {
 	const router = useLoadingRouter();
-	const form = useForm<UpdateProfileValues>({
-		resolver: zodResolver(UpdateProfileSchema),
+	const form = useForm<CompleteProfileValues>({
+		resolver: zodResolver(CompleteProfileSchema),
 		defaultValues: {
 			name: business.name  || '',
 			description: business.description  || '',
@@ -44,7 +44,7 @@ export function FormProfileForm({ business }: { business: Business; }) {
 	const { isValid, isSubmitting, isDirty, errors} = form.formState;
 	const provinceValue = form.watch('province');
 	// 2. Define a submit handler.
-	async function onSubmit(values: UpdateProfileValues) {
+	async function onSubmit(values: CompleteProfileValues) {
 		// Do something with the form values.
 		// ✅ This will be type-safe and validated.
 		try {
@@ -79,7 +79,7 @@ export function FormProfileForm({ business }: { business: Business; }) {
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<FormField
 								control={form.control}
-								name='section'
+								name='section_id'
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>Tipo de negocio<span className="text-red-600">*</span></FormLabel>
@@ -87,7 +87,7 @@ export function FormProfileForm({ business }: { business: Business; }) {
 											<NativeSelect {...field} classNameContainer={'col-span-2 w-full'}>
 												<NativeSelectOption value="">Seleccione...</NativeSelectOption>
 												{sections?.map(p => (
-													<NativeSelectOption key={p.id} value={p.name}>{p.name}</NativeSelectOption>
+													<NativeSelectOption key={p.id} value={p.id}>{p.name}</NativeSelectOption>
 												))}
 											</NativeSelect>
 										</FormControl>

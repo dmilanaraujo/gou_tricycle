@@ -1,4 +1,5 @@
 import {DriverImage} from '@/components/ui/file-upload';
+import {SortingState} from '@tanstack/react-table';
 
 export const VEHICLE_TYPES = ['electric', 'combustion', 'hybrid'] as const
 
@@ -35,6 +36,25 @@ export type ActionError = {
 export type ActionResponse<T> =
     | { success: true; data?: T }
     | { success: false; errors?: ActionError[] };
+
+export type Option = {
+  value: string|number;
+  label: string;
+  disabled?: boolean;
+};
+export type ColumnMeta = {
+  columnDef?: {
+    meta?: {
+      filterName?: string
+    }
+  },
+  headerClassName?: string;
+  cellClassName?: string;
+}
+
+export type SortRequest = {
+  sorting?: SortingState;
+};
 
 export type PaginationRequest = {
   page?: number;
@@ -74,3 +94,10 @@ export class UploadFileError extends Error {
     this.file = file;
   }
 }
+
+export enum ActiveStatus {
+  active = 'active',
+  inactive = 'inactive',
+}
+
+export * from './business';

@@ -22,10 +22,10 @@ import {useLoadingRouter} from '@/providers/navigation-loading-provider';
 import {Business} from '@/types/business';
 
 interface ImagesFormProps {
-	business: Business;
+	profile: Business;
 }
 
-export function ImagesForm({ business }: ImagesFormProps) {
+export function ImagesForm({ profile }: ImagesFormProps) {
 	const router = useLoadingRouter();
 	const [files, setFiles] = React.useState<FileImage[]>([]
 		// business.images.map(image => ({
@@ -66,7 +66,7 @@ export function ImagesForm({ business }: ImagesFormProps) {
 					try {
 						const result = await uploadImage(
 							file.file!,
-							business.id,
+							profile.id,
 							(file, progress) => onProgress({ file, path: file.name, primary: false }, progress)
 						);
 						file.path = result.path;

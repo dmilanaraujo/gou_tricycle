@@ -46,7 +46,7 @@ export async function UserButton() {
                 sideOffset={4}
             >
                 <DropdownMenuLabel className="p-0 font-normal">
-                    <div className="flex items-center gap-2 px-5 pt-4 text-left text-sm">
+                    <div className="flex items-center gap-2 px-3 pt-4 text-left text-sm">
                         {/*<Avatar className="h-8 w-8 rounded-lg">*/}
                         {/*    /!*<AvatarImage src={avatar} alt={fullName} />*!/*/}
                         {/*    /!*<AvatarFallback className="rounded-lg">{avatarFallback}</AvatarFallback>*!/*/}
@@ -61,11 +61,14 @@ export async function UserButton() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                    <div>
-                        <LogoutButton className={'bg-transparent text-blue-900 hover:bg-transparent cursor-pointer'}>
-                            Cerrar
-                        </LogoutButton>
-                    </div>
+                    <a href={'/me'} className={'px-3 cursor-pointer'}>
+                        Mi panel
+                    </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <LogoutButton className={'bg-transparent text-blue-900 hover:bg-transparent cursor-pointer px-5'}>
+                        Cerrar
+                    </LogoutButton>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

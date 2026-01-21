@@ -9,7 +9,9 @@ import {LogoutButton} from '@/components/auth/logout-button';
 import {getProfile} from '@/lib/actions/profile';
 import {isProfileComplete} from '@/lib/utils';
 import {redirect} from 'next/navigation';
-import {UserButton} from '@/components/auth/user-button';
+import {AppSidebar} from '@/components/layout/app-sidebar';
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import {Separator} from '@/components/ui/separator';
 
 interface ManagerLayoutProps {
   children: React.ReactNode;
@@ -40,22 +42,28 @@ export default async function ManagerLayout({ children }: Readonly<ManagerLayout
   }
   
   return (
-        <div className={'flex min-h-svh w-full'}>
-          <main className={'flex w-full flex-1 flex-col'}>
-              <header className="sticky top-0 flex shrink-0 items-center gap-2 border-b bg-background p-2 z-10 justify-between">
-                  <Button asChild>
-                      <Link href='/'>
-                          <Home/>
-                      </Link>
-                  </Button>
-                  <UserButton/>
-                  {/*<LogoutButton/>*/}
+      <SidebarProvider
+          style={
+              {
+                  // "--sidebar-width": "350px",
+                  "--sidebar-width": "50px",
+              } as React.CSSProperties
+          }
+      >
+          <AppSidebar profile={business}/>
+          <SidebarInset>
+              <header className="bg-background sticky top-0 flex shrink-0 items-center gap-2 border-b p-4">
+                  <SidebarTrigger className="-ml-1" />
+                  <Separator
+                      orientation="vertical"
+                      className="mr-2 data-[orientation=vertical]:h-4"
+                  />
               </header>
-              <div className="flex flex-1 flex-col">
+              <div className="flex flex-1 flex-col gap-4 p-4">
                   <LoadingOverlay/>
                   {children}
               </div>
-          </main>
-        </div>
+          </SidebarInset>
+      </SidebarProvider>
   )
 }

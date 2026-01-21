@@ -16,26 +16,25 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { UpdateProfileSchema, UpdateProfileValues} from '@/lib/schemas/auth';
 import {toast} from 'sonner';
 import {LoaderCircle} from 'lucide-react';
-import React, {useEffect} from 'react';
-import {useRouter} from 'next/navigation';
+import React from 'react';
 import {updateProfile} from '@/lib/actions/profile';
 import {NativeSelect, NativeSelectOption} from '@/components/ui/native-select';
 import {municipalities, provinces} from '@/lib/data/locations';
-import {combustionTypes} from '@/lib/utils';
 import {useLoadingRouter} from '@/providers/navigation-loading-provider';
 import {Business} from '@/types/business';
 import {Textarea} from '@/components/ui/textarea';
+import {PhoneInput} from '@/components/ui/phone-input';
 
-export function ProfileForm({ business }: { business: Business; }) {
+export function ProfileForm({ profile }: { profile: Business; }) {
 	const router = useLoadingRouter();
 	const form = useForm<UpdateProfileValues>({
 		resolver: zodResolver(UpdateProfileSchema),
 		defaultValues: {
-			name: business.name  || '',
-			province: business.province || '',
-			municipality: business.municipality || '',
-			address: business.address || '',
-			whatsapp: business.whatsapp || '',
+			name: profile.name  || '',
+			province: profile.province || '',
+			municipality: profile.municipality || '',
+			address: profile.address || '',
+			whatsapp: profile.whatsapp || '',
 		},
 	});
 	
@@ -75,7 +74,7 @@ export function ProfileForm({ business }: { business: Business; }) {
 						<FormField
 							control={form.control}
 							name='name'
-							render={({ field }) => (
+							render={({field}) => (
 								<FormItem>
 									<FormLabel>Alias</FormLabel>
 									<FormControl>
@@ -84,30 +83,31 @@ export function ProfileForm({ business }: { business: Business; }) {
 									<FormDescription>
 										Nombre que saldrá visible en las búsquedas
 									</FormDescription>
-									<FormMessage />
+									<FormMessage/>
 								</FormItem>
 							)}
 						/>
 						<FormField
 							control={form.control}
-							name='description'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Descripción</FormLabel>
+							name="whatsapp"
+							render={({field}) => (
+								<FormItem className="space-y-0 mt-0">
+									<FormLabel>Número de contacto<span className="text-red-600">*</span></FormLabel>
 									<FormControl>
-										<Textarea placeholder='Entre la descripción' {...field} />
+										<PhoneInput value={field.value} onChange={field.onChange} defaultCountry="CU" countries={['CU']}
+										            international={false} placeholder='Entre el WhatsApp'/>
 									</FormControl>
 									<FormDescription>
-										Descripción de su negocio
+										Número de contacto de WhatsApp
 									</FormDescription>
-									<FormMessage />
+									<FormMessage/>
 								</FormItem>
 							)}
 						/>
 						<FormField
 							control={form.control}
 							name='province'
-							render={({ field }) => (
+							render={({field}) => (
 								<FormItem>
 									<FormLabel>Provincia</FormLabel>
 									<FormControl>
@@ -121,18 +121,18 @@ export function ProfileForm({ business }: { business: Business; }) {
 									<FormDescription>
 										Provincia actual donde operará
 									</FormDescription>
-									<FormMessage />
+									<FormMessage/>
 								</FormItem>
 							)}
 						/>
 						<FormField
 							control={form.control}
 							name='municipality'
-							render={({ field }) => (
+							render={({field}) => (
 								<FormItem>
 									<FormLabel>Municipio</FormLabel>
 									<FormControl>
-										<NativeSelect {...field} classNameContainer={'col-span-2 w-full'} >
+										<NativeSelect {...field} classNameContainer={'col-span-2 w-full'}>
 											<NativeSelectOption value="">Seleccione...</NativeSelectOption>
 											{(!!provinceValue && municipalities[provinceValue] || []).map(m => (
 												<NativeSelectOption key={m.value} value={m.value}>{m.label}</NativeSelectOption>
@@ -142,14 +142,32 @@ export function ProfileForm({ business }: { business: Business; }) {
 									<FormDescription>
 										Municipio actual donde operará
 									</FormDescription>
-									<FormMessage />
+									<FormMessage/>
+								</FormItem>
+							)}
+						/>
+					</div>
+					<div className='grid grid-cols-1 gap-4'>
+						<FormField
+							control={form.control}
+							name='description'
+							render={({field}) => (
+								<FormItem>
+									<FormLabel>Descripción</FormLabel>
+									<FormControl>
+										<Textarea placeholder='Entre la descripción' {...field} />
+									</FormControl>
+									<FormDescription>
+										Descripción de su negocio
+									</FormDescription>
+									<FormMessage/>
 								</FormItem>
 							)}
 						/>
 						<FormField
 							control={form.control}
 							name='address'
-							render={({ field }) => (
+							render={({field}) => (
 								<FormItem>
 									<FormLabel>Dirección</FormLabel>
 									<FormControl>
@@ -158,36 +176,15 @@ export function ProfileForm({ business }: { business: Business; }) {
 									<FormDescription>
 										Dirección física de su negocio si la tiene
 									</FormDescription>
-									<FormMessage />
+									<FormMessage/>
 								</FormItem>
 							)}
 						/>
-						{/*<FormField*/}
-						{/*	control={form.control}*/}
-						{/*	name='vehicle_type'*/}
-						{/*	render={({ field }) => (*/}
-						{/*		<FormItem>*/}
-						{/*			<FormLabel>Tipo de combustible</FormLabel>*/}
-						{/*			<FormControl>*/}
-						{/*				<NativeSelect {...field} classNameContainer={'col-span-2 w-full'}>*/}
-						{/*					<NativeSelectOption value="">Seleccione...</NativeSelectOption>*/}
-						{/*					{combustionTypes.map(({ value, label }) => (*/}
-						{/*						<NativeSelectOption key={value} value={value}>{label}</NativeSelectOption>*/}
-						{/*					))}*/}
-						{/*				</NativeSelect>*/}
-						{/*			</FormControl>*/}
-						{/*			<FormDescription>*/}
-						{/*				Tipo de combustible de su vehículo*/}
-						{/*			</FormDescription>*/}
-						{/*			<FormMessage />*/}
-						{/*		</FormItem>*/}
-						{/*	)}*/}
-						{/*/>*/}
 					</div>
 					<Button type='submit' className='w-full' disabled={!isValid || isSubmitting || !isDirty}>
 						{isSubmitting ? (
 							<span className="flex items-center">
-								<LoaderCircle  className="mr-3 animate-spin"/>
+								<LoaderCircle className="mr-3 animate-spin"/>
 								{'Enviando...'}
 							</span>
 						) : 'Actualizar'

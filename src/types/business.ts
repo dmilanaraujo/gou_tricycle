@@ -51,3 +51,12 @@ export type BusinessCategory = {
         name: string
         slug: string
 }
+
+export type Service = {
+    id?: string;
+    business_id?: string;
+    name?: string;
+    description?: string;
+    price?: number;
+    is_active: boolean;
+}

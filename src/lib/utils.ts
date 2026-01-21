@@ -6,6 +6,7 @@ import imageCompression from 'browser-image-compression';
 import {z} from 'zod';
 import {isAfter, parseISO, startOfDay} from 'date-fns';
 import {Business} from '@/types/business';
+import {toast} from 'sonner';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -155,6 +156,9 @@ export const incompleteProfileData = (profile: Business) => {
     // if (profile.images.length == 0) {
     //     incompleteData.push('Imágenes');
     // }
+    if (!profile.section) {
+        incompleteData.push('Sección');
+    }
     if (!profile.name) {
         incompleteData.push('Nombre');
     }
@@ -281,4 +285,13 @@ export function revokeImageUrls(images: OptimizedImages[]): void {
 
 export function getPublicImageUrl(path: string) {
     return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/driver_images/${path}`;
+}
+
+export const showActionErrors = (errors?: ActionError[], toastId?: string|number) => {
+    errors?.forEach((error) => {
+        toast.error('Error', {
+            id: toastId,
+            description: error.message,
+        });
+    });
 }

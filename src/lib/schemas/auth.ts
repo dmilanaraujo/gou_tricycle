@@ -23,15 +23,17 @@ export const SignUpSchema = z.object({
 	path: ["confirm_password"],
 });
 
-export const UpdateProfileSchema = z.object({
+export const CompleteProfileSchema = z.object({
 	name: z.string(),
-	section: z.string(),
+	section_id: z.string({ error: 'El tipo de negocio es requerido'}).min(1),
 	whatsapp: PhoneSchema,
-	province: z.string(),
-	municipality: z.string(),
+	province: z.string({ error: 'La provincia es requerida'}).min(1),
+	municipality: z.string({ error: 'El municipio es requerido' }).min(1),
 	description: z.string().optional(),
 	address: z.string().optional(),
 });
+
+export const UpdateProfileSchema = CompleteProfileSchema.partial();
 
 export const UpdatePasswordSchema = z.object({
 	password: z.string({ error: "Valor requerido" })
@@ -66,6 +68,7 @@ export const VerifyOtpSchema = z.object({
 
 export type UpdatePasswordValues = z.infer<typeof UpdatePasswordSchema>;
 export type UpdateProfileValues = z.infer<typeof UpdateProfileSchema>;
+export type CompleteProfileValues = z.infer<typeof CompleteProfileSchema>;
 export type ImageFormValues = z.infer<typeof ImageSchema>;
 export type ForgotPasswordFormValues = z.infer<typeof ForgotPasswordSchema>;
 export type VerifyOtpFormValues = z.infer<typeof VerifyOtpSchema>;
