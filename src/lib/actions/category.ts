@@ -15,7 +15,7 @@ export async function listCategories(sectionId?: string): Promise<ActionResponse
        const supabase = await createClient()
        
        let query = supabase
-        .from("categories")
+        .from("system_categories")
         .select("*", { count: "exact" });
        
        if (sectionId != null) {
@@ -52,7 +52,7 @@ export async function createCategory(input: CategoryFormValues): Promise<ActionR
         }
         
         const { data, error } = await supabase
-            .from("categories")
+            .from("system_categories")
             .insert(validatedFields.data)
             .select("*");
         
@@ -80,7 +80,7 @@ export async function updateCategory(input: Partial<CategoryFormValues>): Promis
             return { success: false, errors: [{ message: 'Usuario no autenticado o no se pudo obtener el usuario.' }] };
         }
         const { data, error } = await supabase
-            .from("categories")
+            .from("system_categories")
             .update(input)
             .eq("id", input.id)
             .select("*");
@@ -106,7 +106,7 @@ export async function deleteCategories(ids: number[]): Promise<ActionResponse<vo
         const numericIds = ids.map(id => Number(id));
         
         const { error } = await supabase
-            .from("categories")
+            .from("system_categories")
             .delete()
             .in("id", numericIds);
         

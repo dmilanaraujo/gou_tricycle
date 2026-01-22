@@ -13,6 +13,7 @@ export const useInfinityBusinesses = (
   params: BusinessFiltersValues & PaginationRequest,
   options?: Partial<UseInfiniteQueryOptions<ResultList<Business>, Error, TDataResultBusiness, QueryKey, number>>
 ) => {
+
   return useInfiniteQuery({
     queryKey: ['businesses', params],
     queryFn: async ({ pageParam = 0 }) => {

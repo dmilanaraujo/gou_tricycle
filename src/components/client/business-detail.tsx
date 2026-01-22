@@ -11,6 +11,8 @@ import * as React from "react";
 import {ReviewInput} from "@/components/client/review-input";
 import {QuickReviewBar} from "@/components/client/quick-review-bar";
 import {FeaturedOffersCarousel} from "@/components/client/featured-offers-carousel";
+import {ScrollableTabs} from "@/components/client/scrollable-tabs";
+import {useState} from "react";
 
 const WhatsAppIcon = () => (
     <svg
@@ -85,8 +87,125 @@ const featuredItems = [
     },
 ]
 
+const menuTabs = [
+    { value: "offers", label: "Offers" },
+    { value: "build", label: "Build Your Own" },
+    { value: "specialty", label: "Specialty Pizzas" },
+    { value: "breads", label: "Breads" },
+    { value: "wings", label: "Chicken & Wings" },
+    { value: "pasta", label: "Oven-Baked Pastas" },
+    { value: "sandwiches", label: "Sandwiches" },
+    { value: "salads", label: "Salads" },
+    { value: "tots", label: "Loaded Tots" },
+    { value: "pizza", label: "Pizzas" },
+    { value: "aaa", label: "AAa" },
+    { value: "bbb", label: "BBb" },
+    { value: "ccc", label: "CCc" },
+    { value: "ddd", label: "DDd" },
+]
+
+type Product = {
+    id: string
+    name: string
+    price: number
+    image: string
+}
+
+type Section = {
+    id: string
+    title: string
+    products: Product[]
+}
+
+const sections: Section[] = [
+    {
+        id: "offers",
+        title: "Offers",
+        products: [{
+            id: "string",
+            name: "string",
+            price: 123,
+            image: "string",
+        }]
+    },
+    {
+        id: "build",
+        title: "Builds",
+        products: [{
+            id: "string",
+            name: "string",
+            price: 123,
+            image: "string",
+        }]
+    },
+    {
+        id: "pizza",
+        title: "Pizzas",
+        products: [{
+            id: "pizza-1",
+            name: "string",
+            price: 123,
+            image: "string",
+        }, {
+            id: "pizza-2",
+            name: "string",
+            price: 123,
+            image: "string",
+        }, {
+            id: "pizza-3",
+            name: "string",
+            price: 123,
+            image: "string",
+        }, {
+            id: "pizza-4",
+            name: "string",
+            price: 123,
+            image: "string",
+        }, {
+            id: "pizza-5",
+            name: "string",
+            price: 123,
+            image: "string",
+        }]
+    },
+    {
+        id: "pasta",
+        title: "Pastas",
+        products: [{
+            id: "string",
+            name: "string",
+            price: 123,
+            image: "string",
+        }]
+    },
+]
+
+function ProductCard({ product }: any) {
+    return (
+        <div className="rounded-xl border bg-card p-3 hover:shadow-sm transition">
+            <div className="relative h-32 w-full">
+                <Image
+                    src={product.image}
+                    alt={product.title || "producto"}
+                    fill
+                    className="object-contain"
+                />
+            </div>
+
+            <h4 className="font-semibold mt-2 text-sm">
+                {product.title}
+            </h4>
+
+            <p className="text-sm text-muted-foreground">
+                ${product.price.toFixed(2)}
+            </p>
+        </div>
+    )
+}
 
 export default function BusinessDetail({ business, reviews }: any) {
+    const productsRef = React.useRef<HTMLDivElement>(null)
+    const [activeTab, setActiveTab] = useState("offers")
 
     const provinceLabel =
         provinces.find(p => p.value === business.province)?.label || business.province
@@ -96,6 +215,35 @@ export default function BusinessDetail({ business, reviews }: any) {
         business.municipality
 
     const fullLocationLabel = `${municipalityLabel}, ${provinceLabel}`
+
+    React.useEffect(() => {
+        const container = productsRef.current
+        if (!container) return
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const visible = entries
+                    .filter(e => e.isIntersecting)
+                    .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
+
+                if (visible) {
+                    setActiveTab(visible.target.id)
+                }
+            },
+            {
+                root: container,
+                threshold: 0.4,
+            }
+        )
+
+        sections.forEach(section => {
+            const el = document.getElementById(section.id)
+            if (el) observer.observe(el)
+        })
+
+        return () => observer.disconnect()
+    }, [])
+
 
     return (
         <main className="min-h-screen bg-background pt-2 w-full max-w-screen-xl mx-auto px-10 pb-8">
@@ -268,6 +416,54 @@ export default function BusinessDetail({ business, reviews }: any) {
                         title="Oferta y Promociones"
                         items={featuredItems}
                     />
+                </div>
+            </section>
+
+            {/* Service + Products */}
+            <section className="w-full mt-6 sticky top-0 bg-background z-10">
+                <ScrollableTabs
+                    title="Productos"
+                    tabs={sections.map(s => ({ value: s.id, label: s.title }))}
+                    defaultValue="offers"
+                    value={activeTab}
+                    onChange={(value) => {
+                        setActiveTab(value)
+
+                        const container = productsRef.current
+                        const target = document.getElementById(value)
+
+                        if (!container || !target) return
+
+                        container.scrollTo({
+                            top: target.offsetTop - container.offsetTop,
+                            behavior: "smooth",
+                        })
+                    }}
+                />
+
+                {/* 2️⃣ Listado único con secciones */}
+                {/*<div className="space-y-10 mt-6">*/}
+                <div
+                    ref={productsRef}
+                    className="space-y-10 mt-6 max-h-[70vh] overflow-y-auto pr-2 scroll-smooth no-scrollbar"
+                >
+                    {sections.map(section => (
+                        <section
+                            key={section.id}
+                            id={section.id}
+                            className="scroll-mt-32"
+                        >
+                            <h3 className="text-2xl font-semibold mb-4">
+                                {section.title}
+                            </h3>
+
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                {section.products.map(product => (
+                                    <ProductCard key={product.id} product={product}/>
+                                ))}
+                            </div>
+                        </section>
+                    ))}
                 </div>
             </section>
 

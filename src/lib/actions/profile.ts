@@ -22,8 +22,8 @@ export const getProfile = async (cStore?: ReturnType<typeof cookies>): Promise<A
               vehicle_type
             ),
             section:sections(id, name, slug),
-            categories:business_categories(
-              category:categories(id, name, slug)
+            categories:business_system_categories(
+              category:system_categories(id, name, slug)
             )
         `)
         .eq("id", user.id)
