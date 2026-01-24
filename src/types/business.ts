@@ -1,4 +1,5 @@
 import {VehicleTypeEnum} from "@/types/index";
+import {BusinessImage} from '@/components/ui/file-upload';
 
 export const PROMOTION_TYPES = ['nuevo', 'destacado', 'popular', 'recomendado', 'en_oferta', 'envio_gratis', 'top_valorado'] as const
 
@@ -28,6 +29,7 @@ export type Business = {
         id: string
         vehicle_type: VehicleTypeEnum
     }[];
+    images: BusinessImage[];
 };
 
 export const promotions = [
@@ -59,4 +61,11 @@ export type Service = {
     description?: string;
     price?: number;
     is_active: boolean;
+}
+
+// export type ImageType = 'logo' | 'banner' | 'normal';
+export enum ImageType {
+    logo = 'logo',
+    banner = 'banner',
+    normal = 'normal'
 }

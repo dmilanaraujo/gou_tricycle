@@ -1,4 +1,4 @@
-import {DriverImage} from '@/components/ui/file-upload';
+import {BusinessImage} from '@/components/ui/file-upload';
 import {SortingState} from '@tanstack/react-table';
 
 export const VEHICLE_TYPES = ['electric', 'combustion', 'hybrid'] as const
@@ -15,7 +15,7 @@ export type Driver = {
   id: string;
   phone: string;
   alias: string;
-  images: DriverImage[];
+  images: BusinessImage[];
   province: string;
   municipality: string;
   vehicle_type: VehicleType;
@@ -74,9 +74,9 @@ export type ResultList<TData> = {
 };
 
 export interface OptimizedImages {
-  thumbnail: File;
+  thumbnail?: File;
   fullSize: File;
-  thumbnailUrl: string;
+  thumbnailUrl?: string;
   fullSizeUrl: string;
 }
 

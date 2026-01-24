@@ -1,6 +1,6 @@
 "use client";
 
-import {cn, getPublicImageUrl} from '@/lib/utils';
+import {cn} from '@/lib/utils';
 import { Slot } from "@radix-ui/react-slot";
 import {
 	FileArchiveIcon,
@@ -69,17 +69,22 @@ function useDirection(dirProp?: Direction): Direction {
 	return dirProp ?? contextDir ?? "ltr";
 }
 
-export type DriverImage = {
+export type BusinessImage = {
 	path: string;
 	path_thumbnail?: string;
 	primary: boolean;
+	fullPublicUrl?: string;
+	thumbnailPublicUrl?: string;
 }
 
 export interface FileImage {
 	file?: File | undefined;
-	image?: DriverImage;
+	image?: BusinessImage;
 	path: string;
+	fullPublicUrl?: string;
+	thumbnailPublicUrl?: string;
 	primary: boolean;
+	isRemote?: boolean;
 }
 
 interface FileState {
@@ -1029,8 +1034,9 @@ function getFileIcon(file: File) {
 	return <FileIcon />;
 }
 
-export function isDriverImage(value: FileImage): boolean {
-	return !!value.image;
+export function isRemoteImage(value: FileImage): boolean {
+	// return !!value.image;
+	return value.isRemote ?? false;
 }
 
 interface FileUploadItemPreviewProps
@@ -1057,11 +1063,11 @@ const FileUploadItemPreview = React.forwardRef<
 	const onPreviewRender = React.useCallback(
 		(file: FileImage) => {
 			
-			if (file.image) {
+			if (isRemoteImage(file)) {
 				return (
 					<img
-						src={getPublicImageUrl(file.image.path_thumbnail ?? file.image.path)}
-						alt="Imagen del vehículo"
+						src={file.thumbnailPublicUrl ?? file.fullPublicUrl}
+						alt="Imagen"
 						className="size-full rounded object-cover"
 					/>
 				);
@@ -1143,13 +1149,13 @@ const FileUploadItemMetadata = React.forwardRef<
 	          id={itemContext.nameId}
 	          className="truncate font-medium text-sm"
           >
-            {isDriverImage(itemContext.fileState.file) ? '' : itemContext.fileState.file.file!.name}
+            {isRemoteImage(itemContext.fileState.file) ? '' : itemContext.fileState.file.file!.name}
           </span>
 					<span
 						id={itemContext.sizeId}
 						className="text-muted-foreground text-xs"
 					>
-            {isDriverImage(itemContext.fileState.file) ? '' : formatBytes(itemContext.fileState.file.file!.size)}
+            {isRemoteImage(itemContext.fileState.file) ? '' : formatBytes(itemContext.fileState.file.file!.size)}
           </span>
 					{itemContext.fileState.error && (
 						<span
@@ -1333,7 +1339,7 @@ const FileUploadItemDelete = React.forwardRef<
 	
 	const ItemDeletePrimitive = asChild ? Slot : "button";
 	if (isDeleting) {
-		return <RefreshCw/>;
+		return null;
 	}
 	return (
 		<ItemDeletePrimitive
@@ -1414,7 +1420,7 @@ const FileUploadItemPrimary = React.forwardRef<
 	const itemContext = useFileUploadItemContext(ITEM_PRIMARY_NAME);
 	
 	if (!itemContext.fileState?.file) return null;
-	if (!isDriverImage(itemContext.fileState.file)) return null;
+	if (!isRemoteImage(itemContext.fileState.file)) return null;
 	
 	// if (!itemContext.fileState.file.image?.primary) {
 	// 	return null;

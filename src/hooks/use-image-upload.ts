@@ -1,11 +1,17 @@
 import { useState} from 'react';
-import { UploadedImage, UploadFileError} from '@/types';
+import {ImageType, UploadedImage, UploadFileError} from '@/types';
 import {getPublicImageUrl, optimizeImage, revokeImageUrls} from '@/lib/utils';
 import {createClient} from '@/lib/supabase/client';
 
 interface UseImageUploadReturn {
-	uploadImage: (file: File, userId: string, onProgress?: (file: File, progress: number) => void) => Promise<UploadedImage>;
-	removeImage: (path: string) => Promise<boolean>;
+	uploadImage: (
+		bucket: string,
+		file: File,
+		userId: string,
+		type: ImageType,
+		onProgress?: (file: File, progress: number) => void
+	) => Promise<UploadedImage>;
+	removeImage: (bucket: string, path: string) => Promise<boolean>;
 	isUploading: boolean;
 	progress: number;
 	error: string | null;
@@ -17,8 +23,10 @@ export function useImageUpload(): UseImageUploadReturn {
 	const [error, setError] = useState<string | null>(null);
 	
 	const uploadImage = async (
+		bucket: string,
 		file: File,
 		userId: string,
+		type: ImageType,
 		onProgress?: (file: File, progress: number) => void
 	): Promise<UploadedImage> => {
 		setIsUploading(true);
@@ -32,33 +40,35 @@ export function useImageUpload(): UseImageUploadReturn {
 			setProgress(10);
 			onProgress?.(file, 10);
 			
-			const optimizedImage = await optimizeImage(file, userId)
+			const optimizedImage = await optimizeImage(file, userId, type)
 			setProgress(20);
 			onProgress?.(file, 20);
 			
 			// Paso 2: Subir a Supabase (80% del progreso)
-			const bucket = 'driver_images';
-			// try {
-			const { error: errorThumbnail } = await supabase.storage
-				.from(bucket)
-				.upload(optimizedImage.thumbnail.name, optimizedImage.thumbnail, {
-					cacheControl: '31536000', // 1 año
-					upsert: false
-				});
-			setProgress(60);
-			onProgress?.(file, 60);
-			
-			if (errorThumbnail) {
-				throw new UploadFileError('Error al subir el thumbnail', file);
+			if (optimizedImage.thumbnail) {
+				const { error: errorThumbnail } = await supabase.storage
+					.from(bucket)
+					.upload(optimizedImage.thumbnail.name, optimizedImage.thumbnail, {
+						cacheControl: '31536000', // 1 año
+						upsert: false
+					});
+				setProgress(60);
+				onProgress?.(file, 60);
+				
+				if (errorThumbnail) {
+					throw new UploadFileError('Error al subir el thumbnail', file);
+				}
 			}
-			// try {
+
 			const { error: erroFullSize } = await supabase.storage
 					.from(bucket)
 					.upload(optimizedImage.fullSize.name, optimizedImage.fullSize, {
 						cacheControl: '31536000',
 						upsert: false,
 						metadata: {
-							driver_id: userId
+							business_id: userId,
+							logo: type == ImageType.logo,
+							banner: type == ImageType.banner,
 						}
 					});
 				setProgress(80);
@@ -73,31 +83,13 @@ export function useImageUpload(): UseImageUploadReturn {
 				throw new UploadFileError('Error al subir la imagen', file);
 			}
 			
-			// } catch (err) {
-			// 	throw new UploadFileError('Error al subir el thumbnail', file);
-			// }
-			
-
-			// Paso 3: Obtener URLs públicas
-			// const { data: thumbData } = supabase.storage
-			// 	.from('driver-images')
-			// 	.getPublicUrl(optimizedImage.thumbnail.name);
-			//
-			// setProgress(90);
-			// onProgress?.(file, 90);
-			//
-			// const { data: fullData } = supabase.storage
-			// 	.from('driver-images')
-			// 	.getPublicUrl(optimizedImage.fullSize.name);
 			
 			setProgress(95);
 			onProgress?.(file, 95);
 			
 			const uploadedImage = {
-				// thumbnailUrl: thumbData.publicUrl,
-				thumbnailUrl: getPublicImageUrl(optimizedImage.thumbnail.name),
-				// fullSizeUrl: fullData.publicUrl,
-				fullSizeUrl: getPublicImageUrl(optimizedImage.fullSize.name),
+				thumbnailUrl: optimizedImage.thumbnail ? getPublicImageUrl(bucket, optimizedImage.thumbnail.name) : '',
+				fullSizeUrl: getPublicImageUrl(bucket, optimizedImage.fullSize.name),
 				path: optimizedImage.fullSize.name
 			};
 			
@@ -117,14 +109,14 @@ export function useImageUpload(): UseImageUploadReturn {
 		}
 	};
 	
-	const removeImage = async (path: string) => {
+	const removeImage = async (bucket: string, path: string) => {
 		if (!path) {
 			return false;
 		}
 		try {
 			const supabase = createClient()
 			const { error } = await supabase.storage
-				.from('driver_images')
+				.from(bucket)
 				.remove([path]);
 		} catch (err) {
 			return false;

@@ -1,15 +1,17 @@
 'use client';
 
 import React from 'react';
-import { toast } from 'sonner';
+import {toast} from 'sonner';
 import {Check, Upload, X} from 'lucide-react';
 import {
 	FileImage,
 	FileUpload,
 	FileUploadDropzone,
-	FileUploadItem, FileUploadItemDelete,
+	FileUploadItem,
+	FileUploadItemDelete,
 	FileUploadItemMetadata,
-	FileUploadItemPreview, FileUploadItemPrimary,
+	FileUploadItemPreview,
+	FileUploadItemPrimary,
 	FileUploadItemProgress,
 	FileUploadList,
 	FileUploadTrigger,
@@ -19,30 +21,35 @@ import {useImageUpload} from '@/hooks/use-image-upload';
 import {useConfirm} from '@/components/common/confirm-dialog-provider';
 import {setDefaultImage} from '@/lib/actions/drivers';
 import {useLoadingRouter} from '@/providers/navigation-loading-provider';
-import {Business} from '@/types/business';
+import {Business, ImageType} from '@/types/business';
+import {getPublicImageUrl} from '@/lib/utils';
 
 interface ImagesFormProps {
+	bucket: string;
 	profile: Business;
 }
 
-export function ImagesForm({ profile }: ImagesFormProps) {
+export function ImagesForm({ bucket, profile }: ImagesFormProps) {
 	const router = useLoadingRouter();
-	const [files, setFiles] = React.useState<FileImage[]>([]
-		// business.images.map(image => ({
-		// 	image,
-		// 	path: image.path,
-		// 	primary: image.primary
-		// }))
+	const [files, setFiles] = React.useState<FileImage[]>(
+		profile.images?.map(image => ({
+			image,
+			isRemote: true,
+			path: image.path,
+			primary: image.primary,
+			fullPublicUrl: getPublicImageUrl(bucket, image.path),
+			thumbnailPublicUrl: image.path_thumbnail ? getPublicImageUrl(bucket, image.path_thumbnail) : undefined,
+		}))
 	);
-
+	
 	const { uploadImage, removeImage } = useImageUpload();
 	const confirm = useConfirm();
 	
 	const refreshPrimaryValue = (path: string) => {
-		const updatedFiles: FileImage[] = files.map(f => ({
+		const updatedFiles: FileImage[] = files?.map(f => ({
 			...f,
 			primary: f.path == path,
-		}))
+		})) || [];
 		setFiles(updatedFiles);
 	}
 	
@@ -65,8 +72,10 @@ export function ImagesForm({ profile }: ImagesFormProps) {
 				const uploadPromises = files.map(async (file) => {
 					try {
 						const result = await uploadImage(
+							bucket,
 							file.file!,
 							profile.id,
+							ImageType.normal,
 							(file, progress) => onProgress({ file, path: file.name, primary: false }, progress)
 						);
 						file.path = result.path;
@@ -100,7 +109,7 @@ export function ImagesForm({ profile }: ImagesFormProps) {
 	const onFileRemove = React.useCallback(async (file: FileImage) => {
 		if (!!file.path || !!file.image?.path) {
 			const toastId = toast.loading('Eliminando imagen...')
-			const result = await removeImage(file.path || file.image!.path);
+			const result = await removeImage(bucket,file.path || file.image!.path);
 			if (result) {
 				toast.success('Imagen eliminada correctamente', {
 					id: toastId
@@ -148,15 +157,15 @@ export function ImagesForm({ profile }: ImagesFormProps) {
 	const maxFiles = 3;
 	const maxSize = 3;
 	return (
-		<div className="space-y-6 max-w-md mx-auto">
+		<div className="space-y-6 w-full">
 			<div className="flex justify-center mb-4">
-				<div className="relative">
+				<div className="relative w-full">
 					<FileUpload
 						value={files}
 						onValueChange={setFiles}
 						maxFiles={maxFiles}
 						maxSize={maxSize * 1024 * 1024}
-						className="w-full max-w-md"
+						className="w-full"
 						accept="image/*"
 						onUpload={onUpload}
 						onFileReject={onFileReject}
@@ -192,10 +201,10 @@ export function ImagesForm({ profile }: ImagesFormProps) {
 								</Button>
 							</FileUploadTrigger>
 						</FileUploadDropzone>
-						<FileUploadList orientation="horizontal">
+						<FileUploadList orientation="horizontal" className='grid grid-cols-1 md:grid-cols-3'>
 							{files.map((file, index) => (
 								<FileUploadItem key={index} value={file} className="p-0">
-									<FileUploadItemPreview className="size-20">
+									<FileUploadItemPreview className="w-full h-full">
 										<FileUploadItemProgress circular={true}/>
 									</FileUploadItemPreview>
 									{/*<FileUploadItemPreview />*/}

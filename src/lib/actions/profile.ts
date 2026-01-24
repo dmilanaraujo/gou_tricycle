@@ -24,7 +24,8 @@ export const getProfile = async (cStore?: ReturnType<typeof cookies>): Promise<A
             section:sections(id, name, slug),
             categories:business_system_categories(
               category:system_categories(id, name, slug)
-            )
+            ),
+            images:business_images(*)
         `)
         .eq("id", user.id)
         .single();

@@ -44,7 +44,8 @@ export const getBusinesses = async (
         section:sections!inner(id, name, slug),
         categories:business_system_categories!inner(
           category:system_categories!inner(id, name, slug)
-        )
+        ),
+        images:business_images(*)
       `, { count: "exact" })
       .eq("is_active", true)
 
@@ -112,7 +113,8 @@ export const getBusinessById = async (id: string) => {
       section:sections!inner(id, name, slug),
       categories:business_system_categories!inner(
         category:system_categories!inner(id, name, slug)
-      )
+      ),
+      images:business_images(*)
     `)
       .eq("id", id)
       .eq("is_active", true)

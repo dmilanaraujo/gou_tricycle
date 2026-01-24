@@ -59,7 +59,7 @@ export function BusinessCard({business}: BusinessCardProps) {
             <CardContent className="px-0 pb-0">
                 <div className="relative w-full aspect-video h-[180px] rounded-xl overflow-hidden">
                     <Image
-                        src={getPublicImageUrl(business.logo)}
+                        src={getPublicImageUrl('business_images', business.logo)}
                         alt="Banner"
                         fill
                         className="object-cover"

@@ -1,10 +1,9 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import {AuthError, PostgrestError} from '@supabase/supabase-js';
-import {ActionError, Driver, OptimizedImages, UploadFileError, type VehicleType} from '@/types';
+import {ActionError, ImageType, OptimizedImages, UploadFileError, type VehicleType} from '@/types';
 import imageCompression from 'browser-image-compression';
 import {z} from 'zod';
-import {isAfter, parseISO, startOfDay} from 'date-fns';
 import {Business} from '@/types/business';
 import {toast} from 'sonner';
 
@@ -191,6 +190,7 @@ export const combustionTypes: { value: VehicleType; label: string }[] = [
 export async function optimizeImage(
     file: File,
     userId: string,
+    type: ImageType,
     imageIndex?: number
 ): Promise<OptimizedImages> {
     
@@ -218,11 +218,14 @@ export async function optimizeImage(
     };
     
     try {
-        // Comprimir ambas versiones en paralelo
-        const [thumbnailBlob, fullSizeBlob] = await Promise.all([
-            imageCompression(file, thumbnailOptions),
+        const compressionTasks = [
             imageCompression(file, fullSizeOptions)
-        ]);
+        ];
+        if (type == ImageType.normal) {
+            compressionTasks.push(imageCompression(file, thumbnailOptions))
+        }
+        // Comprimir ambas versiones en paralelo
+        const [fullSizeBlob, thumbnailBlob] = await Promise.all(compressionTasks);
         
         // Crear nombres únicos para Supabase
         const timestamp = Date.now();
@@ -230,16 +233,16 @@ export async function optimizeImage(
         const fullSizeName = `${userId}/full_${!!imageIndex ? imageIndex + '_' : ''}${timestamp}.webp`;
         
         // Convertir Blobs a Files
-        const thumbnailFile = new File([thumbnailBlob], thumbnailName, {
+        const thumbnailFile = type == ImageType.normal ? new File([thumbnailBlob], thumbnailName, {
             type: 'image/webp'
-        });
+        }) : undefined;
         
         const fullSizeFile = new File([fullSizeBlob], fullSizeName, {
             type: 'image/webp'
         });
         
         // Crear URLs temporales para preview (opcional)
-        const thumbnailUrl = URL.createObjectURL(thumbnailBlob);
+        const thumbnailUrl = type == ImageType.normal ? URL.createObjectURL(thumbnailBlob) : '';
         const fullSizeUrl = URL.createObjectURL(fullSizeBlob);
         
         return {
@@ -255,36 +258,19 @@ export async function optimizeImage(
 }
 
 /**
- * Procesa múltiples imágenes (hasta 3 para el perfil)
- */
-export async function optimizeMultipleImages(
-    files: File[],
-    userId: string
-): Promise<OptimizedImages[]> {
-    
-    // if (files.length > 3) {
-    //     throw new Error('Máximo 3 imágenes permitidas');
-    // }
-    
-    const optimizationPromises = files.map((file, index) =>
-        optimizeImage(file, userId, index)
-    );
-    
-    return Promise.all(optimizationPromises);
-}
-
-/**
  * Limpia las URLs temporales creadas para preview
  */
 export function revokeImageUrls(images: OptimizedImages[]): void {
     images.forEach(img => {
-        URL.revokeObjectURL(img.thumbnailUrl);
+        if (!!img.thumbnailUrl) {
+            URL.revokeObjectURL(img.thumbnailUrl);
+        }
         URL.revokeObjectURL(img.fullSizeUrl);
     });
 }
 
-export function getPublicImageUrl(path: string) {
-    return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/driver_images/${path}`;
+export function getPublicImageUrl(bucket: string, path: string) {
+    return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucket}/${path}`;
 }
 
 export const showActionErrors = (errors?: ActionError[], toastId?: string|number) => {

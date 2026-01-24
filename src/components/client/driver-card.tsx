@@ -48,7 +48,7 @@ export function DriverCard({ driver }: DriverCardProps) {
               <ItemMedia variant="image" onClick={() => setIsCarouselOpen(true)}>
                   {!!sortedImages[0]?.path_thumbnail ? (
                       <Image
-                          src={getPublicImageUrl(sortedImages[0].path_thumbnail)}
+                          src={sortedImages[0].fullPublicUrl!}
                           alt={`Vehículo de ${driver.alias}`}
                           width={48}
                           height={48}
