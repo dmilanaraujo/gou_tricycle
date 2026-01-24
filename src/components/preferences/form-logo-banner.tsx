@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { toast } from 'sonner';
-import { ImageOff,  X} from 'lucide-react';
+import { ImageOff,  Trash2} from 'lucide-react';
 import {
 	FileImage,
 	FileUpload,
@@ -165,7 +165,7 @@ export function LogoBannerForm({ bucket, profile }: LogoBannerFormProps) {
 														title={'Eliminar logotipo'}
 														className="top-0 right-0 absolute cursor-pointer"
 													>
-														<X className="size-3"/>
+														<Trash2 className="size-3"/>
 														Eliminar
 													</Button>
 												</FileUploadItemDelete>
@@ -241,7 +241,7 @@ export function LogoBannerForm({ bucket, profile }: LogoBannerFormProps) {
 												title={'Eliminar banner'}
 												className="top-2 right-2 absolute cursor-pointer"
 											>
-												<X className="size-3"/>
+												<Trash2 className="size-3"/>
 												Eliminar
 											</Button>
 										</FileUploadItemDelete>

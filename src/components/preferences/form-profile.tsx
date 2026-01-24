@@ -76,7 +76,7 @@ export function ProfileForm({ profile }: { profile: Business; }) {
 							name='name'
 							render={({field}) => (
 								<FormItem>
-									<FormLabel>Alias</FormLabel>
+									<FormLabel>Nombre del negocio<span className="text-red-600">*</span></FormLabel>
 									<FormControl>
 										<Input placeholder='Entre su alias' {...field} />
 									</FormControl>
@@ -109,7 +109,7 @@ export function ProfileForm({ profile }: { profile: Business; }) {
 							name='province'
 							render={({field}) => (
 								<FormItem>
-									<FormLabel>Provincia</FormLabel>
+									<FormLabel>Provincia<span className="text-red-600">*</span></FormLabel>
 									<FormControl>
 										<NativeSelect {...field} classNameContainer={'col-span-2 w-full'}>
 											<NativeSelectOption value="">Seleccione...</NativeSelectOption>
@@ -130,7 +130,7 @@ export function ProfileForm({ profile }: { profile: Business; }) {
 							name='municipality'
 							render={({field}) => (
 								<FormItem>
-									<FormLabel>Municipio</FormLabel>
+									<FormLabel>Municipio<span className="text-red-600">*</span></FormLabel>
 									<FormControl>
 										<NativeSelect {...field} classNameContainer={'col-span-2 w-full'}>
 											<NativeSelectOption value="">Seleccione...</NativeSelectOption>

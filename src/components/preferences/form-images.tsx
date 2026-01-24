@@ -2,7 +2,7 @@
 
 import React from 'react';
 import {toast} from 'sonner';
-import {Check, Upload, X} from 'lucide-react';
+import {Check, Upload, Trash2} from 'lucide-react';
 import {
 	FileImage,
 	FileUpload,
@@ -211,11 +211,13 @@ export function ImagesForm({ bucket, profile }: ImagesFormProps) {
 									<FileUploadItemMetadata className="sr-only" />
 									<FileUploadItemDelete asChild>
 										<Button
-											variant="secondary"
-											size="icon"
-											className="-top-1 -right-1 absolute size-5 rounded-full"
+											variant="destructive"
+											size="sm"
+											title={'Eliminar'}
+											className="top-1 right-1 absolute cursor-pointer"
 										>
-											<X className="size-3" />
+											<Trash2 className="size-3"/>
+											Eliminar
 										</Button>
 									</FileUploadItemDelete>
 									<FileUploadItemPrimary asChild>

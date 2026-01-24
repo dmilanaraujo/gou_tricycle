@@ -82,34 +82,28 @@ export default async function PreferencesPage() {
 				title='Preferencias'
 				desc='Gestione los datos de su negocio aquí.'
 			/>
-			<Tabs defaultValue='general_info' className='flex gap-4 w-full'>
-				<TabsList className="bg-background flex-col rounded-none border-l p-0 justify-start">
-						{tabs.map(tab => (
-							<TabsTrigger
-								key={tab.value}
-								value={tab.value}
-								className='bg-background data-[state=active]:border-primary dark:data-[state=active]:border-primary h-full w-full justify-start rounded-none border-0 border-l-2 border-transparent data-[state=active]:shadow-none'
-							>
-								{tab.name}
-							</TabsTrigger>
-						))}
-				</TabsList>
-				<div className={'w-full'}>
+				<Tabs defaultValue='general_info' className='flex gap-4 w-full flex-col md:flex-row'>
+					<TabsList className="bg-background flex-col rounded-none border-l p-0 justify-start h-full md:h-10">
+							{tabs.map(tab => (
+								<TabsTrigger
+									key={tab.value}
+									value={tab.value}
+									className='bg-background data-[state=active]:border-primary dark:data-[state=active]:border-primary h-full w-full justify-start rounded-none border-0 border-l-2 border-transparent data-[state=active]:shadow-none'
+								>
+									{tab.name}
+								</TabsTrigger>
+							))}
+					</TabsList>
+					
 					{tabs.map(tab => (
-						<TabsContent key={tab.value} value={tab.value} className={'flex w-full overflow-y-hidden px-1'}>
-							<ScrollArea
-								key={tab.value}
-								// orientation='horizontal'
-								type="always"
-								className='hidden w-full min-w-40 bg-background px-1 md:block'
-							>
-							{tab.content}
+						<TabsContent key={tab.value} value={tab.value} className={'flex w-full px-1'}>
+							<ScrollArea className='w-full md:max-h-[calc(100vh-270px)]'>
+								{tab.content}
 							</ScrollArea>
 						</TabsContent>
 					))}
-				</div>
-
-			</Tabs>
+	
+				</Tabs>
 		</Main>
 	)
 }
