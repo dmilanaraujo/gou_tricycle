@@ -281,3 +281,45 @@ export const showActionErrors = (errors?: ActionError[], toastId?: string|number
         });
     });
 }
+
+type Discount = {
+    type: "PERCENT" | "FIXED"
+    value: number
+}
+
+export function applyDiscount(
+    basePrice: number,
+    discount?: Discount | null
+) {
+    if (!discount) {
+        return {
+            finalPrice: basePrice,
+            label: null,
+        }
+    }
+
+    if (discount.type === "PERCENT") {
+        const final = basePrice - (basePrice * discount.value) / 100
+
+        return {
+            finalPrice: Number(final.toFixed(2)),
+            label: `-${discount.value}%`,
+        }
+    }
+
+    if (discount.type === "FIXED") {
+        const final = basePrice - discount.value
+
+        return {
+            finalPrice: Math.max(0, Number(final.toFixed(2))),
+            label: `-$${discount.value}`,
+        }
+    }
+
+    return {
+        finalPrice: basePrice,
+        label: null,
+    }
+}
+
+

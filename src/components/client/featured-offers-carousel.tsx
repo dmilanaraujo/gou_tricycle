@@ -12,22 +12,33 @@ import {
     CarouselPrevious,
 } from "@/components/ui/carousel"
 import Autoplay from "embla-carousel-autoplay";
+import {FeaturedItems} from "@/types/featured-items";
+
+// export type FeaturedOffer = {
+//     id: string
+//     name: string
+//     image_url: string
+//     base_price: number
+//     oldPrice?: number
+//     discountLabel?: string
+//     rankingLabel?: string
+//     rating?: number
+//     likes?: number
+// }
 
 export type FeaturedOffer = {
     id: string
-    title: string
-    image: string
-    price: number
-    oldPrice?: number
-    discountLabel?: string
-    rankingLabel?: string
-    rating?: number
-    likes?: number
+    name: string
+    image_url: string
+    base_price: number
+    final_price: number
+    discount_label?: string
 }
+
 
 type Props = {
     title: string
-    items: FeaturedOffer[]
+    items: FeaturedItems[]
 }
 
 export function FeaturedOffersCarousel({ title, items }: Props) {
@@ -60,52 +71,45 @@ export function FeaturedOffersCarousel({ title, items }: Props) {
 
                                 <div className="relative w-full h-[180px] rounded-xl overflow-hidden bg-white">
                                     <Image
-                                        src={item.image}
-                                        alt={item.title}
+                                        src={item.image_url}
+                                        alt={item.name}
                                         fill
                                         className="object-contain"
                                     />
 
-                                    {item.rankingLabel && (
-                                        <Badge className="absolute top-2 left-2 bg-primary text-white text-xs">
-                                            {item.rankingLabel}
-                                        </Badge>
-                                    )}
-
-                                    <Button
-                                        size="icon"
-                                        className="absolute bottom-2 right-2 rounded-full bg-white shadow"
-                                    >
-                                        <PlusIcon className="w-4 h-4" />
-                                    </Button>
+                                    {/*{item.rankingLabel && (*/}
+                                    {/*    <Badge className="absolute top-2 left-2 bg-primary text-white text-xs">*/}
+                                    {/*        {item.rankingLabel}*/}
+                                    {/*    </Badge>*/}
+                                    {/*)}*/}
                                 </div>
 
                                 <div className="mt-3 space-y-1">
                                     <h4 className="font-semibold text-sm line-clamp-2">
-                                        {item.title}
+                                        {item.name}
                                     </h4>
 
                                     <div className="flex items-center gap-2 text-sm">
-                                        <span className="font-bold">${item.price.toFixed(2)}</span>
+                                        <span className="font-bold">${item.base_price.toFixed(2)}</span>
 
-                                        {item.oldPrice && (
+                                        {item.final_price && (
                                             <span className="line-through text-muted-foreground">
-                        ${item.oldPrice.toFixed(2)}
-                      </span>
+                                                ${item.final_price.toFixed(2)}
+                                              </span>
                                         )}
 
-                                        {item.discountLabel && (
+                                        {item.discount_label && (
                                             <Badge variant="destructive" className="text-xs">
-                                                {item.discountLabel}
+                                                {item.discount_label}
                                             </Badge>
                                         )}
                                     </div>
 
-                                    {item.rating && (
-                                        <div className="text-xs text-muted-foreground">
-                                            👍 {item.rating}% ({item.likes})
-                                        </div>
-                                    )}
+                                    {/*{item.rating && (*/}
+                                    {/*    <div className="text-xs text-muted-foreground">*/}
+                                    {/*        👍 {item.rating}% ({item.likes})*/}
+                                    {/*    </div>*/}
+                                    {/*)}*/}
                                 </div>
                             </div>
                         </CarouselItem>

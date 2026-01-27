@@ -12,7 +12,11 @@ import {ReviewInput} from "@/components/client/review-input";
 import {QuickReviewBar} from "@/components/client/quick-review-bar";
 import {FeaturedOffersCarousel} from "@/components/client/featured-offers-carousel";
 import {ScrollableTabs} from "@/components/client/scrollable-tabs";
-import {useState} from "react";
+import {useMemo, useState} from "react";
+import {Business, BusinessCategory} from "@/types";
+import {ProductWithPricing} from "@/lib/actions/product";
+import {Reviews} from "@/types/reviews";
+import {FeaturedItems} from "@/types/featured-items";
 
 const WhatsAppIcon = () => (
     <svg
@@ -31,78 +35,33 @@ const WhatsAppIcon = () => (
 const featuredItems = [
     {
         id: "1",
-        title: "Pizza Veggie",
-        image: "/images/pizza1.png",
-        price: 9.59,
+        name: "Pizza Veggie",
+        image_url: "/images/pizza1.png",
+        base_price: 9.59,
         oldPrice: 15.99,
         discountLabel: "40% off",
         rankingLabel: "#1 most liked",
         rating: 100,
         likes: 5,
     },
-    {
-        id: "2",
-        title: "Pepperoni Cheesy Bread",
-        image: "/images/pizza2.png",
-        price: 10.29,
-        rankingLabel: "#2 most liked",
-        rating: 66,
-        likes: 6,
-    },
-    {
-        id: "3",
-        title: "Pepperoni Cheesy Bread",
-        image: "/images/pizza2.png",
-        price: 10.29,
-        rankingLabel: "#2 most liked",
-        rating: 66,
-        likes: 6,
-    },
-    {
-        id: "4",
-        title: "Pepperoni Cheesy Bread",
-        image: "/images/pizza2.png",
-        price: 10.29,
-        rankingLabel: "#2 most liked",
-        rating: 66,
-        likes: 6,
-    },
-    {
-        id: "5",
-        title: "Pepperoni Cheesy Bread",
-        image: "/images/pizza2.png",
-        price: 10.29,
-        rankingLabel: "#2 most liked",
-        rating: 66,
-        likes: 6,
-    },
-    {
-        id: "6",
-        title: "Pepperoni Cheesy Bread",
-        image: "/images/pizza2.png",
-        price: 10.29,
-        rankingLabel: "#2 most liked",
-        rating: 66,
-        likes: 6,
-    },
 ]
 
-const menuTabs = [
-    { value: "offers", label: "Offers" },
-    { value: "build", label: "Build Your Own" },
-    { value: "specialty", label: "Specialty Pizzas" },
-    { value: "breads", label: "Breads" },
-    { value: "wings", label: "Chicken & Wings" },
-    { value: "pasta", label: "Oven-Baked Pastas" },
-    { value: "sandwiches", label: "Sandwiches" },
-    { value: "salads", label: "Salads" },
-    { value: "tots", label: "Loaded Tots" },
-    { value: "pizza", label: "Pizzas" },
-    { value: "aaa", label: "AAa" },
-    { value: "bbb", label: "BBb" },
-    { value: "ccc", label: "CCc" },
-    { value: "ddd", label: "DDd" },
-]
+// const menuTabs = [
+//     { value: "offers", label: "Offers" },
+//     { value: "build", label: "Build Your Own" },
+//     { value: "specialty", label: "Specialty Pizzas" },
+//     { value: "breads", label: "Breads" },
+//     { value: "wings", label: "Chicken & Wings" },
+//     { value: "pasta", label: "Oven-Baked Pastas" },
+//     { value: "sandwiches", label: "Sandwiches" },
+//     { value: "salads", label: "Salads" },
+//     { value: "tots", label: "Loaded Tots" },
+//     { value: "pizza", label: "Pizzas" },
+//     { value: "aaa", label: "AAa" },
+//     { value: "bbb", label: "BBb" },
+//     { value: "ccc", label: "CCc" },
+//     { value: "ddd", label: "DDd" },
+// ]
 
 type Product = {
     id: string
@@ -117,83 +76,87 @@ type Section = {
     products: Product[]
 }
 
-const sections: Section[] = [
-    {
-        id: "offers",
-        title: "Offers",
-        products: [{
-            id: "string",
-            name: "string",
-            price: 123,
-            image: "string",
-        }]
-    },
-    {
-        id: "build",
-        title: "Builds",
-        products: [{
-            id: "string",
-            name: "string",
-            price: 123,
-            image: "string",
-        }]
-    },
-    {
-        id: "pizza",
-        title: "Pizzas",
-        products: [{
-            id: "pizza-1",
-            name: "string",
-            price: 123,
-            image: "string",
-        }, {
-            id: "pizza-2",
-            name: "string",
-            price: 123,
-            image: "string",
-        }, {
-            id: "pizza-3",
-            name: "string",
-            price: 123,
-            image: "string",
-        }, {
-            id: "pizza-4",
-            name: "string",
-            price: 123,
-            image: "string",
-        }, {
-            id: "pizza-5",
-            name: "string",
-            price: 123,
-            image: "string",
-        }]
-    },
-    {
-        id: "pasta",
-        title: "Pastas",
-        products: [{
-            id: "string",
-            name: "string",
-            price: 123,
-            image: "string",
-        }]
-    },
-]
+// const sections: Section[] = [
+//     {
+//         id: "offers",
+//         title: "Offers",
+//         products: [{
+//             id: "string",
+//             name: "string",
+//             price: 123,
+//             image: "string",
+//         }]
+//     },
+//     {
+//         id: "build",
+//         title: "Builds",
+//         products: [{
+//             id: "string",
+//             name: "string",
+//             price: 123,
+//             image: "string",
+//         }]
+//     },
+//     {
+//         id: "pizza",
+//         title: "Pizzas",
+//         products: [{
+//             id: "pizza-1",
+//             name: "string",
+//             price: 123,
+//             image: "string",
+//         }, {
+//             id: "pizza-2",
+//             name: "string",
+//             price: 123,
+//             image: "string",
+//         }, {
+//             id: "pizza-3",
+//             name: "string",
+//             price: 123,
+//             image: "string",
+//         }, {
+//             id: "pizza-4",
+//             name: "string",
+//             price: 123,
+//             image: "string",
+//         }, {
+//             id: "pizza-5",
+//             name: "string",
+//             price: 123,
+//             image: "string",
+//         }]
+//     },
+//     {
+//         id: "pasta",
+//         title: "Pastas",
+//         products: [{
+//             id: "string",
+//             name: "string",
+//             price: 123,
+//             image: "string",
+//         }]
+//     },
+// ]
 
-function ProductCard({ product }: any) {
+function ProductCard({ product }: { product: {
+        name: string
+        price: number
+        image: string
+    } }) {
     return (
         <div className="rounded-xl border bg-card p-3 hover:shadow-sm transition">
             <div className="relative h-32 w-full">
                 <Image
                     src={product.image}
-                    alt={product.title || "producto"}
+                    alt={product.name}
                     fill
                     className="object-contain"
                 />
             </div>
 
             <h4 className="font-semibold mt-2 text-sm">
-                {product.title}
+                {product.name}
             </h4>
 
             <p className="text-sm text-muted-foreground">
@@ -203,7 +166,7 @@ function ProductCard({ product }: any) {
     )
 }
 
-export default function BusinessDetail({ business, reviews }: any) {
+export default function BusinessDetail({ business, reviews, products, featuredItems }: {business: Business, reviews: Reviews[], products: ProductWithPricing[], featuredItems: FeaturedItems[]}) {
     const productsRef = React.useRef<HTMLDivElement>(null)
     const [activeTab, setActiveTab] = useState("offers")
 
@@ -215,6 +178,32 @@ export default function BusinessDetail({ business, reviews }: any) {
         business.municipality
 
     const fullLocationLabel = `${municipalityLabel}, ${provinceLabel}`
+
+    const categories = React.useMemo(() => {
+        const map = new Map<string, {
+            id: string
+            title: string
+            products: ProductWithPricing[]
+        }>()
+
+        for (const p of products) {
+            if (!p.category) continue
+
+            const { id, name } = p.category
+
+            if (!map.has(id)) {
+                map.set(id, {
+                    id,
+                    title: name,
+                    products: [],
+                })
+            }
+
+            map.get(id)!.products.push(p)
+        }
+
+        return Array.from(map.values())
+    }, [products])
 
     React.useEffect(() => {
         const container = productsRef.current
@@ -236,14 +225,13 @@ export default function BusinessDetail({ business, reviews }: any) {
             }
         )
 
-        sections.forEach(section => {
-            const el = document.getElementById(section.id)
+        categories.forEach(category => {
+            const el = document.getElementById(category.id)
             if (el) observer.observe(el)
         })
 
         return () => observer.disconnect()
-    }, [])
-
+    }, [categories])
 
     return (
         <main className="min-h-screen bg-background pt-2 w-full max-w-screen-xl mx-auto px-10 pb-8">
@@ -300,7 +288,7 @@ export default function BusinessDetail({ business, reviews }: any) {
                         <span>({business.reviews || 0}+)</span>
                     </div>
 
-                    <span>• {business.sections?.[0]?.name}</span>
+                    <span>• {business.section?.name}</span>
                     <span>• {business.categories?.[0]?.name}</span>
                 </div>
 
@@ -421,10 +409,32 @@ export default function BusinessDetail({ business, reviews }: any) {
 
             {/* Service + Products */}
             <section className="w-full mt-6 sticky top-0 bg-background z-10">
+                {/*<ScrollableTabs*/}
+                {/*    title="Productos"*/}
+                {/*    tabs={sections.map(s => ({ value: s.id, label: s.title }))}*/}
+                {/*    defaultValue="offers"*/}
+                {/*    value={activeTab}*/}
+                {/*    onChange={(value) => {*/}
+                {/*        setActiveTab(value)*/}
+
+                {/*        const container = productsRef.current*/}
+                {/*        const target = document.getElementById(value)*/}
+
+                {/*        if (!container || !target) return*/}
+
+                {/*        container.scrollTo({*/}
+                {/*            top: target.offsetTop - container.offsetTop,*/}
+                {/*            behavior: "smooth",*/}
+                {/*        })*/}
+                {/*    }}*/}
+                {/*/>*/}
                 <ScrollableTabs
                     title="Productos"
-                    tabs={sections.map(s => ({ value: s.id, label: s.title }))}
-                    defaultValue="offers"
+                    tabs={categories.map(c => ({
+                        value: c.id,
+                        label: c.title,
+                    }))}
+                    defaultValue={categories[0]?.id}
                     value={activeTab}
                     onChange={(value) => {
                         setActiveTab(value)
@@ -447,19 +457,43 @@ export default function BusinessDetail({ business, reviews }: any) {
                     ref={productsRef}
                     className="space-y-10 mt-6 max-h-[70vh] overflow-y-auto pr-2 scroll-smooth no-scrollbar"
                 >
-                    {sections.map(section => (
+                    {/*{sections.map(section => (*/}
+                    {/*    <section*/}
+                    {/*        key={section.id}*/}
+                    {/*        id={section.id}*/}
+                    {/*        className="scroll-mt-32"*/}
+                    {/*    >*/}
+                    {/*        <h3 className="text-2xl font-semibold mb-4">*/}
+                    {/*            {section.title}*/}
+                    {/*        </h3>*/}
+
+                    {/*        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">*/}
+                    {/*            {section.products.map(product => (*/}
+                    {/*                <ProductCard key={product.id} product={product}/>*/}
+                    {/*            ))}*/}
+                    {/*        </div>*/}
+                    {/*    </section>*/}
+                    {/*))}*/}
+                    {categories.map(category => (
                         <section
-                            key={section.id}
-                            id={section.id}
+                            key={category.id}
+                            id={category.id}   // 🔥 ESTE ID ES CRÍTICO
                             className="scroll-mt-32"
                         >
                             <h3 className="text-2xl font-semibold mb-4">
-                                {section.title}
+                                {category.title}
                             </h3>
 
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                                {section.products.map(product => (
-                                    <ProductCard key={product.id} product={product}/>
+                                {category.products.map(product => (
+                                    <ProductCard
+                                        key={product.id}
+                                        product={{
+                                            ...product,
+                                            image: getPublicImageUrl(product.image_url),
+                                            price: product.base_price,
+                                        }}
+                                    />
                                 ))}
                             </div>
                         </section>

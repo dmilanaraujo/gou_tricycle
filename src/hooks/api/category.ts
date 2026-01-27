@@ -4,7 +4,7 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query';
 import { BusinessCategory } from '@/types/business';
-import {createCategory, deleteCategories, listCategories, updateCategory} from '@/lib/actions/category';
+import {createCategory, deleteCategories, listCategories, updateCategory} from '@/lib/actions/system_category';
 import {CategoryFormValues} from '@/lib/schemas/category';
 
 export const useGetCategories = (
