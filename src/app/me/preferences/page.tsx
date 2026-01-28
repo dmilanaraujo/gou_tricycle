@@ -82,17 +82,18 @@ export default async function PreferencesPage() {
 				title='Preferencias'
 				desc='Gestione los datos de su negocio aquí.'
 			/>
-				<Tabs defaultValue='general_info' className='flex gap-4 w-full flex-col md:flex-row'>
+			<div className='flex justify-center flex-col items-center'>
+				<Tabs defaultValue='general_info' className='flex gap-4 w-full flex-col md:flex-row md:w-4xl'>
 					<TabsList className="bg-background flex-col rounded-none border-l p-0 justify-start h-full md:h-10">
-							{tabs.map(tab => (
-								<TabsTrigger
-									key={tab.value}
-									value={tab.value}
-									className='bg-background data-[state=active]:border-primary dark:data-[state=active]:border-primary h-full w-full justify-start rounded-none border-0 border-l-2 border-transparent data-[state=active]:shadow-none'
-								>
-									{tab.name}
-								</TabsTrigger>
-							))}
+						{tabs.map(tab => (
+							<TabsTrigger
+								key={tab.value}
+								value={tab.value}
+								className='bg-background data-[state=active]:border-primary dark:data-[state=active]:border-primary h-full w-full justify-start rounded-none border-0 border-l-2 border-transparent data-[state=active]:shadow-none'
+							>
+								{tab.name}
+							</TabsTrigger>
+						))}
 					</TabsList>
 					
 					{tabs.map(tab => (
@@ -102,8 +103,10 @@ export default async function PreferencesPage() {
 							</ScrollArea>
 						</TabsContent>
 					))}
-	
+				
 				</Tabs>
+			</div>
+		
 		</Main>
 	)
 }

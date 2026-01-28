@@ -146,7 +146,7 @@ export function LogoBannerForm({ bucket, profile }: LogoBannerFormProps) {
 							{/*<FileUploadDropzone>*/}
 							<div className="flex flex-col items-center gap-1 text-center rounded-lg border-2 border-dashed outline-none pb-6">
 								<div className="flex items-center justify-center rounded-full w-full">
-									<FileUploadList orientation="horizontal" className="border-none w-full">
+									<FileUploadList orientation="horizontal" className="border-none w-full min-h-24">
 										{logo.map((file, index) => (
 											<FileUploadItem key={index} value={file} className="p-0 w-full h-full border-none flex-row items-center justify-center">
 												<FileUploadItemPreview className="size-40 rounded-full border-none my-6"/>
@@ -225,7 +225,7 @@ export function LogoBannerForm({ bucket, profile }: LogoBannerFormProps) {
 							multiple
 							// disabled={banner.length == maxFiles}
 						>
-							<FileUploadList orientation="horizontal" className={'w-full border-none p-0 FileUploadList'}>
+							<FileUploadList orientation="horizontal" className={'w-full border-none p-0 min-h-24'}>
 								{banner.length == 0 && <ImageOff className="size-6 text-muted-foreground"/>}
 								{banner.map((file, index) => (
 									<FileUploadItem key={index} value={file} className="p-0 w-full">
