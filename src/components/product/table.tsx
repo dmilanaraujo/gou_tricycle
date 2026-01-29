@@ -110,7 +110,7 @@ export default function ProductTable() {
 			ColumnFiltersComponent={DataTableColumnFilters}
 			// ExportComponent={ExportButton}
 			RowSelectedActionsComponent={DataTableRowSelected}
-			onRowClick={(row) => openForEdit(row)}
+			// onRowClick={(row) => openForEdit(row)}
 			onDeleteSelected={handleDeleteSelected}
 			rowClassName={(item) =>
 				!item.is_active ? "bg-gray-100 dark:bg-gray-800 text-gray-400" : ""

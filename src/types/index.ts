@@ -100,4 +100,9 @@ export enum ActiveStatus {
   inactive = 'inactive',
 }
 
+export type IdParamsProps = {
+  id: string;
+};
+
+
 export * from './business';

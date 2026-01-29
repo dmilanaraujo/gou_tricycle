@@ -21,9 +21,11 @@ const initialValues: Partial<ProductFormValues> = {
 	name: '',
 	description: '',
 	price: 0,
+	business_category_id: '',
+	product_discounts_id: '',
+	is_featured: false
 }
 export function ProductSheet() {
-	const profile = useProfile()
 	const { openSheet, setOpenSheet, isEditing, closeSheet, openForCreate, editingProduct } = useProductStore();
 	const isMobile = useIsMobile();
 	const { mutateAsync: createProduct, isPending: isCreatingProduct } = useCreateProduct();
@@ -105,7 +107,7 @@ export function ProductSheet() {
 				</DrawerHeader>
 				<div className="no-scrollbar overflow-y-auto px-4">
 					<div className="flex-1 overflow-y-auto overscroll-contain py-2">
-						<ProductForm profile={profile} form={form} isEdit={!!editingProduct}/>
+						<ProductForm form={form}/>
 					</div>
 				</div>
 				

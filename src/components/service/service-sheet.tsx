@@ -105,7 +105,7 @@ export function ServiceSheet() {
 				</DrawerHeader>
 				<div className="no-scrollbar overflow-y-auto px-4">
 					<div className="flex-1 overflow-y-auto overscroll-contain py-2">
-						<ServiceForm form={form} profile={profile} isEdit={!!editingService} service={editingService}/>
+						<ServiceForm form={form}/>
 					</div>
 				</div>
 				

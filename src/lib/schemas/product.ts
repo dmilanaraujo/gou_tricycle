@@ -3,11 +3,8 @@ import {ActiveStatus} from '@/types';
 import {ServiceSchema} from '@/lib/schemas/service';
 
 export const ProductSchema = ServiceSchema.extend({
-    business_category_id: z.uuid().optional(),
-    image_url: z.url().optional(),
+    business_category_id: z.string().optional().nullable(),
     is_featured: z.boolean().optional(),
-    product_discounts_id: z.uuid().optional(),
-    item_type: z.literal('product'),
 });
 
 export const ProductsFilterSchema = z.object({

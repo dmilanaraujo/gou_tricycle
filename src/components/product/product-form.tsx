@@ -14,20 +14,19 @@ import * as React from 'react'
 import {Textarea} from '@/components/ui/textarea'
 import {Switch} from '@/components/ui/switch'
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
-import {useGetBusinessCategories} from '@/hooks/api/business';
-import {Business, Product} from '@/types';
+import {useGetBusinessCategories, useGetBusinessDiscounts} from '@/hooks/api/business';
 import {ProductFormValues} from '@/lib/schemas/product';
-import {ImagesForm} from '@/components/common/form-images';
+import {Loader2} from 'lucide-react';
+import {useProfile} from '@/providers/profile-provider';
 
 interface ProductFormProps {
 	form: UseFormReturn<ProductFormValues>
-	isEdit?: boolean
-	profile: Business
-	product?: Product
 }
 
-export const ProductForm = ({form, profile, isEdit, product}: ProductFormProps) => {
+export const ProductForm = ({form}: ProductFormProps) => {
+	const profile = useProfile();
 	const { data: categories, isLoading: isLoadingCategories } = useGetBusinessCategories(profile.id);
+	const { data: discounts, isLoading: isLoadingDiscounts } = useGetBusinessDiscounts(profile.id);
 	return (
 			<ReusableForm form={form}>
 				<div className="space-y-6 p-4">
@@ -71,7 +70,30 @@ export const ProductForm = ({form, profile, isEdit, product}: ProductFormProps) 
 						/>
 					</div>
 					
-					{/* Precios */}
+					<div className="grid grid-cols-1 gap-4 items-start">
+						<FormField
+							control={form.control}
+							name="price"
+							render={({field}) => (
+								<FormItem>
+									<FormLabel>Precio</FormLabel>
+									<FormControl>
+										<Input type="number"
+										       placeholder="40"
+										       min={1}
+										       {...field}
+										       value={field.value ?? ''}
+										       onChange={(e) => {
+											       const value = e.target.valueAsNumber;
+											       field.onChange(isNaN(value) ? undefined : value);
+										       }}/>
+									</FormControl>
+									<FormMessage/>
+								</FormItem>
+							)}
+						/>
+					
+					</div>
 					<div className="grid grid-cols-1 gap-4 items-start">
 						{/* category */}
 						<FormField
@@ -83,17 +105,26 @@ export const ProductForm = ({form, profile, isEdit, product}: ProductFormProps) 
 									<Select
 										value={field.value ?? ''}
 										onValueChange={field.onChange}
-										
+									
 									>
 										<FormControl>
 											<SelectTrigger className={'w-full'}>
-												<SelectValue placeholder="Seleccionar categoría" />
+												{/*<SelectValue placeholder="Seleccionar categoría"/>*/}
+												
+												{isLoadingCategories ? (
+													<span className="flex items-center gap-2">
+													  <Loader2 className="h-4 w-4 animate-spin"/>
+													  Cargando categorias...
+													</span>
+												) : (
+													 <SelectValue placeholder="Seleccionar categoría"/>
+												 )}
 											</SelectTrigger>
 										</FormControl>
 										<SelectContent>
-											{ categories?.map(c => (
-											 <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-											 )) }
+											{categories?.map(c => (
+												<SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+											))}
 										</SelectContent>
 									</Select>
 									<FormMessage/>
@@ -101,23 +132,6 @@ export const ProductForm = ({form, profile, isEdit, product}: ProductFormProps) 
 							)}
 						/>
 					</div>
-					
-					{/* Media */}
-					{/*<div className="grid grid-cols-1 gap-4 items-start">*/}
-					{/*	<FormField*/}
-					{/*		control={form.control}*/}
-					{/*		name="image_url"*/}
-					{/*		render={({field}) => (*/}
-					{/*			<FormItem>*/}
-					{/*				<FormLabel>Imagen (URL)</FormLabel>*/}
-					{/*				<FormControl>*/}
-					{/*					<Input placeholder="https://img..." {...field} />*/}
-					{/*				</FormControl>*/}
-					{/*				<FormMessage/>*/}
-					{/*			</FormItem>*/}
-					{/*		)}*/}
-					{/*	/>*/}
-					{/*</div>*/}
 					
 					{/* Flags */}
 					<div className="grid grid-cols-1 gap-4 items-start">
@@ -154,16 +168,24 @@ export const ProductForm = ({form, profile, isEdit, product}: ProductFormProps) 
 									<Select
 										value={field.value ?? ''}
 										onValueChange={field.onChange}
+									
 									>
 										<FormControl>
 											<SelectTrigger className={'w-full'}>
-												<SelectValue placeholder="Seleccionar descuento" />
+												{isLoadingDiscounts ? (
+													<span className="flex items-center gap-2">
+													  <Loader2 className="h-4 w-4 animate-spin"/>
+													  Cargando descuentos...
+													</span>
+												) : (
+													 <SelectValue placeholder="Seleccionar descuento"/>
+												 )}
 											</SelectTrigger>
 										</FormControl>
 										<SelectContent>
-											{/* discounts.map(d => (
-											 <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
-											 )) */}
+											{discounts?.map(c => (
+												<SelectItem key={c.id} value={c.id}>{`${c.type} (${c.value})`}</SelectItem>
+											))}
 										</SelectContent>
 									</Select>
 									<FormMessage/>
@@ -171,25 +193,8 @@ export const ProductForm = ({form, profile, isEdit, product}: ProductFormProps) 
 							)}
 						/>
 					</div>
-					
-					{/* Hidden discriminator */}
-					<FormField
-						control={form.control}
-						name="item_type"
-						render={({field}) => (
-							<input type="hidden" {...field} value="product" />
-						)}
-					/>
-					{isEdit &&
-                        <ImagesForm
-                            bucket='service_images'
-                            images={product?.images || []}
-                            extraMetadata={{ service_id: product?.id! }}
-                            extraPath={`/${product?.id!}`}
-                        />
-					}
 				</div>
-				
+			
 			</ReusableForm>
 	)
 }

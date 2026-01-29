@@ -23,5 +23,15 @@ export const BusinessCategorySchema = z.object({
 	slug: SlugSchema.parse(data.name),
 }))
 
+export const BusinessDiscountSchema = z.object({
+	id: z.number().optional(),
+	type: z.string({ error: 'El tipo es requerido'}),
+	value: z.number({ error: 'El valor es requerido'}),
+	starts_at: z.date().optional(),
+	ends_at: z.date().optional(),
+	is_active: z.boolean().optional(),
+});
+
 export type BusinessFiltersValues = z.infer<typeof BusinessFiltersSchema>
 export type BusinessCategoryValues = z.infer<typeof BusinessCategorySchema>
+export type BusinessDiscountValues = z.infer<typeof BusinessDiscountSchema>

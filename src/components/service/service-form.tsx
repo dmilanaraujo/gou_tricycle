@@ -9,17 +9,19 @@ import {ServiceFormValues} from '@/lib/schemas/service';
 import {Textarea} from '@/components/ui/textarea';
 import {ImagesForm} from '@/components/common/form-images';
 import {Business, Service} from '@/types';
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
+import {Loader2} from 'lucide-react';
+import {useGetBusinessDiscounts} from '@/hooks/api/business';
+import {useProfile} from '@/providers/profile-provider';
 
 interface ServiceFormProps
 {
 	form: UseFormReturn<ServiceFormValues>;
-	isEdit?: boolean
-	profile: Business
-	service?: Service | null
 }
 
-export const ServiceForm = ({form, isEdit, profile, service}: ServiceFormProps) => {
-	
+export const ServiceForm = ({form}: ServiceFormProps) => {
+	const profile = useProfile();
+	const { data: discounts, isLoading: isLoadingDiscounts } = useGetBusinessDiscounts(profile.id);
 	return (
 		<>
 			<ReusableForm form={form}>
@@ -81,16 +83,40 @@ export const ServiceForm = ({form, isEdit, profile, service}: ServiceFormProps) 
 								</FormItem>
 							)}
 						/>
-					
+						<FormField
+							control={form.control}
+							name="product_discounts_id"
+							render={({field}) => (
+								<FormItem>
+									<FormLabel>Descuento</FormLabel>
+									<Select
+										value={field.value ?? ''}
+										onValueChange={field.onChange}
+									
+									>
+										<FormControl>
+											<SelectTrigger className={'w-full'}>
+												{isLoadingDiscounts ? (
+													<span className="flex items-center gap-2">
+													  <Loader2 className="h-4 w-4 animate-spin"/>
+													  Cargando descuentos...
+													</span>
+												) : (
+													 <SelectValue placeholder="Seleccionar descuento"/>
+												 )}
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+											{discounts?.map(c => (
+												<SelectItem key={c.id} value={c.id}>{`${c.type} (${c.value})`}</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+									<FormMessage/>
+								</FormItem>
+							)}
+						/>
 					</div>
-					{isEdit &&
-                        <ImagesForm
-                            bucket='service_images'
-                            images={service?.images || []}
-                            extraMetadata={{ service_id: service?.id! }}
-                            extraPath={`/${service?.id!}`}
-                        />
-					}
 				</div>
 		
 			</ReusableForm>

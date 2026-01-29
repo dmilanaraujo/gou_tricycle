@@ -6,6 +6,8 @@ import { Product } from "@/types/business"
 import {NotesHoverCard} from '@/components/common/notes-nover-card';
 import {Badge} from '@/components/ui/badge';
 import {Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui/tooltip';
+import {Button} from '@/components/ui/button';
+import Link from 'next/link';
 
 export const columns: ColumnDef<Product>[] = [
     {
@@ -133,16 +135,18 @@ export const columns: ColumnDef<Product>[] = [
             headerClassName: 'w-[50px]'
         }
     },
-    // {
-    //     accessorKey: "description",
-    //     header: "Descripción",
-    //     cell: ({ row }) => (
-    //       <span className="text-muted-foreground">
-    //         {row.original.description || "-"}
-    //       </span>
-    //     ),
-    //     meta: {
-    //         headerClassName: "truncate",
-    //     },
-    // }
+    {
+        accessorKey: "actions",
+        header: "",
+        cell: ({ row }) => (
+            <div className="flex justify-end pe-4">
+                <Button asChild size={'sm'} className='bg-green-800'>
+                    <Link href={`/me/products/${row.original.id}`}>Editar</Link>
+                </Button>
+            </div>
+        ),
+        meta: {
+            headerClassName: "w-[50px]",
+        },
+    }
 ]

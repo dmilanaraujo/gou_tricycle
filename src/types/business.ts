@@ -77,16 +77,15 @@ export type Service = {
     description?: string;
     price?: number;
     is_active: boolean;
+    product_discounts_id?: string
     images: BucketImage[];
+    discount?: BusinessDiscount;
 }
 
 export type Product = Service & {
     business_category_id?: string
-    product_discounts_id?: string
-    image_url?: string
     is_featured: boolean;
     category?: BusinessCategory;
-    discount?: BusinessDiscount;
 }
 
 // export type ImageType = 'logo' | 'banner' | 'normal';

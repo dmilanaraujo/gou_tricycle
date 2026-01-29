@@ -1,13 +1,13 @@
 "use server"
 
-import {ActionResponse, PaginationRequest, ResultList, Service, SortRequest} from '@/types';
+import {ActionResponse, PaginationRequest, Product, ResultList, Service, SortRequest} from '@/types';
 import {
     ServiceFormValues,
     ServiceSchema,
     ServicesFilterSchema,
     ServicesFilterValues
 } from '@/lib/schemas/service';
-import {formatSupabasePostgrestErrors, formatZodErrors} from '@/lib/utils';
+import {formatSupabaseFunctionErrors, formatSupabasePostgrestErrors, formatZodErrors} from '@/lib/utils';
 import {createClient} from '@/lib/supabase/server';
 
 const constraintMap = {
@@ -46,7 +46,7 @@ export async function listServices(params: ServicesFilterValues & PaginationRequ
 
         let query = supabase
             .from("services")
-            .select('*, images:service_images(*)', { count: "exact" })
+            .select('*, images:service_images(*), discount:product_discounts(*)', { count: "exact" })
             .eq('item_type', 'service');
        
        if (!!business_id) {
@@ -95,6 +95,29 @@ export async function listServices(params: ServicesFilterValues & PaginationRequ
        throw new Error('Error no especificado');
    }
 }
+
+export const getServiceById = async<T = Service | Product> (id: string): Promise<T|null> => {
+    try {
+        const supabase = await createClient();
+        
+        const { data, error } = await supabase
+            .from("services")
+            .select("*, images:service_images(*), discount:product_discounts(*)")
+            .eq("id", id)
+            .single();
+        
+        if (error) {
+            const errors = await formatSupabaseFunctionErrors(error);
+            console.error(errors);
+            return null;
+        }
+        return data;
+    } catch (error) {
+        console.log("Unexpected error in getServiceById:", error);
+        throw new Error("customErrors.unspecified_error");
+    }
+};
+
 
 export async function createService(input: ServiceFormValues): Promise<ActionResponse<Service>> {
     try {
@@ -147,7 +170,12 @@ export async function updateService(input: Partial<ServiceFormValues>): Promise<
         }
         const { data, error } = await supabase
             .from("services")
-            .update(input)
+            .update({
+                name: input.name,
+                description: input.description,
+                price: input.price,
+                product_discounts_id: input.product_discounts_id,
+            })
             .eq("id", input.id)
             .select("*");
         

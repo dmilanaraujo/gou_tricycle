@@ -151,7 +151,14 @@ export async function updateProduct(input: Partial<ProductFormValues>): Promise<
         }
         const { data, error } = await supabase
             .from("services")
-            .update(input)
+            .update({
+                name: input.name,
+                description: input.description,
+                price: input.price,
+                product_discounts_id: input.product_discounts_id,
+                business_category_id: input.business_category_id,
+                is_featured: input.is_featured,
+            })
             .eq("id", input.id)
             .select("*");
         
