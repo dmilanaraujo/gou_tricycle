@@ -7,19 +7,23 @@ import {ReusableForm} from '@/components/common/reusable-form';
 import * as React from 'react';
 import {ServiceFormValues} from '@/lib/schemas/service';
 import {Textarea} from '@/components/ui/textarea';
+import {ImagesForm} from '@/components/common/form-images';
+import {Business, Service} from '@/types';
 
 interface ServiceFormProps
 {
 	form: UseFormReturn<ServiceFormValues>;
 	isEdit?: boolean
+	profile: Business
+	service?: Service | null
 }
 
-export const ServiceForm = ({form}: ServiceFormProps) => {
+export const ServiceForm = ({form, isEdit, profile, service}: ServiceFormProps) => {
 	
 	return (
 		<>
 			<ReusableForm form={form}>
-				<div className="space-y-6 p-6">
+				<div className="space-y-6 p-4">
 					
 					<div className="flex items-center w-full">
 						<FormLabel className="font-semibold">Datos del Servicio</FormLabel>
@@ -31,7 +35,7 @@ export const ServiceForm = ({form}: ServiceFormProps) => {
 							name="name"
 							render={({field}) => (
 								<FormItem>
-									<FormLabel>Nombre*</FormLabel>
+									<FormLabel>Nombre<span className="text-red-600">*</span></FormLabel>
 									<FormControl>
 										<Input placeholder="ABC-123" {...field} />
 									</FormControl>
@@ -79,8 +83,16 @@ export const ServiceForm = ({form}: ServiceFormProps) => {
 						/>
 					
 					</div>
-
+					{isEdit &&
+                        <ImagesForm
+                            bucket='service_images'
+                            images={service?.images || []}
+                            extraMetadata={{ service_id: service?.id! }}
+                            extraPath={`/${service?.id!}`}
+                        />
+					}
 				</div>
+		
 			</ReusableForm>
 		
 		</>

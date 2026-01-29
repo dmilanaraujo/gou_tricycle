@@ -1,7 +1,7 @@
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs';
 import {ProfileForm} from '@/components/preferences/form-profile';
 import {redirect} from 'next/navigation';
-import {ImagesForm} from '@/components/preferences/form-images';
+import {ImagesForm} from '@/components/common/form-images';
 import {UpdatePasswordForm} from '@/components/preferences/form-update-password';
 import * as React from 'react';
 import {ContentSection} from '@/components/layout/content-section';
@@ -16,9 +16,6 @@ export const dynamic = "force-dynamic";
 
 export default async function PreferencesPage() {
 	const business = await getProfileCachedData();
-	if (!business) {
-		redirect("/sign-in");
-	}
 	
 	const tabs =  [
 		{
@@ -30,7 +27,7 @@ export default async function PreferencesPage() {
 					title='Perfil'
 					desc='Datos del perfil de su negocio'
 				>
-					<ProfileForm profile={business}/>
+					<ProfileForm/>
 				</ContentSection>
 			)
 		},
@@ -43,7 +40,7 @@ export default async function PreferencesPage() {
 					title='Logo y banner de su negocio'
 					desc='Suba las imágenes del logo y banner de su negocio'
 				>
-					<LogoBannerForm profile={business} bucket='business_images'/>
+					<LogoBannerForm bucket='business_images'/>
 				</ContentSection>
 			)
 		},
@@ -56,7 +53,7 @@ export default async function PreferencesPage() {
 					title='Imágenes'
 					desc='Gestione las imágenes para hacer visible su negocio'
 				>
-					<ImagesForm profile={business} bucket='business_images'/>
+					<ImagesForm bucket='business_images' images={business?.images || []}/>
 				</ContentSection>
 			)
 		},

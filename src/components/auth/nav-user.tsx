@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/sidebar"
 import {Business} from '@/types/business';
 import {LogoutButton} from '@/components/auth/logout-button';
+import {getInitials, getPublicBusinessImageUrl} from '@/lib/utils';
 
 export function NavUser({ profile }: { profile: Business }) {
 	const { isMobile } = useSidebar()
@@ -42,8 +43,8 @@ export function NavUser({ profile }: { profile: Business }) {
 							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground md:h-8 md:p-0"
 						>
 							<Avatar className="h-8 w-8 rounded-lg">
-								<AvatarImage src={profile.logo} alt={profile.name} />
-								<AvatarFallback className="rounded-lg">CN</AvatarFallback>
+								<AvatarImage src={getPublicBusinessImageUrl(profile.logo)} alt={profile.name} />
+								<AvatarFallback className="rounded-lg">{getInitials(profile.name)}</AvatarFallback>
 							</Avatar>
 							<div className="grid flex-1 text-left text-sm leading-tight">
 								<span className="truncate font-medium">{profile.name}</span>
@@ -61,8 +62,8 @@ export function NavUser({ profile }: { profile: Business }) {
 						<DropdownMenuLabel className="p-0 font-normal">
 							<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
 								<Avatar className="h-8 w-8 rounded-lg">
-									<AvatarImage src={profile.logo} alt={profile.name} />
-									<AvatarFallback className="rounded-lg">CN</AvatarFallback>
+									<AvatarImage src={getPublicBusinessImageUrl(profile.logo)} alt={profile.name} />
+									<AvatarFallback className="rounded-lg">{getInitials(profile.name)}</AvatarFallback>
 								</Avatar>
 								<div className="grid flex-1 text-left text-sm leading-tight">
 									<span className="truncate font-medium">{profile.name}</span>

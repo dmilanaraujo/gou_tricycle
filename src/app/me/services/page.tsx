@@ -10,7 +10,7 @@ export default async function ServicesPage() {
 			<HeaderSection
 				title='Servicios'
 				desc='Gestione sus servicios aquí.'
-				action={<ServiceSheet />}
+				action={<ServiceSheet/>}
 			/>
 			<div className="p-4">
 				<ServiceTable/>

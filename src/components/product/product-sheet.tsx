@@ -6,15 +6,15 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 
-import { useCreateService, useUpdateService } from "@/hooks/api/service"
+import { useCreateProduct, useUpdateProduct } from "@/hooks/api/product"
 import {useEffect} from 'react';
-import {useServiceStore} from '@/store/service';
+import {useProductStore} from '@/store/product';
 import {showActionErrors} from '@/lib/utils';
 import {Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger} from '@/components/ui/drawer';
 import {useIsMobile} from '@/hooks/use-mobile';
-import {Business} from '@/types';
 import {ProductFormValues, ProductSchema} from '@/lib/schemas/product';
 import {ProductForm} from '@/components/product/product-form';
+import {useProfile} from '@/providers/profile-provider';
 
 const initialValues: Partial<ProductFormValues> = {
 	id: '',
@@ -22,11 +22,12 @@ const initialValues: Partial<ProductFormValues> = {
 	description: '',
 	price: 0,
 }
-export function ProductSheet({ profile }: { profile: Business }) {
-	const { openSheet, setOpenSheet, isEditing, closeSheet, openForCreate, editingService } = useServiceStore();
+export function ProductSheet() {
+	const profile = useProfile()
+	const { openSheet, setOpenSheet, isEditing, closeSheet, openForCreate, editingProduct } = useProductStore();
 	const isMobile = useIsMobile();
-	const { mutateAsync: createProduct, isPending: isCreatingProduct } = useCreateService();
-	const { mutateAsync: updateProduct, isPending: isUpdatingProduct } = useUpdateService();
+	const { mutateAsync: createProduct, isPending: isCreatingProduct } = useCreateProduct();
+	const { mutateAsync: updateProduct, isPending: isUpdatingProduct } = useUpdateProduct();
 	
 	const form = useForm<ProductFormValues>({
 		resolver: zodResolver(ProductSchema),
@@ -42,10 +43,10 @@ export function ProductSheet({ profile }: { profile: Business }) {
 	}, [openSheet]);
 	
 	useEffect(() => {
-		if (editingService) {
-			form.reset(editingService);
+		if (editingProduct) {
+			form.reset(editingProduct);
 		}
-	}, [editingService]);
+	}, [editingProduct]);
 	
 	const handleSave = async (data: ProductFormValues) => {
 		const toastId = toast.loading("Guardando producto...")
@@ -53,7 +54,7 @@ export function ProductSheet({ profile }: { profile: Business }) {
 		try {
 			let result;
 			if (isEditing()) {
-				result = await updateProduct({  ...editingService, ...data})
+				result = await updateProduct({  ...editingProduct, ...data})
 			} else {
 				result = await createProduct(data)
 			}
@@ -90,9 +91,9 @@ export function ProductSheet({ profile }: { profile: Business }) {
 	}
 	
 	return (
-		<Drawer open={openSheet} onOpenChange={setOpenSheet} direction={isMobile ? 'bottom' : 'right'}>
+		<Drawer open={openSheet} onOpenChange={setOpenSheet} direction={isMobile ? 'bottom' : 'right'} dismissible={false}>
 			<DrawerTrigger asChild>
-				<Button onClick={openForCreate}>
+				<Button onClick={openForCreate} className={'cursor-pointer'}>
 					<PlusIcon className="h-4 w-4" />
 					<span className="hidden lg:inline">Adicionar Producto</span>
 				</Button>
@@ -104,7 +105,7 @@ export function ProductSheet({ profile }: { profile: Business }) {
 				</DrawerHeader>
 				<div className="no-scrollbar overflow-y-auto px-4">
 					<div className="flex-1 overflow-y-auto overscroll-contain py-2">
-						<ProductForm profile={profile} form={form} isEdit={!!editingService}/>
+						<ProductForm profile={profile} form={form} isEdit={!!editingProduct}/>
 					</div>
 				</div>
 				

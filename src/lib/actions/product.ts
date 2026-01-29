@@ -46,7 +46,7 @@ export async function listProducts(params: ProductsFilterValues & PaginationRequ
 
         let query = supabase
             .from("services")
-            .select('*, category:business_categories(*), discount:product_discounts(*)', { count: "exact" })
+            .select('*, category:business_categories(*), discount:product_discounts(*), images:service_images(*)', { count: "exact" })
             .eq('item_type', 'product');
        
        if (!!business_id) {

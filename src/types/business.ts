@@ -1,5 +1,5 @@
 import {VehicleTypeEnum} from "@/types/index";
-import {BusinessImage} from '@/components/ui/file-upload';
+import {BucketImage} from '@/components/ui/file-upload';
 
 export const PROMOTION_TYPES = ['nuevo', 'destacado', 'popular', 'recomendado', 'en_oferta', 'envio_gratis', 'top_valorado'] as const
 
@@ -29,7 +29,7 @@ export type Business = {
         id: string
         vehicle_type: VehicleTypeEnum
     }[];
-    images: BusinessImage[];
+    images: BucketImage[];
 };
 
 export const promotions = [
@@ -77,6 +77,7 @@ export type Service = {
     description?: string;
     price?: number;
     is_active: boolean;
+    images: BucketImage[];
 }
 
 export type Product = Service & {

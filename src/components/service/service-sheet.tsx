@@ -14,6 +14,7 @@ import {useServiceStore} from '@/store/service';
 import {showActionErrors} from '@/lib/utils';
 import {Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger} from '@/components/ui/drawer';
 import {useIsMobile} from '@/hooks/use-mobile';
+import {useProfile} from '@/providers/profile-provider';
 
 const initialValues: Partial<ServiceFormValues> = {
 	id: '',
@@ -22,6 +23,7 @@ const initialValues: Partial<ServiceFormValues> = {
 	price: 0,
 }
 export function ServiceSheet() {
+	const profile = useProfile()
 	const { openSheet, setOpenSheet, isEditing, closeSheet, openForCreate, editingService } = useServiceStore();
 	const isMobile = useIsMobile();
 	const { mutateAsync: createService, isPending: isCreatingService } = useCreateService();
@@ -89,9 +91,9 @@ export function ServiceSheet() {
 	}
 	
 	return (
-		<Drawer open={openSheet} onOpenChange={setOpenSheet} direction={isMobile ? 'bottom' : 'right'}>
+		<Drawer open={openSheet} onOpenChange={setOpenSheet} direction={isMobile ? 'bottom' : 'right'} dismissible={false}>
 			<DrawerTrigger asChild>
-				<Button onClick={openForCreate}>
+				<Button onClick={openForCreate} className={'cursor-pointer'}>
 					<PlusIcon className="h-4 w-4" />
 					<span className="hidden lg:inline">Adicionar Servicio</span>
 				</Button>
@@ -103,7 +105,7 @@ export function ServiceSheet() {
 				</DrawerHeader>
 				<div className="no-scrollbar overflow-y-auto px-4">
 					<div className="flex-1 overflow-y-auto overscroll-contain py-2">
-						<ServiceForm form={form} isEdit={!!editingService}/>
+						<ServiceForm form={form} profile={profile} isEdit={!!editingService} service={editingService}/>
 					</div>
 				</div>
 				

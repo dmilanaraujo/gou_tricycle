@@ -21,11 +21,12 @@ import {updateProfile} from '@/lib/actions/profile';
 import {NativeSelect, NativeSelectOption} from '@/components/ui/native-select';
 import {municipalities, provinces} from '@/lib/data/locations';
 import {useLoadingRouter} from '@/providers/navigation-loading-provider';
-import {Business} from '@/types/business';
 import {Textarea} from '@/components/ui/textarea';
 import {PhoneInput} from '@/components/ui/phone-input';
+import {useProfile} from '@/providers/profile-provider';
 
-export function ProfileForm({ profile }: { profile: Business; }) {
+export function ProfileForm() {
+	const profile = useProfile()
 	const router = useLoadingRouter();
 	const form = useForm<UpdateProfileValues>({
 		resolver: zodResolver(UpdateProfileSchema),

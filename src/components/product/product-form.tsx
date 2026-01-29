@@ -15,20 +15,22 @@ import {Textarea} from '@/components/ui/textarea'
 import {Switch} from '@/components/ui/switch'
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {useGetBusinessCategories} from '@/hooks/api/business';
-import {Business} from '@/types';
+import {Business, Product} from '@/types';
 import {ProductFormValues} from '@/lib/schemas/product';
+import {ImagesForm} from '@/components/common/form-images';
 
 interface ProductFormProps {
 	form: UseFormReturn<ProductFormValues>
 	isEdit?: boolean
 	profile: Business
+	product?: Product
 }
 
-export const ProductForm = ({form, profile}: ProductFormProps) => {
+export const ProductForm = ({form, profile, isEdit, product}: ProductFormProps) => {
 	const { data: categories, isLoading: isLoadingCategories } = useGetBusinessCategories(profile.id);
 	return (
 			<ReusableForm form={form}>
-				<div className="space-y-6 p-6">
+				<div className="space-y-6 p-4">
 					
 					{/* Header */}
 					<div className="flex items-center w-full">
@@ -42,7 +44,7 @@ export const ProductForm = ({form, profile}: ProductFormProps) => {
 							name="name"
 							render={({field}) => (
 								<FormItem>
-									<FormLabel>Nombre*</FormLabel>
+									<FormLabel>Nombre<span className="text-red-600">*</span></FormLabel>
 									<FormControl>
 										<Input placeholder="Shampoo herbal" {...field} />
 									</FormControl>
@@ -178,8 +180,16 @@ export const ProductForm = ({form, profile}: ProductFormProps) => {
 							<input type="hidden" {...field} value="product" />
 						)}
 					/>
-				
+					{isEdit &&
+                        <ImagesForm
+                            bucket='service_images'
+                            images={product?.images || []}
+                            extraMetadata={{ service_id: product?.id! }}
+                            extraPath={`/${product?.id!}`}
+                        />
+					}
 				</div>
+				
 			</ReusableForm>
 	)
 }

@@ -46,7 +46,7 @@ export async function listServices(params: ServicesFilterValues & PaginationRequ
 
         let query = supabase
             .from("services")
-            .select('*', { count: "exact" })
+            .select('*, images:service_images(*)', { count: "exact" })
             .eq('item_type', 'service');
        
        if (!!business_id) {
