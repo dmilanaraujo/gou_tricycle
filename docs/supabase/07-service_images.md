@@ -21,6 +21,7 @@ as $$
 declare
   v_service_id uuid;
   v_thumb_path text;
+  v_has_primary boolean;
 begin
   -- Solo bucket correcto
   if new.bucket_id <> 'service_images' then
@@ -34,19 +35,29 @@ begin
     return new;
   end if;
 
-
   -- CASO IMAGEN NORMAL
   v_thumb_path := replace(new.name, 'full_', 'thumb_');
+
+  -- 🔍 verificar si ya existe primary
+  select exists (
+    select 1
+    from public.service_images
+    where service_id = v_service_id
+      and "primary" = true
+  )
+  into v_has_primary;
 
   insert into public.service_images (
     service_id,
     path,
-    path_thumbnail
+    path_thumbnail,
+    "primary"
   )
   values (
     v_service_id,
     new.name,
-    v_thumb_path
+    v_thumb_path,
+    not v_has_primary
   );
 
   return new;
