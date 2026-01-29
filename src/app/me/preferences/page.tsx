@@ -1,6 +1,5 @@
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs';
 import {ProfileForm} from '@/components/preferences/form-profile';
-import {getProfile} from '@/lib/actions/profile';
 import {redirect} from 'next/navigation';
 import {ImagesForm} from '@/components/preferences/form-images';
 import {UpdatePasswordForm} from '@/components/preferences/form-update-password';
@@ -11,15 +10,15 @@ import {HeaderSection} from '@/components/layout/header-section';
 import {Main} from '@/components/layout/main';
 import {Wrench, Key, Images} from 'lucide-react';
 import {LogoBannerForm} from '@/components/preferences/form-logo-banner';
+import {getProfileCachedData} from '@/lib/actions/profile';
 
 export const dynamic = "force-dynamic";
 
 export default async function PreferencesPage() {
-	const profileRes = await getProfile();
-	if (!profileRes.success || !profileRes.data) {
+	const business = await getProfileCachedData();
+	if (!business) {
 		redirect("/sign-in");
 	}
-	const {data: business} = profileRes;
 	
 	const tabs =  [
 		{

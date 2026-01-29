@@ -1,8 +1,8 @@
-import { QueryKey, useInfiniteQuery, UseInfiniteQueryOptions } from '@tanstack/react-query';
-import {PaginationRequest, ResultList} from '@/types';
+import {QueryKey, useInfiniteQuery, UseInfiniteQueryOptions, useMutation, useQuery, useQueryClient, UseQueryOptions} from '@tanstack/react-query';
+import {BusinessCategory, PaginationRequest, ResultList} from '@/types';
 import {Business} from "@/types/business";
-import {getBusinesses} from "@/lib/actions/business";
-import {BusinessFiltersValues} from "@/lib/schemas/business";
+import {createBusinessCategory, deleteBusinessCategories, getBusinessCategories, getBusinesses, updateBusinessCategory} from '@/lib/actions/business';
+import {BusinessCategoryValues, BusinessFiltersValues} from '@/lib/schemas/business';
 
 type TDataResultBusiness = {
   pageParams: number[];
@@ -30,3 +30,55 @@ export const useInfinityBusinesses = (
 };
 
 
+export const useGetBusinessCategories = (
+    businessId?: string,
+    options?: Partial<UseQueryOptions< BusinessCategory[], Error,  BusinessCategory[], QueryKey>>
+) => {
+  return useQuery({
+    queryKey: ['business-categories', businessId],
+    queryFn: async () => {
+      const response = await getBusinessCategories(businessId);
+      return response.success ?  response.data! : [];
+    },
+    ...options
+  })
+};
+
+
+export const useCreateBusinessCategory = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: BusinessCategoryValues) => {
+      return await createBusinessCategory(input);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['business-categories'] });
+    },
+  });
+};
+
+export const useUpdateBusinessCategory = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (input: Partial<BusinessCategoryValues>) => {
+      return await updateBusinessCategory(input);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['business-categories'] });
+    },
+  });
+};
+
+export const useDeleteBusinessCategories = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (ids: number[]) => {
+      return await deleteBusinessCategories(ids);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['business-categories'] });
+    },
+  });
+};

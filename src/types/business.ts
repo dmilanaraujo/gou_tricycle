@@ -24,7 +24,7 @@ export type Business = {
     featured: boolean;
     is_active: boolean;
     section: BusinessSection;
-    categories: BusinessCategory[];
+    categories: BusinessSystemCategory[];
     vehicles?: {
         id: string
         vehicle_type: VehicleTypeEnum
@@ -48,10 +48,26 @@ export type BusinessSection = {
         slug: string
 }
 
+export type BusinessSystemCategory = {
+        id: string
+        name: string
+        slug: string
+}
+
 export type BusinessCategory = {
         id: string
         name: string
         slug: string
+        icon?: string
+}
+
+export type BusinessDiscount = {
+        id: string
+        type: string
+        value: number
+        starts_at?: string
+        ends_at?: string
+        is_active: boolean
 }
 
 export type Service = {
@@ -61,6 +77,15 @@ export type Service = {
     description?: string;
     price?: number;
     is_active: boolean;
+}
+
+export type Product = Service & {
+    business_category_id?: string
+    product_discounts_id?: string
+    image_url?: string
+    is_featured: boolean;
+    category?: BusinessCategory;
+    discount?: BusinessDiscount;
 }
 
 // export type ImageType = 'logo' | 'banner' | 'normal';

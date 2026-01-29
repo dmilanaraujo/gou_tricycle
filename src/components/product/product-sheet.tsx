@@ -6,29 +6,30 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 
-import { ServiceForm } from "@/components/service/service-form"
 import { useCreateService, useUpdateService } from "@/hooks/api/service"
 import {useEffect} from 'react';
-import {ServiceFormValues, ServiceSchema} from '@/lib/schemas/service';
 import {useServiceStore} from '@/store/service';
 import {showActionErrors} from '@/lib/utils';
 import {Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger} from '@/components/ui/drawer';
 import {useIsMobile} from '@/hooks/use-mobile';
+import {Business} from '@/types';
+import {ProductFormValues, ProductSchema} from '@/lib/schemas/product';
+import {ProductForm} from '@/components/product/product-form';
 
-const initialValues: Partial<ServiceFormValues> = {
+const initialValues: Partial<ProductFormValues> = {
 	id: '',
 	name: '',
 	description: '',
 	price: 0,
 }
-export function ServiceSheet() {
+export function ProductSheet({ profile }: { profile: Business }) {
 	const { openSheet, setOpenSheet, isEditing, closeSheet, openForCreate, editingService } = useServiceStore();
 	const isMobile = useIsMobile();
-	const { mutateAsync: createService, isPending: isCreatingService } = useCreateService();
-	const { mutateAsync: updateService, isPending: isUpdatingService } = useUpdateService();
+	const { mutateAsync: createProduct, isPending: isCreatingProduct } = useCreateService();
+	const { mutateAsync: updateProduct, isPending: isUpdatingProduct } = useUpdateService();
 	
-	const form = useForm<ServiceFormValues>({
-		resolver: zodResolver(ServiceSchema),
+	const form = useForm<ProductFormValues>({
+		resolver: zodResolver(ProductSchema),
 		defaultValues: initialValues,
 		mode: 'onBlur'
 	})
@@ -46,45 +47,45 @@ export function ServiceSheet() {
 		}
 	}, [editingService]);
 	
-	const handleSave = async (data: ServiceFormValues) => {
-		const toastId = toast.loading("Guardando servicio...")
+	const handleSave = async (data: ProductFormValues) => {
+		const toastId = toast.loading("Guardando producto...")
 		
 		try {
 			let result;
 			if (isEditing()) {
-				result = await updateService({  ...editingService, ...data})
+				result = await updateProduct({  ...editingService, ...data})
 			} else {
-				result = await createService(data)
+				result = await createProduct(data)
 			}
 			if (!result.success) {
 				showActionErrors(result.errors, toastId)
 				return;
 			}
-			toast.success("Servicio guardado con éxito", { id: toastId })
+			toast.success("Producto guardado con éxito", { id: toastId })
 			closeSheet();
 			form.reset()
 			// onSuccess?.()
 		} catch (err) {
 			console.error(err)
-			toast.error("Error al guardar la servicio", { id: toastId })
+			toast.error("Error al guardar la producto", { id: toastId })
 		}
 	}
 	
-	const handleSaveAndContinue = async (data: ServiceFormValues) => {
-		const toastId = toast.loading("Guardando servicio...")
+	const handleSaveAndContinue = async (data: ProductFormValues) => {
+		const toastId = toast.loading("Guardando producto...")
 		
 		try {
-			const result = await createService(data);
+			const result = await createProduct(data);
 			if (!result.success) {
 				showActionErrors(result.errors, toastId)
 				return;
 			}
-			toast.success("Servicio guardado con éxito", { id: toastId })
+			toast.success("Producto guardado con éxito", { id: toastId })
 			form.reset()
 			// onSuccess?.()
 		} catch (err) {
 			console.error(err)
-			toast.error("Error al guardar la servicio", { id: toastId })
+			toast.error("Error al guardar la producto", { id: toastId })
 		}
 	}
 	
@@ -93,17 +94,17 @@ export function ServiceSheet() {
 			<DrawerTrigger asChild>
 				<Button onClick={openForCreate}>
 					<PlusIcon className="h-4 w-4" />
-					<span className="hidden lg:inline">Adicionar Servicio</span>
+					<span className="hidden lg:inline">Adicionar Producto</span>
 				</Button>
 			</DrawerTrigger>
 			<DrawerContent>
 				<DrawerHeader>
-					<DrawerTitle>{!isEditing() ? 'Registrar Servicio' : 'Modificar Servicio'}</DrawerTitle>
+					<DrawerTitle>{!isEditing() ? 'Registrar Producto' : 'Modificar Producto'}</DrawerTitle>
 					{/*<DrawerDescription>Set your daily activity goal.</DrawerDescription>*/}
 				</DrawerHeader>
 				<div className="no-scrollbar overflow-y-auto px-4">
 					<div className="flex-1 overflow-y-auto overscroll-contain py-2">
-						<ServiceForm form={form} isEdit={!!editingService}/>
+						<ProductForm profile={profile} form={form} isEdit={!!editingService}/>
 					</div>
 				</div>
 				
@@ -111,7 +112,7 @@ export function ServiceSheet() {
 					<Button
 						size="sm"
 						variant="outline"
-						disabled={isCreatingService || isUpdatingService}
+						disabled={isCreatingProduct || isUpdatingProduct}
 						onClick={() => closeSheet()}
 					>
 						Cancelar
@@ -119,21 +120,21 @@ export function ServiceSheet() {
 					{!isEditing() && (
 						<Button
 							size="sm"
-							disabled={isCreatingService}
+							disabled={isCreatingProduct}
 							// onClick={handleSaveAndContinue}
 							onClick={form.handleSubmit(handleSaveAndContinue)}
 						>
-							{isCreatingService && <Loader2 className="h-4 w-4 animate-spin"/>}
-							{isCreatingService ? 'Guardando...' : 'Guardar y Continuar'}
+							{isCreatingProduct && <Loader2 className="h-4 w-4 animate-spin"/>}
+							{isCreatingProduct ? 'Guardando...' : 'Guardar y Continuar'}
 						</Button>
 					)}
 					<Button
 						size="sm"
-						disabled={isCreatingService || isUpdatingService}
+						disabled={isCreatingProduct || isUpdatingProduct}
 						onClick={form.handleSubmit(handleSave)}
 					>
-						{(isCreatingService || isUpdatingService) && <Loader2 className="h-4 w-4 animate-spin"/>}
-						{(isCreatingService || isUpdatingService) ? 'Guardando...' : 'Guardar'}
+						{(isCreatingProduct || isUpdatingProduct) && <Loader2 className="h-4 w-4 animate-spin"/>}
+						{(isCreatingProduct || isUpdatingProduct) ? 'Guardando...' : 'Guardar'}
 					</Button>
 				</DrawerFooter>
 			</DrawerContent>

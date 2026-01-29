@@ -2,16 +2,12 @@ import * as React from 'react';
 import { User, AuthError } from '@supabase/supabase-js';
 import {createClient} from '@/lib/supabase/server';
 import {LoadingOverlay} from '@/components/common/loading-overlay';
-import {Button} from '@/components/ui/button';
-import Link from 'next/link';
-import {Home} from 'lucide-react';
-import {LogoutButton} from '@/components/auth/logout-button';
-import {getProfile} from '@/lib/actions/profile';
 import {isProfileComplete} from '@/lib/utils';
 import {redirect} from 'next/navigation';
 import {AppSidebar} from '@/components/layout/app-sidebar';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import {Separator} from '@/components/ui/separator';
+import {getProfileCachedData} from '@/lib/actions/profile';
 
 interface ManagerLayoutProps {
   children: React.ReactNode;
@@ -31,11 +27,10 @@ export default async function ManagerLayout({ children }: Readonly<ManagerLayout
     return null;
   }
   
-  const profileRes = await getProfile();
-  if (!profileRes.success || !profileRes.data) {
+  const business = await getProfileCachedData();
+  if (!business) {
       return null
   }
-  const { data: business } = profileRes;
 
   if (!isProfileComplete(business)) {
       redirect('/complete-profile')

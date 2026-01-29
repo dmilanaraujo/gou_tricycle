@@ -3,13 +3,13 @@ import {
   useQuery, useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query';
-import { BusinessCategory } from '@/types/business';
+import { BusinessSystemCategory } from '@/types/business';
 import {createCategory, deleteCategories, listCategories, updateCategory} from '@/lib/actions/category';
 import {CategoryFormValues} from '@/lib/schemas/category';
 
 export const useGetCategories = (
     sectionId?: string,
-    options?: Partial<UseQueryOptions< BusinessCategory[], Error,  BusinessCategory[], QueryKey>>
+    options?: Partial<UseQueryOptions< BusinessSystemCategory[], Error,  BusinessSystemCategory[], QueryKey>>
 ) => {
   return useQuery({
     queryKey: ['categories', sectionId],
