@@ -15,17 +15,20 @@ const SlugSchema = z.string().slugify();
 
 export const BusinessCategorySchema = z.object({
 	id: z.number().optional(),
-	name: z.string({ error: 'El nombre es requerido'}),
+	name: z.string({ error: 'El nombre es requerido'}).min(1, "El nombre es requerido"),
 	icon: z.string().optional(),
 	// slug: z.string().optional(), // se genera
-}).transform((data) => ({
-	...data,
-	slug: SlugSchema.parse(data.name),
-}))
+})
+// 	.transform((data) => ({
+// 	...data,
+// 	slug: SlugSchema.parse(data.name),
+// }))
 
 export const BusinessDiscountSchema = z.object({
 	id: z.number().optional(),
-	type: z.string({ error: 'El tipo es requerido'}),
+	type: z.enum(['percentage', 'fixed'], {
+		error: 'El tipo es requerido',
+	}),
 	value: z.number({ error: 'El valor es requerido'}),
 	starts_at: z.date().optional(),
 	ends_at: z.date().optional(),

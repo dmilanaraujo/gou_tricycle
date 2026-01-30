@@ -1,7 +1,7 @@
 'use server';
 import {ActionResponse, Business, BusinessCategory, BusinessDiscount, BusinessSystemCategory, PaginationRequest, ResultList} from '@/types';
 import {createClient} from '@/lib/supabase/server';
-import {formatSupabaseFunctionErrors, formatSupabasePostgrestErrors, formatZodErrors, shuffleArray} from '@/lib/utils';
+import {formatSupabaseFunctionErrors, formatSupabasePostgrestErrors, formatZodErrors, shuffleArray, slugify} from '@/lib/utils';
 import {BusinessCategorySchema, BusinessCategoryValues, BusinessDiscountSchema, BusinessDiscountValues, BusinessFiltersSchema, BusinessFiltersValues} from '@/lib/schemas/business';
 
 const constraintCategoryMap = {
@@ -193,6 +193,7 @@ export async function createBusinessCategory(input: BusinessCategoryValues): Pro
         .from("business_categories")
         .insert({
           ...validatedFields.data,
+          slug: slugify(validatedFields.data.name),
           business_id: user.id
         })
         .select("*");
@@ -236,7 +237,7 @@ export async function updateBusinessCategory(input: Partial<BusinessCategoryValu
   }
 }
 
-export async function deleteBusinessCategories(ids: number[]): Promise<ActionResponse<void>> {
+export async function deleteBusinessCategories(ids: string[]): Promise<ActionResponse<void>> {
   try {
     if (!Array.isArray(ids) || ids.length === 0) {
       return { success: false, errors: [{ message: 'Debe proporcionar al menos un ID para eliminar.' }] };
@@ -244,12 +245,10 @@ export async function deleteBusinessCategories(ids: number[]): Promise<ActionRes
     
     const supabase = await createClient();
     
-    const numericIds = ids.map(id => Number(id));
-    
     const { error } = await supabase
         .from("business_categories")
         .delete()
-        .in("id", numericIds);
+        .in("id", ids);
     
     if (error) {
       return { success: false, errors: formatSupabasePostgrestErrors(error) }
@@ -347,7 +346,7 @@ export async function updateBusinessDiscount(input: Partial<BusinessDiscountValu
   }
 }
 
-export async function deleteBusinessDiscount(ids: number[]): Promise<ActionResponse<void>> {
+export async function deleteBusinessDiscount(ids: string[]): Promise<ActionResponse<void>> {
   try {
     if (!Array.isArray(ids) || ids.length === 0) {
       return { success: false, errors: [{ message: 'Debe proporcionar al menos un ID para eliminar.' }] };
@@ -355,12 +354,10 @@ export async function deleteBusinessDiscount(ids: number[]): Promise<ActionRespo
     
     const supabase = await createClient();
     
-    const numericIds = ids.map(id => Number(id));
-    
     const { error } = await supabase
         .from("product_discounts")
         .delete()
-        .in("id", numericIds);
+        .in("id", ids);
     
     if (error) {
       return { success: false, errors: formatSupabasePostgrestErrors(error) }

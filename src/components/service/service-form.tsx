@@ -7,8 +7,6 @@ import {ReusableForm} from '@/components/common/reusable-form';
 import * as React from 'react';
 import {ServiceFormValues} from '@/lib/schemas/service';
 import {Textarea} from '@/components/ui/textarea';
-import {ImagesForm} from '@/components/common/form-images';
-import {Business, Service} from '@/types';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
 import {Loader2} from 'lucide-react';
 import {useGetBusinessDiscounts} from '@/hooks/api/business';

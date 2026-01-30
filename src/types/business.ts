@@ -1,5 +1,6 @@
 import {VehicleTypeEnum} from "@/types/index";
 import {BucketImage} from '@/components/ui/file-upload';
+import {IconName} from 'lucide-react/dynamic';
 
 export const PROMOTION_TYPES = ['nuevo', 'destacado', 'popular', 'recomendado', 'en_oferta', 'envio_gratis', 'top_valorado'] as const
 
@@ -58,7 +59,7 @@ export type BusinessCategory = {
         id: string
         name: string
         slug: string
-        icon?: string
+        icon?: IconName
 }
 
 export type BusinessDiscount = {

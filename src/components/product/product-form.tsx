@@ -18,6 +18,8 @@ import {useGetBusinessCategories, useGetBusinessDiscounts} from '@/hooks/api/bus
 import {ProductFormValues} from '@/lib/schemas/product';
 import {Loader2} from 'lucide-react';
 import {useProfile} from '@/providers/profile-provider';
+import {BusinessCategoryDialog} from '@/components/business-category/business-category-dialog';
+import {BusinessDiscountDialog} from '@/components/business-discount/business-discount-dialog';
 
 interface ProductFormProps {
 	form: UseFormReturn<ProductFormValues>
@@ -94,7 +96,7 @@ export const ProductForm = ({form}: ProductFormProps) => {
 						/>
 					
 					</div>
-					<div className="grid grid-cols-1 gap-4 items-start">
+					<div className="grid grid-cols-1 gap-1 items-start">
 						{/* category */}
 						<FormField
 							control={form.control}
@@ -131,6 +133,7 @@ export const ProductForm = ({form}: ProductFormProps) => {
 								</FormItem>
 							)}
 						/>
+						<BusinessCategoryDialog/>
 					</div>
 					
 					{/* Flags */}
@@ -157,7 +160,8 @@ export const ProductForm = ({form}: ProductFormProps) => {
 								</FormItem>
 							)}
 						/>
-						
+					</div>
+					<div className="grid grid-cols-1 gap-1 items-start">
 						{/* product_discounts_id */}
 						<FormField
 							control={form.control}
@@ -192,6 +196,7 @@ export const ProductForm = ({form}: ProductFormProps) => {
 								</FormItem>
 							)}
 						/>
+						<BusinessDiscountDialog/>
 					</div>
 				</div>
 			

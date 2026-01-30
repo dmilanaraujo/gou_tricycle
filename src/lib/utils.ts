@@ -6,6 +6,7 @@ import imageCompression from 'browser-image-compression';
 import {z} from 'zod';
 import {Business} from '@/types/business';
 import {toast} from 'sonner';
+import {format, parseISO} from 'date-fns';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -300,4 +301,13 @@ export const showActionErrors = (errors?: ActionError[], toastId?: string|number
 
 export function getInitials(...words: string[]) {
     return words.filter(n => !!n).map(w => w.charAt(0).toUpperCase()).join('');
+}
+
+export function slugify(name: string) {
+    const schema = z.string().slugify();
+    return schema.parse(name);
+}
+
+export function formatDateByString(date: string, f: string = 'dd/MM/yyyy') {
+    return format(parseISO(date), f);
 }

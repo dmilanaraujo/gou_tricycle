@@ -82,7 +82,7 @@ export const useDeleteBusinessCategories = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (ids: number[]) => {
+    mutationFn: async (ids: string[]) => {
       return await deleteBusinessCategories(ids);
     },
     onSuccess: () => {
@@ -134,7 +134,7 @@ export const useDeleteBusinessDiscounts = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (ids: number[]) => {
+    mutationFn: async (ids: string[]) => {
       return await deleteBusinessDiscount(ids);
     },
     onSuccess: () => {
