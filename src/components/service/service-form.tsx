@@ -11,6 +11,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/c
 import {Loader2} from 'lucide-react';
 import {useGetBusinessDiscounts} from '@/hooks/api/business';
 import {useProfile} from '@/providers/profile-provider';
+import {BusinessDiscountDialog} from '@/components/business-discount/business-discount-dialog';
 
 interface ServiceFormProps
 {
@@ -43,7 +44,7 @@ export const ServiceForm = ({form}: ServiceFormProps) => {
 								</FormItem>
 							)}
 						/>
-					
+						
 						<FormField
 							control={form.control}
 							name="description"
@@ -81,6 +82,8 @@ export const ServiceForm = ({form}: ServiceFormProps) => {
 								</FormItem>
 							)}
 						/>
+					</div>
+					<div className="grid grid-cols-1 gap-1 items-start">
 						<FormField
 							control={form.control}
 							name="product_discounts_id"
@@ -114,9 +117,10 @@ export const ServiceForm = ({form}: ServiceFormProps) => {
 								</FormItem>
 							)}
 						/>
+						<BusinessDiscountDialog/>
 					</div>
 				</div>
-		
+			
 			</ReusableForm>
 		
 		</>
