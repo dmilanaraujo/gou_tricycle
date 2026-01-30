@@ -4,6 +4,8 @@ import {HeaderSection} from '@/components/layout/header-section';
 import * as React from 'react';
 import {Main} from '@/components/layout/main';
 
+export const dynamic = "force-dynamic";
+
 export default async function ServicesPage() {
 	return (
 		<Main fixed>

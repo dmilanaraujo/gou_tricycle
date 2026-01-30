@@ -1,26 +1,18 @@
-import { createClient } from "@/lib/supabase/server";
-import {notFound, redirect} from 'next/navigation';
+import {redirect} from 'next/navigation';
 import React from 'react';
 import {isBusinessActive, isProfileComplete} from '@/lib/utils';
 import {Statistics} from '@/components/dashboard/statistics';
 import {getProfileCachedData} from '@/lib/actions/profile';
 
+export const dynamic = "force-dynamic";
+
 export default async function AccountPage() {
-    const supabase = await createClient();
-    
-    const {data: {user}, error} = await supabase.auth.getUser();
-    if (error || !user) {
-        redirect("/sign-in");
-    }
     const business = await getProfileCachedData();
-    if (!business) {
-        notFound();
-    }
-    const isComplete = isProfileComplete(business);
+    const isComplete = isProfileComplete(business!);
     if (!isComplete) {
         redirect("/me/profile");
     }
-    const isActive = isBusinessActive(business)
+    const isActive = isBusinessActive(business!)
     const online = true;
     return (
         <div className="flex flex-col justify-between h-full pb-12 md:mx-auto md:max-w-6xl">

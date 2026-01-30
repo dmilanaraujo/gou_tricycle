@@ -4,6 +4,8 @@ import * as React from 'react';
 import {Main} from '@/components/layout/main';
 import {ProductSheet} from '@/components/product/product-sheet';
 
+export const dynamic = "force-dynamic";
+
 export default async function ProductsPage() {
 	return (
 		<Main fixed>
