@@ -69,7 +69,7 @@ function useDirection(dirProp?: Direction): Direction {
 	return dirProp ?? contextDir ?? "ltr";
 }
 
-export type BusinessImage = {
+export type BucketImage = {
 	path: string;
 	path_thumbnail?: string;
 	primary: boolean;
@@ -79,7 +79,7 @@ export type BusinessImage = {
 
 export interface FileImage {
 	file?: File | undefined;
-	image?: BusinessImage;
+	image?: BucketImage;
 	path: string;
 	fullPublicUrl?: string;
 	thumbnailPublicUrl?: string;

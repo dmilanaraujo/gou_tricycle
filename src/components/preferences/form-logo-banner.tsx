@@ -18,15 +18,16 @@ import {Button} from '@/components/ui/button';
 import {useImageUpload} from '@/hooks/use-image-upload';
 import {useConfirm} from '@/components/common/confirm-dialog-provider';
 import {useLoadingRouter} from '@/providers/navigation-loading-provider';
-import {Business, ImageType} from '@/types/business';
+import {ImageType} from '@/types/business';
 import {getPublicImageUrl} from '@/lib/utils';
+import {useProfile} from '@/providers/profile-provider';
 
 interface LogoBannerFormProps {
-	profile: Business;
 	bucket: string;
 }
 
-export function LogoBannerForm({ bucket, profile }: LogoBannerFormProps) {
+export function LogoBannerForm({ bucket }: LogoBannerFormProps) {
+	const profile = useProfile()
 	const router = useLoadingRouter();
 	const [logo, setLogo] = React.useState<FileImage[]>(profile.logo ? [{
 		isRemote: true,
@@ -63,13 +64,13 @@ export function LogoBannerForm({ bucket, profile }: LogoBannerFormProps) {
 				// Process each file individually
 				const uploadPromises = files.map(async (file) => {
 					try {
-						const result = await uploadImage(
+						const result = await uploadImage({
 							bucket,
-							file.file!,
-							profile.id,
+							file: file.file!,
+							userId: profile.id,
 							type,
-							(file, progress) => onProgress({ file, path: file.name, primary: false }, progress)
-						);
+						    onProgress:	(file, progress) => onProgress({ file, path: file.name, primary: false }, progress)
+						});
 						file.path = result.path;
 						onSuccess(file);
 					} catch (error) {

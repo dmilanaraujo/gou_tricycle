@@ -6,6 +6,7 @@ export const ServiceSchema = z.object({
     name: z.string().min(1, "El nombre es obligatorio"),
     description: z.string().optional(),
     price: z.number().optional(),
+    product_discounts_id: z.string().optional().nullable(),
 });
 
 export const ServicesFilterSchema = z.object({

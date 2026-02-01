@@ -3,14 +3,18 @@ import {ImageType, UploadedImage, UploadFileError} from '@/types';
 import {getPublicImageUrl, optimizeImage, revokeImageUrls} from '@/lib/utils';
 import {createClient} from '@/lib/supabase/client';
 
+type UploadImageParams = {
+	bucket: string,
+	userId: string,
+	file: File,
+	type: ImageType,
+	onProgress?: (file: File, progress: number) => void;
+	extraMetadata?: Record<string, string>;
+	extraPath?: string;
+}
+
 interface UseImageUploadReturn {
-	uploadImage: (
-		bucket: string,
-		file: File,
-		userId: string,
-		type: ImageType,
-		onProgress?: (file: File, progress: number) => void
-	) => Promise<UploadedImage>;
+	uploadImage: (params: UploadImageParams) => Promise<UploadedImage>;
 	removeImage: (bucket: string, path: string) => Promise<boolean>;
 	isUploading: boolean;
 	progress: number;
@@ -22,13 +26,7 @@ export function useImageUpload(): UseImageUploadReturn {
 	const [progress, setProgress] = useState(0);
 	const [error, setError] = useState<string | null>(null);
 	
-	const uploadImage = async (
-		bucket: string,
-		file: File,
-		userId: string,
-		type: ImageType,
-		onProgress?: (file: File, progress: number) => void
-	): Promise<UploadedImage> => {
+	const uploadImage = async ({ bucket, file, userId, type, onProgress, extraMetadata, extraPath }: UploadImageParams	): Promise<UploadedImage> => {
 		setIsUploading(true);
 		setProgress(0);
 		setError(null);
@@ -40,7 +38,7 @@ export function useImageUpload(): UseImageUploadReturn {
 			setProgress(10);
 			onProgress?.(file, 10);
 			
-			const optimizedImage = await optimizeImage(file, userId, type)
+			const optimizedImage = await optimizeImage(file, userId, type, extraPath)
 			setProgress(20);
 			onProgress?.(file, 20);
 			
@@ -69,6 +67,7 @@ export function useImageUpload(): UseImageUploadReturn {
 							business_id: userId,
 							logo: type == ImageType.logo,
 							banner: type == ImageType.banner,
+							...(extraMetadata || {})
 						}
 					});
 				setProgress(80);

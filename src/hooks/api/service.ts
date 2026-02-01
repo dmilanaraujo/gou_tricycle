@@ -73,7 +73,7 @@ export const useUpdateStatusService = () => {
       return await updateStatusService(serviceId, active);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['services'] });
+      queryClient.invalidateQueries({ queryKey: ['services', 'products'] });
     },
   });
 };

@@ -7,19 +7,24 @@ import {ReusableForm} from '@/components/common/reusable-form';
 import * as React from 'react';
 import {ServiceFormValues} from '@/lib/schemas/service';
 import {Textarea} from '@/components/ui/textarea';
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
+import {Loader2} from 'lucide-react';
+import {useGetBusinessDiscounts} from '@/hooks/api/business';
+import {useProfile} from '@/providers/profile-provider';
+import {BusinessDiscountDialog} from '@/components/business-discount/business-discount-dialog';
 
 interface ServiceFormProps
 {
 	form: UseFormReturn<ServiceFormValues>;
-	isEdit?: boolean
 }
 
 export const ServiceForm = ({form}: ServiceFormProps) => {
-	
+	const profile = useProfile();
+	const { data: discounts, isLoading: isLoadingDiscounts } = useGetBusinessDiscounts(profile.id);
 	return (
 		<>
 			<ReusableForm form={form}>
-				<div className="space-y-6 p-6">
+				<div className="space-y-6 p-4">
 					
 					<div className="flex items-center w-full">
 						<FormLabel className="font-semibold">Datos del Servicio</FormLabel>
@@ -31,7 +36,7 @@ export const ServiceForm = ({form}: ServiceFormProps) => {
 							name="name"
 							render={({field}) => (
 								<FormItem>
-									<FormLabel>Nombre*</FormLabel>
+									<FormLabel>Nombre<span className="text-red-600">*</span></FormLabel>
 									<FormControl>
 										<Input placeholder="ABC-123" {...field} />
 									</FormControl>
@@ -39,7 +44,7 @@ export const ServiceForm = ({form}: ServiceFormProps) => {
 								</FormItem>
 							)}
 						/>
-					
+						
 						<FormField
 							control={form.control}
 							name="description"
@@ -77,10 +82,45 @@ export const ServiceForm = ({form}: ServiceFormProps) => {
 								</FormItem>
 							)}
 						/>
-					
 					</div>
-
+					<div className="grid grid-cols-1 gap-1 items-start">
+						<FormField
+							control={form.control}
+							name="product_discounts_id"
+							render={({field}) => (
+								<FormItem>
+									<FormLabel>Descuento</FormLabel>
+									<Select
+										value={field.value ?? ''}
+										onValueChange={field.onChange}
+									
+									>
+										<FormControl>
+											<SelectTrigger className={'w-full'}>
+												{isLoadingDiscounts ? (
+													<span className="flex items-center gap-2">
+													  <Loader2 className="h-4 w-4 animate-spin"/>
+													  Cargando descuentos...
+													</span>
+												) : (
+													 <SelectValue placeholder="Seleccionar descuento"/>
+												 )}
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+											{discounts?.map(c => (
+												<SelectItem key={c.id} value={c.id}>{`${c.type} (${c.value})`}</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+									<FormMessage/>
+								</FormItem>
+							)}
+						/>
+						<BusinessDiscountDialog/>
+					</div>
 				</div>
+			
 			</ReusableForm>
 		
 		</>

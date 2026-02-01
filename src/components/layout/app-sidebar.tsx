@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Command, Settings, Home, Grid } from 'lucide-react'
+import { Command, Settings, Home, Grid, ListOrdered } from 'lucide-react'
 
 import { NavUser } from "@/components/auth/nav-user"
 import {
@@ -31,6 +31,12 @@ const sidebarNavs = [
 		title: "Mis servicios",
 		url: "/me/services",
 		icon: Grid,
+		isActive: false,
+	},
+	{
+		title: "Mis productos",
+		url: "/me/products",
+		icon: ListOrdered,
 		isActive: false,
 	},
 	{

@@ -1,8 +1,7 @@
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs';
 import {ProfileForm} from '@/components/preferences/form-profile';
-import {getProfile} from '@/lib/actions/profile';
 import {redirect} from 'next/navigation';
-import {ImagesForm} from '@/components/preferences/form-images';
+import {ImagesForm} from '@/components/common/form-images';
 import {UpdatePasswordForm} from '@/components/preferences/form-update-password';
 import * as React from 'react';
 import {ContentSection} from '@/components/layout/content-section';
@@ -11,15 +10,12 @@ import {HeaderSection} from '@/components/layout/header-section';
 import {Main} from '@/components/layout/main';
 import {Wrench, Key, Images} from 'lucide-react';
 import {LogoBannerForm} from '@/components/preferences/form-logo-banner';
+import {getProfileCachedData} from '@/lib/actions/profile';
 
 export const dynamic = "force-dynamic";
 
 export default async function PreferencesPage() {
-	const profileRes = await getProfile();
-	if (!profileRes.success || !profileRes.data) {
-		redirect("/sign-in");
-	}
-	const {data: business} = profileRes;
+	const business = await getProfileCachedData();
 	
 	const tabs =  [
 		{
@@ -31,7 +27,7 @@ export default async function PreferencesPage() {
 					title='Perfil'
 					desc='Datos del perfil de su negocio'
 				>
-					<ProfileForm profile={business}/>
+					<ProfileForm/>
 				</ContentSection>
 			)
 		},
@@ -44,7 +40,7 @@ export default async function PreferencesPage() {
 					title='Logo y banner de su negocio'
 					desc='Suba las imágenes del logo y banner de su negocio'
 				>
-					<LogoBannerForm profile={business} bucket='business_images'/>
+					<LogoBannerForm bucket='business_images'/>
 				</ContentSection>
 			)
 		},
@@ -57,7 +53,7 @@ export default async function PreferencesPage() {
 					title='Imágenes'
 					desc='Gestione las imágenes para hacer visible su negocio'
 				>
-					<ImagesForm profile={business} bucket='business_images'/>
+					<ImagesForm bucket='business_images' images={business?.images || []}/>
 				</ContentSection>
 			)
 		},

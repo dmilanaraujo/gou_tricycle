@@ -12,10 +12,10 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import {BusinessImage} from '@/components/ui/file-upload';
+import {BucketImage} from '@/components/ui/file-upload';
 
 interface ImageCarouselModalProps {
-  images: BusinessImage[];
+  images: BucketImage[];
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
 }

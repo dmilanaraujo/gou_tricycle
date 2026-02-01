@@ -5,6 +5,7 @@ import {formatSupabaseFunctionErrors, formatSupabasePostgrestErrors} from '@/lib
 import {cookies} from 'next/headers';
 import {UpdateProfileSchema, UpdateProfileValues} from '@/lib/schemas/auth';
 import {Business} from '@/types/business';
+import {cache} from 'react';
 
 export const getProfile = async (cStore?: ReturnType<typeof cookies>): Promise<ActionResponse<Business>> => {
   try{
@@ -34,12 +35,23 @@ export const getProfile = async (cStore?: ReturnType<typeof cookies>): Promise<A
       const errors = await formatSupabaseFunctionErrors(error);
       return { success: false, errors }
     }
-    return { success: true, data: data || {} as Driver };
+    return { success: true, data: data || {} as Business };
   } catch (error) {
     console.log('Unexpected error in getProfile:', error);
     throw new Error('Ha ocurrido un error no especificado');
   }
 };
+
+// Cachea solo para el mismo request
+export const getProfileCached = cache(getProfile);
+
+// Cachea solo para el mismo request (obtener solo el data)
+export const getProfileCachedData = cache(async () => {
+  const res = await getProfileCached()
+  
+  if (!res.success) return null
+  return res.data ?? null
+})
 
 export const updateProfile = async (params: UpdateProfileValues): Promise<ActionResponse<Business>> => {
   const validatedFields = UpdateProfileSchema.safeParse(params);

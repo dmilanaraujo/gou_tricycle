@@ -1,4 +1,4 @@
-import {BusinessImage} from '@/components/ui/file-upload';
+import {BucketImage} from '@/components/ui/file-upload';
 import {SortingState} from '@tanstack/react-table';
 
 export const VEHICLE_TYPES = ['electric', 'combustion', 'hybrid'] as const
@@ -15,7 +15,7 @@ export type Driver = {
   id: string;
   phone: string;
   alias: string;
-  images: BusinessImage[];
+  images: BucketImage[];
   province: string;
   municipality: string;
   vehicle_type: VehicleType;
@@ -99,5 +99,10 @@ export enum ActiveStatus {
   active = 'active',
   inactive = 'inactive',
 }
+
+export type IdParamsProps = {
+  id: string;
+};
+
 
 export * from './business';

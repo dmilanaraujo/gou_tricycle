@@ -3,14 +3,14 @@
 import {ActionResponse} from '@/types';
 import {createClient} from '@/lib/supabase/server';
 import {formatSupabasePostgrestErrors, formatZodErrors} from '@/lib/utils';
-import {BusinessCategory} from '@/types/business';
+import {BusinessSystemCategory} from '@/types/business';
 import {CategoryFormValues, CategorySchema} from '@/lib/schemas/category';
 
 const constraintMap = {
 
 };
 
-export async function listCategories(sectionId?: string): Promise<ActionResponse<BusinessCategory[]>> {
+export async function listCategories(sectionId?: string): Promise<ActionResponse<BusinessSystemCategory[]>> {
    try {
        const supabase = await createClient()
        
@@ -35,7 +35,7 @@ export async function listCategories(sectionId?: string): Promise<ActionResponse
    }
 }
 
-export async function createCategory(input: CategoryFormValues): Promise<ActionResponse<BusinessCategory>> {
+export async function createCategory(input: CategoryFormValues): Promise<ActionResponse<BusinessSystemCategory>> {
     try {
         const validatedFields = CategorySchema.safeParse(input);
         
@@ -66,7 +66,7 @@ export async function createCategory(input: CategoryFormValues): Promise<ActionR
     }
 }
 
-export async function updateCategory(input: Partial<CategoryFormValues>): Promise<ActionResponse<BusinessCategory>> {
+export async function updateCategory(input: Partial<CategoryFormValues>): Promise<ActionResponse<BusinessSystemCategory>> {
     try {
         const supabase = await createClient();
         

@@ -14,8 +14,10 @@ import {DataTableColumnFilters} from '@/components/service/data-table-column-fil
 import {ServicesFilterValues} from '@/lib/schemas/service';
 import {showActionErrors} from '@/lib/utils';
 import {useServiceStore} from '@/store/service';
+import {useProfile} from '@/providers/profile-provider';
 
 export default function ServiceTable() {
+	const profile = useProfile()
 	const pathname = usePathname()
 	const { openForEdit } = useServiceStore()
 	const { setIsNavigating } = useNavigationLoading();
@@ -28,6 +30,7 @@ export default function ServiceTable() {
 	const [filter, setFilter] = useState<ServicesFilterValues>({
 		columnId: null,
 		value: "",
+		business_id: profile.id,
 		statusFilters: {
 			[ActiveStatus.active]: true,
 			[ActiveStatus.inactive]: true,
@@ -106,7 +109,7 @@ export default function ServiceTable() {
 			ColumnFiltersComponent={DataTableColumnFilters}
 			// ExportComponent={ExportButton}
 			RowSelectedActionsComponent={DataTableRowSelected}
-			onRowClick={(row) => openForEdit(row)}
+			// onRowClick={(row) => openForEdit(row)}
 			onDeleteSelected={handleDeleteSelected}
 			rowClassName={(item) =>
 				!item.is_active ? "bg-gray-100 dark:bg-gray-800 text-gray-400" : ""

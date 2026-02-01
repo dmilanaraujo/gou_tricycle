@@ -4,13 +4,15 @@ import {HeaderSection} from '@/components/layout/header-section';
 import * as React from 'react';
 import {Main} from '@/components/layout/main';
 
-export default function ServicesPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ServicesPage() {
 	return (
 		<Main fixed>
 			<HeaderSection
 				title='Servicios'
 				desc='Gestione sus servicios aquí.'
-				action={<ServiceSheet />}
+				action={<ServiceSheet/>}
 			/>
 			<div className="p-4">
 				<ServiceTable/>

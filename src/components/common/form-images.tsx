@@ -4,6 +4,7 @@ import React from 'react';
 import {toast} from 'sonner';
 import {Check, Upload, Trash2} from 'lucide-react';
 import {
+	BucketImage,
 	FileImage,
 	FileUpload,
 	FileUploadDropzone,
@@ -21,18 +22,22 @@ import {useImageUpload} from '@/hooks/use-image-upload';
 import {useConfirm} from '@/components/common/confirm-dialog-provider';
 import {setDefaultImage} from '@/lib/actions/drivers';
 import {useLoadingRouter} from '@/providers/navigation-loading-provider';
-import {Business, ImageType} from '@/types/business';
+import {ImageType} from '@/types/business';
 import {getPublicImageUrl} from '@/lib/utils';
+import {useProfile} from '@/providers/profile-provider';
 
 interface ImagesFormProps {
 	bucket: string;
-	profile: Business;
+	images: BucketImage[];
+	extraMetadata?: Record<string, string>;
+	extraPath?: string;
 }
 
-export function ImagesForm({ bucket, profile }: ImagesFormProps) {
+export function ImagesForm({ bucket, images, extraMetadata, extraPath }: ImagesFormProps) {
+	const profile = useProfile()
 	const router = useLoadingRouter();
 	const [files, setFiles] = React.useState<FileImage[]>(
-		profile.images?.map(image => ({
+		images?.map(image => ({
 			image,
 			isRemote: true,
 			path: image.path,
@@ -71,13 +76,15 @@ export function ImagesForm({ bucket, profile }: ImagesFormProps) {
 				// Process each file individually
 				const uploadPromises = files.map(async (file) => {
 					try {
-						const result = await uploadImage(
+						const result = await uploadImage({
 							bucket,
-							file.file!,
-							profile.id,
-							ImageType.normal,
-							(file, progress) => onProgress({ file, path: file.name, primary: false }, progress)
-						);
+							userId: profile.id,
+							file: file.file!,
+							type: ImageType.normal,
+							extraMetadata,
+							extraPath,
+							onProgress: (file, progress) => onProgress({ file, path: file.name, primary: false }, progress)
+						});
 						file.path = result.path;
 						file.primary = false;
 						onSuccess(file);

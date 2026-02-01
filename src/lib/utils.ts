@@ -6,6 +6,7 @@ import imageCompression from 'browser-image-compression';
 import {z} from 'zod';
 import {Business} from '@/types/business';
 import {toast} from 'sonner';
+import {format, parseISO} from 'date-fns';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -181,6 +182,13 @@ export const isBusinessActive = (business: Business) => {
     return true;
 }
 
+export const isBusinessProducts = (business: Business) => {
+    if (business.section.slug == 'transport'){
+        return false;
+    }
+    return true;
+}
+
 export const combustionTypes: { value: VehicleType; label: string }[] = [
     { value: 'electric', label: 'Eléctrico' },
     { value: 'hybrid', label: 'Híbrido' },
@@ -191,6 +199,7 @@ export async function optimizeImage(
     file: File,
     userId: string,
     type: ImageType,
+    extraPath?: string,
     imageIndex?: number
 ): Promise<OptimizedImages> {
     
@@ -229,8 +238,8 @@ export async function optimizeImage(
         
         // Crear nombres únicos para Supabase
         const timestamp = Date.now();
-        const thumbnailName = `${userId}/thumb_${!!imageIndex ? imageIndex + '_' : ''}${timestamp}.webp`;
-        const fullSizeName = `${userId}/full_${!!imageIndex ? imageIndex + '_' : ''}${timestamp}.webp`;
+        const thumbnailName = `${userId}${extraPath}/thumb_${!!imageIndex ? imageIndex + '_' : ''}${timestamp}.webp`;
+        const fullSizeName = `${userId}${extraPath}/full_${!!imageIndex ? imageIndex + '_' : ''}${timestamp}.webp`;
         
         // Convertir Blobs a Files
         const thumbnailFile = type == ImageType.normal ? new File([thumbnailBlob], thumbnailName, {
@@ -273,6 +282,14 @@ export function getPublicImageUrl(bucket: string, path: string) {
     return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucket}/${path}`;
 }
 
+export function getPublicBusinessImageUrl(path: string) {
+    return getPublicImageUrl('business_images', path);
+}
+
+export function getPublicServiceImageUrl(path: string) {
+    return getPublicImageUrl('service_images', path);
+}
+
 export const showActionErrors = (errors?: ActionError[], toastId?: string|number) => {
     errors?.forEach((error) => {
         toast.error('Error', {
@@ -280,6 +297,19 @@ export const showActionErrors = (errors?: ActionError[], toastId?: string|number
             description: error.message,
         });
     });
+}
+
+export function getInitials(...words: string[]) {
+    return words.filter(n => !!n).map(w => w.charAt(0).toUpperCase()).join('');
+}
+
+export function slugify(name: string) {
+    const schema = z.string().slugify();
+    return schema.parse(name);
+}
+
+export function formatDateByString(date: string, f: string = 'dd/MM/yyyy') {
+    return format(parseISO(date), f);
 }
 
 type Discount = {

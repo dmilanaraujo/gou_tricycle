@@ -1,18 +1,17 @@
 import {redirect} from 'next/navigation';
 import React from "react";
-import {getProfile} from '@/lib/actions/profile';
 import {FormProfileForm} from '@/components/auth/form-complete-profile';
 import {StepProgress} from '@/components/common/step-progress';
+import {getProfileCachedData} from '@/lib/actions/profile';
 
 export const dynamic = "force-dynamic";
 
 export default async function CompleteProfilePage() {
 	
-	const profileRes = await getProfile();
-	if (!profileRes.success || !profileRes.data) {
+	const business = await getProfileCachedData();
+	if (!business) {
 		redirect("/sign-in");
 	}
-	const { data: business } = profileRes;
 
 	return (
 		<div className={'flex justify-center items-center'}>
