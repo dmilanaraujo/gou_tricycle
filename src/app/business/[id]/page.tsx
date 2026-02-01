@@ -1,28 +1,31 @@
 import { getBusinessById, getBusinessReviews } from "@/lib/actions/business"
 import { notFound } from "next/navigation"
 import BusinessDetail from "@/components/client/business-detail";
-import {getBusinessfeaturedProducts, getBusinessProducts, ProductWithPricing} from "@/lib/actions/product";
+// import {getBusinessfeaturedProducts, getBusinessProducts} from "@/lib/actions/product";
 import {applyDiscount, getPublicImageUrl} from "@/lib/utils";
+import {ServiceItems} from "@/types/service-items";
+import {listProducts} from "@/lib/actions/product";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
 
     const res = await getBusinessById(id)
     const { data: reviews } = await getBusinessReviews(id)
-    const rawProducts = await getBusinessProducts(id)
-
-    const featuredRaw = await getBusinessfeaturedProducts(id)
-    const featuredItems = featuredRaw
+    const response = await listProducts({business_id: id, page: 0, limit: 10})
+    const rawProducts = response.success ?  response.data! : { data: [] };
+    // const featuredRaw = await getBusinessfeaturedProducts(id)
+    const featuredItems = rawProducts.data
         .filter(p => p.is_featured)
         .map(p => {
-            const discount = p.discount?.[0] ?? null
-            const { finalPrice, label } = applyDiscount(p.base_price, discount)
+            // const discount = p.discount?.[0] ?? null
+            const { finalPrice, label } = applyDiscount(p.price, p.discount)
+            const primaryImage = p.images?.find(img => img.primary === true)
 
             return {
                 id: p.id,
                 name: p.name,
-                image_url: getPublicImageUrl(p.image_url),
-                base_price: p.base_price,
+                image_url: primaryImage?.path ?? null,
+                price: p.price,
                 final_price: finalPrice,
                 discount_label: label ?? undefined,
             }

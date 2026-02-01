@@ -13,24 +13,14 @@ import {
 } from "@/components/ui/carousel"
 import Autoplay from "embla-carousel-autoplay";
 import {FeaturedItems} from "@/types/featured-items";
-
-// export type FeaturedOffer = {
-//     id: string
-//     name: string
-//     image_url: string
-//     base_price: number
-//     oldPrice?: number
-//     discountLabel?: string
-//     rankingLabel?: string
-//     rating?: number
-//     likes?: number
-// }
+import {ServiceItems} from "@/types/service-items";
+import {ServiceCard} from "@/components/client/service-card";
 
 export type FeaturedOffer = {
     id: string
     name: string
     image_url: string
-    base_price: number
+    price: number
     final_price: number
     discount_label?: string
 }
@@ -38,7 +28,7 @@ export type FeaturedOffer = {
 
 type Props = {
     title: string
-    items: FeaturedItems[]
+    items: ServiceItems[]
 }
 
 export function FeaturedOffersCarousel({ title, items }: Props) {
@@ -67,51 +57,52 @@ export function FeaturedOffersCarousel({ title, items }: Props) {
                             key={item.id}
                             className="pl-4 basis-[260px] md:basis-[280px]"
                         >
-                            <div className="rounded-2xl bg-muted/30 p-4">
+                            <ServiceCard service={item} />
+                            {/*<div className="rounded-2xl bg-muted/30 p-4">*/}
 
-                                <div className="relative w-full h-[180px] rounded-xl overflow-hidden bg-white">
-                                    <Image
-                                        src={item.image_url}
-                                        alt={item.name}
-                                        fill
-                                        className="object-contain"
-                                    />
+                            {/*    <div className="relative w-full h-[180px] rounded-xl overflow-hidden bg-white">*/}
+                            {/*        <Image*/}
+                            {/*            src={item.image_url}*/}
+                            {/*            alt={item.name}*/}
+                            {/*            fill*/}
+                            {/*            className="object-contain"*/}
+                            {/*        />*/}
 
-                                    {/*{item.rankingLabel && (*/}
-                                    {/*    <Badge className="absolute top-2 left-2 bg-primary text-white text-xs">*/}
-                                    {/*        {item.rankingLabel}*/}
-                                    {/*    </Badge>*/}
-                                    {/*)}*/}
-                                </div>
+                            {/*        /!*{item.rankingLabel && (*!/*/}
+                            {/*        /!*    <Badge className="absolute top-2 left-2 bg-primary text-white text-xs">*!/*/}
+                            {/*        /!*        {item.rankingLabel}*!/*/}
+                            {/*        /!*    </Badge>*!/*/}
+                            {/*        /!*)}*!/*/}
+                            {/*    </div>*/}
 
-                                <div className="mt-3 space-y-1">
-                                    <h4 className="font-semibold text-sm line-clamp-2">
-                                        {item.name}
-                                    </h4>
+                            {/*    <div className="mt-3 space-y-1">*/}
+                            {/*        <h4 className="font-semibold text-sm line-clamp-2">*/}
+                            {/*            {item.name}*/}
+                            {/*        </h4>*/}
 
-                                    <div className="flex items-center gap-2 text-sm">
-                                        <span className="font-bold">${item.base_price.toFixed(2)}</span>
+                            {/*        <div className="flex items-center gap-2 text-sm">*/}
+                            {/*            <span className="font-bold">${item.base_price.toFixed(2)}</span>*/}
 
-                                        {item.final_price && (
-                                            <span className="line-through text-muted-foreground">
-                                                ${item.final_price.toFixed(2)}
-                                              </span>
-                                        )}
+                            {/*            {item.final_price && (*/}
+                            {/*                <span className="line-through text-muted-foreground">*/}
+                            {/*                    ${item.final_price.toFixed(2)}*/}
+                            {/*                  </span>*/}
+                            {/*            )}*/}
 
-                                        {item.discount_label && (
-                                            <Badge variant="destructive" className="text-xs">
-                                                {item.discount_label}
-                                            </Badge>
-                                        )}
-                                    </div>
+                            {/*            {item.discount_label && (*/}
+                            {/*                <Badge variant="destructive" className="text-xs">*/}
+                            {/*                    {item.discount_label}*/}
+                            {/*                </Badge>*/}
+                            {/*            )}*/}
+                            {/*        </div>*/}
 
-                                    {/*{item.rating && (*/}
-                                    {/*    <div className="text-xs text-muted-foreground">*/}
-                                    {/*        👍 {item.rating}% ({item.likes})*/}
-                                    {/*    </div>*/}
-                                    {/*)}*/}
-                                </div>
-                            </div>
+                            {/*        /!*{item.rating && (*!/*/}
+                            {/*        /!*    <div className="text-xs text-muted-foreground">*!/*/}
+                            {/*        /!*        👍 {item.rating}% ({item.likes})*!/*/}
+                            {/*        /!*    </div>*!/*/}
+                            {/*        /!*)}*!/*/}
+                            {/*    </div>*/}
+                            {/*</div>*/}
                         </CarouselItem>
                     ))}
                 </CarouselContent>

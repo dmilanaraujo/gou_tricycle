@@ -14,9 +14,10 @@ import {FeaturedOffersCarousel} from "@/components/client/featured-offers-carous
 import {ScrollableTabs} from "@/components/client/scrollable-tabs";
 import {useMemo, useState} from "react";
 import {Business, BusinessCategory} from "@/types";
-import {ProductWithPricing} from "@/lib/actions/product";
+// import {ProductWithPricing} from "@/lib/actions/product";
 import {Reviews} from "@/types/reviews";
 import {FeaturedItems} from "@/types/featured-items";
+import {ServiceItems} from "@/types/service-items";
 
 const WhatsAppIcon = () => (
     <svg
@@ -37,7 +38,7 @@ const featuredItems = [
         id: "1",
         name: "Pizza Veggie",
         image_url: "/images/pizza1.png",
-        base_price: 9.59,
+        price: 9.59,
         oldPrice: 15.99,
         discountLabel: "40% off",
         rankingLabel: "#1 most liked",
@@ -166,7 +167,7 @@ function ProductCard({ product }: { product: {
     )
 }
 
-export default function BusinessDetail({ business, reviews, products, featuredItems }: {business: Business, reviews: Reviews[], products: ProductWithPricing[], featuredItems: FeaturedItems[]}) {
+export default function BusinessDetail({ business, reviews, products, featuredItems }: {business: Business, reviews: Reviews[], products: [], featuredItems: ServiceItems[]}) {
     const productsRef = React.useRef<HTMLDivElement>(null)
     const [activeTab, setActiveTab] = useState("offers")
 
@@ -183,24 +184,24 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
         const map = new Map<string, {
             id: string
             title: string
-            products: ProductWithPricing[]
+            products: []
         }>()
 
-        for (const p of products) {
-            if (!p.category) continue
-
-            const { id, name } = p.category
-
-            if (!map.has(id)) {
-                map.set(id, {
-                    id,
-                    title: name,
-                    products: [],
-                })
-            }
-
-            map.get(id)!.products.push(p)
-        }
+        // for (const p of products) {
+        //     if (!p.category) continue
+        //
+        //     const { id, name } = p.category
+        //
+        //     if (!map.has(id)) {
+        //         map.set(id, {
+        //             id,
+        //             title: name,
+        //             products: [],
+        //         })
+        //     }
+        //
+        //     map.get(id)!.products.push(p)
+        // }
 
         return Array.from(map.values())
     }, [products])
@@ -239,7 +240,7 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
             {/* Banner */}
             <section className="relative h-[250px] w-full rounded-xl">
                 <Image
-                    src={getPublicImageUrl(business.banner || business.logo)}
+                    src={getPublicImageUrl(process.env.NEXT_PUBLIC_SUPABASE_BUSINESS_BUCKET || "", business.banner || business.logo)}
                     alt={business.name}
                     fill
                     className="object-cover rounded-xl"
@@ -249,7 +250,7 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
                 <div className="absolute -bottom-8 left-6">
                     <div className="relative h-20 w-20">
                         <Image
-                            src={getPublicImageUrl(business.logo)}
+                            src={getPublicImageUrl(process.env.NEXT_PUBLIC_SUPABASE_BUSINESS_BUCKET || "", business.logo)}
                             alt={business.name}
                             fill
                             className="rounded-full border-4 border-background bg-white object-cover"
@@ -275,7 +276,7 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            <WhatsAppIcon />
+                            <WhatsAppIcon/>
                             Enviar mensaje
                         </a>
                     </Button>
@@ -283,7 +284,7 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
 
                 <div className="mt-2 flex flex-wrap gap-2 text-lg text-muted-foreground">
                     <div className="flex items-center gap-1">
-                        <StarIcon className="w-4 h-4" />
+                        <StarIcon className="w-4 h-4"/>
                         <span className="font-bold">{business.rating}</span>
                         <span>({business.reviews || 0}+)</span>
                     </div>
@@ -295,7 +296,7 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
                 <p className="text-md text-muted-foreground">{business.description}</p>
 
                 <p className="flex gap-1 items-center text-md text-muted-foreground">
-                    <MapPin className="w-4 h-4" />
+                    <MapPin className="w-4 h-4"/>
                     {business.address}
                 </p>
             </section>
@@ -314,7 +315,7 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
                                 <span className="text-5xl font-bold">{business.rating}</span>
 
                                 <div className="flex mt-2">
-                                    {[1,2,3,4,5].map(i => (
+                                    {[1, 2, 3, 4, 5].map(i => (
                                         <StarIcon
                                             key={i}
                                             className={`w-5 h-5 ${
@@ -339,7 +340,7 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
 
                                             <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
                                                 <div className="flex">
-                                                    {[1,2,3,4,5].map(i => (
+                                                    {[1, 2, 3, 4, 5].map(i => (
                                                         <StarIcon
                                                             key={i}
                                                             className={`w-4 h-4 ${
@@ -364,7 +365,7 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
 
                                 {reviews.length > 2 && (
                                     <Button variant="secondary" className="px-3 py-1 rounded-full">
-                                        <ArrowDownIcon className="w-4 h-4" />
+                                        <ArrowDownIcon className="w-4 h-4"/>
                                         Mostrar más
                                     </Button>
                                 )}
@@ -391,7 +392,7 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
                             description="Aprovecha nuestras ofertas en productos seleccionados."
                             buttonLabel="Comprar ahora"
                             buttonHref={`https://wa.me/${business.phone}`}
-                            backgroundImage={getPublicImageUrl(business.banner || business.logo)}
+                            backgroundImage={getPublicImageUrl(process.env.NEXT_PUBLIC_SUPABASE_SERVICE_BUCKET || "", business.banner || business.logo)}
                         />
                     </div>
                 </div>
@@ -484,18 +485,18 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
                                 {category.title}
                             </h3>
 
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                                {category.products.map(product => (
-                                    <ProductCard
-                                        key={product.id}
-                                        product={{
-                                            ...product,
-                                            image: getPublicImageUrl(product.image_url),
-                                            price: product.base_price,
-                                        }}
-                                    />
-                                ))}
-                            </div>
+                            {/*<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">*/}
+                            {/*    {category.products.map(product => (*/}
+                            {/*        <ProductCard*/}
+                            {/*            key={product.id}*/}
+                            {/*            product={{*/}
+                            {/*                ...product,*/}
+                            {/*                image: getPublicImageUrl(product.image_url),*/}
+                            {/*                price: product.base_price,*/}
+                            {/*            }}*/}
+                            {/*        />*/}
+                            {/*    ))}*/}
+                            {/*</div>*/}
                         </section>
                     ))}
                 </div>
