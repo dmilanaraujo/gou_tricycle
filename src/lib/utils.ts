@@ -6,7 +6,7 @@ import imageCompression from 'browser-image-compression';
 import {z} from 'zod';
 import {Business} from '@/types/business';
 import {toast} from 'sonner';
-import {format, parseISO} from 'date-fns';
+import {format, isAfter, isEqual, parseISO, startOfDay} from 'date-fns';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -354,4 +354,12 @@ export function applyDiscount(
     }
 }
 
+export function isAfterOrEqual(date: Date, compareDate: Date = new Date()) {
+    const today = startOfDay(compareDate);
+    return  isAfter(date, today)  || isEqual(date, today);
+}
 
+export function isAfterToday(date: Date) {
+    const today = startOfDay(new Date());
+    return  isAfter(date, today);
+}

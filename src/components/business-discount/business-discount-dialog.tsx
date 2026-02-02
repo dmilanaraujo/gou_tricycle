@@ -7,19 +7,20 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 
 import {useEffect} from 'react';
-import {showActionErrors} from '@/lib/utils';
+import {cn, showActionErrors} from '@/lib/utils';
 import {Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger} from '@/components/ui/drawer';
 import {useIsMobile} from '@/hooks/use-mobile';
 import {useBusinessDiscountStore} from '@/store/business-discount';
 import {useCreateBusinessDiscount} from '@/hooks/api/business';
-import {BusinessDiscountSchema, BusinessDiscountValues} from '@/lib/schemas/business';
+import {BusinessDiscountInput, BusinessDiscountOutput, BusinessDiscountSchema} from '@/lib/schemas/business';
 import {BusinessDiscountForm} from '@/components/business-discount/business-discount-form';
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger} from '@/components/ui/dialog';
 import {BusinessDiscountList} from '@/components/business-discount/business-discount-list';
 import {ScrollArea} from '@/components/ui/scroll-area';
+import {Separator} from '@/components/ui/separator';
 
-const initialValues: Partial<BusinessDiscountValues> = {
-	value: 0,
+const initialValues: Partial<BusinessDiscountInput> = {
+	value: '',
 	type: undefined,
 	starts_at: undefined,
 	ends_at: undefined,
@@ -30,7 +31,7 @@ export function BusinessDiscountDialog() {
 	const isMobile = useIsMobile();
 	const { mutateAsync: createBusinessDiscount, isPending: isCreatingBusinessDiscount } = useCreateBusinessDiscount();
 	
-	const form = useForm<BusinessDiscountValues>({
+	const form = useForm<BusinessDiscountInput, any, BusinessDiscountOutput>({
 		resolver: zodResolver(BusinessDiscountSchema),
 		defaultValues: initialValues,
 		mode: 'onSubmit'
@@ -44,7 +45,7 @@ export function BusinessDiscountDialog() {
 	}, [opened]);
 	
 	
-	const handleSave = async (data: BusinessDiscountValues) => {
+	const handleSave = async (data: BusinessDiscountOutput) => {
 		const toastId = toast.loading("Guardando descuento...")
 		
 		try {
@@ -77,25 +78,27 @@ export function BusinessDiscountDialog() {
 							Adicione o elimine las descuentos que usará para sus productos o servicios
 						</DrawerDescription>
 					</DrawerHeader>
-					<div className="no-scrollbar overflow-y-auto px-4">
-						 <div className="flex items-end justify-between gap-2 overflow-y-auto overscroll-contain py-2">
+					<div className="no-scrollbar overflow-y-auto px-8">
+						<div className={'flex flex-col justify-between gap-2 overflow-y-auto overscroll-contain py-2 items-center'}>
 							<BusinessDiscountForm form={form}/>
 							<Button
 								size="sm"
 								disabled={isCreatingBusinessDiscount}
 								onClick={form.handleSubmit(handleSave)}
+								className='cursor-pointer mt-3 w-full'
 							>
 								{(isCreatingBusinessDiscount) && <Loader2 className="h-4 w-4 animate-spin"/>}
-								{(isCreatingBusinessDiscount) ? 'Guardando...' : 'Guardar'}
+								{(isCreatingBusinessDiscount) ? 'Creando...' : 'Crear'}
 							</Button>
-						 </div>
-						<ScrollArea>
+						</div>
+						<Separator className={'my-2'}/>
+						<ScrollArea className={'pb-8'}>
 							<BusinessDiscountList/>
 						</ScrollArea>
 					</div>
 				</DrawerContent>
 			</Drawer>
-	)
+		)
 	}
 	return (
 		<Dialog open={opened} onOpenChange={setOpenDialog}>
@@ -112,23 +115,25 @@ export function BusinessDiscountDialog() {
 					</DialogDescription>
 				</DialogHeader>
 				<div className="no-scrollbar overflow-y-auto">
-					 <div className="flex items-end justify-between gap-2 overflow-y-auto overscroll-contain py-2">
+					<div className={'flex justify-between gap-2 overflow-y-auto overscroll-contain py-2 items-center'}>
 						<BusinessDiscountForm form={form}/>
-						 <Button
-							 size="icon"
-							 disabled={isCreatingBusinessDiscount}
-							 onClick={form.handleSubmit(handleSave)}
-							 title='Crear descuento'
-						 >
-							 {isCreatingBusinessDiscount ? <Loader2 className="h-4 w-4 animate-spin"/> : <PlusCircle className="h-4 w-4"/>}
-						 </Button>
-					 </div>
+						<Button
+							size="icon"
+							disabled={isCreatingBusinessDiscount}
+							onClick={form.handleSubmit(handleSave)}
+							title='Crear descuento'
+							className='cursor-pointer mt-3'
+						>
+							{isCreatingBusinessDiscount ? <Loader2 className="h-4 w-4 animate-spin"/> : <PlusCircle className="h-4 w-4"/>}
+						</Button>
+					</div>
+					<Separator className={'my-2'}/>
 					<ScrollArea className='min-h-72'>
 						<BusinessDiscountList/>
 					</ScrollArea>
 				</div>
 			</DialogContent>
-
+		
 		</Dialog>
-		)
+	)
 }

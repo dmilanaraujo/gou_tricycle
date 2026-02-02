@@ -77,8 +77,8 @@ export default async function ServiceEditPage({ params }: { params: Promise<IdPa
 					</TabsList>
 					
 					{tabs.map(tab => (
-						<TabsContent key={tab.value} value={tab.value} className={'flex w-full px-1'}>
-							<ScrollArea className='w-full md:max-h-[calc(100vh-270px)]'>
+						<TabsContent key={tab.value} value={tab.value} className={'flex w-full px-0 md:px-1'}>
+							<ScrollArea className='w-full md:max-h-[calc(100vh-270px)] md:pr-4'>
 								{tab.content}
 							</ScrollArea>
 						</TabsContent>

@@ -30,13 +30,8 @@ export const ProductForm = ({form}: ProductFormProps) => {
 	const { data: categories, isLoading: isLoadingCategories } = useGetBusinessCategories(profile.id);
 	const { data: discounts, isLoading: isLoadingDiscounts } = useGetBusinessDiscounts(profile.id);
 	return (
-			<ReusableForm form={form}>
-				<div className="space-y-6 p-4">
-					
-					{/* Header */}
-					<div className="flex items-center w-full">
-						<FormLabel className="font-semibold">Datos del Producto</FormLabel>
-					</div>
+			<ReusableForm form={form} className='w-full'>
+				<div className="space-y-6">
 					
 					{/* Info básica */}
 					<div className="grid grid-cols-1 gap-4 items-start">

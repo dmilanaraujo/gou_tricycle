@@ -47,17 +47,18 @@ export function ServiceEdit({ service }: { service: Service }) {
 	
 	return (
 		<div className=''>
-			<div className="no-scrollbar overflow-y-auto px-4">
+			<div className="no-scrollbar overflow-y-auto px-0">
 				<div className="flex-1 overflow-y-auto overscroll-contain py-2">
 					<ServiceForm form={form}/>
 				</div>
 			</div>
 			
-			<div className="flex justify-end px-8 py-4">
+			<div className="flex justify-end py-4">
 				<Button
 					size="sm"
 					disabled={isUpdatingService}
 					onClick={form.handleSubmit(handleSave)}
+					className={'w-full md:w-auto'}
 				>
 					{isUpdatingService && <Loader2 className="h-4 w-4 animate-spin"/>}
 					{isUpdatingService ? 'Guardando...' : 'Guardar'}

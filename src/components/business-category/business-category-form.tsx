@@ -16,7 +16,7 @@ interface BusinessCategoryFormProps
 
 export const BusinessCategoryForm = ({form}: BusinessCategoryFormProps) => {
 	return (
-			<ReusableForm form={form}>
+			<ReusableForm form={form} className={'w-full'}>
 				<div className="space-y-6">
 					<div className="grid grid-cols-1 gap-4 items-start">
 						<div className='flex gap-2 items-start'>

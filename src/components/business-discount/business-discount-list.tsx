@@ -60,7 +60,7 @@ export function BusinessDiscountList() {
 						<ItemTitle className='text-green-700'>
 							{discount.type == 'fixed' ? `$${discount.value}` : `${discount.value}%`}
 						</ItemTitle>
-						<ItemDescription className='flex justify-between'>
+						<ItemDescription className='flex justify-between flex-col md:flex-row'>
 							<span>
 								<span className='font-semibold'>Inicia:</span> {discount.starts_at ? formatDateByString(discount.starts_at) : '-'}
 							</span>

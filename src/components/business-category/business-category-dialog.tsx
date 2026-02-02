@@ -17,6 +17,7 @@ import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Dia
 import {BusinessCategoryList} from '@/components/business-category/business-category-list';
 import {ScrollArea} from '@/components/ui/scroll-area';
 import {BusinessCategoryForm} from '@/components/business-category/business-category-form';
+import {Separator} from '@/components/ui/separator';
 
 const initialValues: Partial<BusinessCategoryValues> = {
 	name: '',
@@ -76,7 +77,7 @@ export function BusinessCategoryDialog() {
 							Adicione o elimine las categorias que usará para sus productos o servicios
 						</DrawerDescription>
 					</DrawerHeader>
-					<div className="no-scrollbar overflow-y-auto px-4">
+					<div className="no-scrollbar overflow-y-auto px-8">
 						 <div className={cn(
 							 'flex justify-between gap-2 overflow-y-auto overscroll-contain py-2',
 							 isValid ? 'items-end' : 'items-center'
@@ -92,7 +93,8 @@ export function BusinessCategoryDialog() {
 								{isCreatingBusinessCategory ? <Loader2 className="h-4 w-4 animate-spin"/> : <PlusCircle className="h-4 w-4"/>}
 							</Button>
 						 </div>
-						<ScrollArea>
+						<Separator className={'my-2'}/>
+						<ScrollArea className={'pb-8'}>
 							<BusinessCategoryList/>
 						</ScrollArea>
 					</div>
@@ -130,6 +132,7 @@ export function BusinessCategoryDialog() {
 							 {isCreatingBusinessCategory ? <Loader2 className="h-4 w-4 animate-spin"/> : <PlusCircle className="h-4 w-4"/>}
 						 </Button>
 					 </div>
+					<Separator className={'my-2'}/>
 					<ScrollArea className='min-h-72'>
 						<BusinessCategoryList/>
 					</ScrollArea>
