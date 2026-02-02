@@ -1,9 +1,7 @@
 import { getBusinessById, getBusinessReviews } from "@/lib/actions/business"
 import { notFound } from "next/navigation"
 import BusinessDetail from "@/components/client/business-detail";
-// import {getBusinessfeaturedProducts, getBusinessProducts} from "@/lib/actions/product";
-import {applyDiscount, getPublicImageUrl} from "@/lib/utils";
-import {ServiceItems} from "@/types/service-items";
+import {applyDiscount} from "@/lib/utils";
 import {listProducts} from "@/lib/actions/product";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
@@ -23,9 +21,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         .filter(p => p.is_featured)
         .map(p => {
             const price = p.price ?? 0
+            const price_usd = p.price_usd ?? 0
             const name = p.name ?? ""
 
-            const { finalPrice, label } = applyDiscount(price ?? 0, p.discount)
+            const { finalPrice, finalPriceUsd, label } = applyDiscount(price, price_usd, p.discount)
             const primaryImage = p.images?.find(img => img.primary === true)
 
             return {
@@ -34,16 +33,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                 image_url: primaryImage?.path ?? "",
                 price: price,
                 final_price: finalPrice,
+                price_usd: price_usd,
+                final_price_usd: finalPriceUsd,
                 discount_label: label ?? undefined,
                 is_featured: p.is_featured,
             }
         }) : []
-
-    // const products: ProductWithPricing[] = rawProducts.map(p => ({
-    //     ...p,
-    //     category: p.category?.[0] ?? null,
-    // }))
-
 
     if (!res?.success || !res.data) notFound()
 

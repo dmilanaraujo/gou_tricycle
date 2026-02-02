@@ -88,19 +88,38 @@ export function ServiceCard({service}: ServiceCardProps) {
                         </div>
                         <div className="flex items-center gap-1">
                             <span className="text-xl font-semibold text-primary">
-                                {service.final_price}
+                                {service.final_price_usd}
                             </span>
                             <span className="text-sm text-muted-foreground">
                                 USD
                             </span>
                         </div>
-
-                        {/* Derecha: descuento */}
-                        {service.discount_label && (
-                            <Badge variant="secondary">
-                                {service.discount_label}
-                            </Badge>
-                        )}
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1">
+                            <span className="text-md font-semibold text-muted-foreground relative">
+                                {service.price}
+                                <span
+                                    className="absolute top-1/2 left-0 right-0 h-[1px] bg-muted-foreground transform -translate-y-1/2"></span>
+                            </span>
+                            <span className="text-sm text-muted-foreground relative">
+                                CUP
+                                <span
+                                    className="absolute top-1/2 left-0 right-0 h-[1px] bg-muted-foreground transform -translate-y-1/2"></span>
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                            <span className="text-md font-semibold text-muted-foreground relative">
+                                {service.price_usd}
+                                <span
+                                    className="absolute top-1/2 left-0 right-0 h-[1px] bg-muted-foreground transform -translate-y-1/2"></span>
+                            </span>
+                            <span className="text-sm text-muted-foreground relative">
+                                USD
+                                <span
+                                    className="absolute top-1/2 left-0 right-0 h-[1px] bg-muted-foreground transform -translate-y-1/2"></span>
+                            </span>
+                        </div>
                     </div>
                     <span className="text-md block mt-1">
                         {service.name}

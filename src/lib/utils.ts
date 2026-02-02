@@ -312,43 +312,44 @@ export function formatDateByString(date: string, f: string = 'dd/MM/yyyy') {
     return format(parseISO(date), f);
 }
 
-type Discount = {
-    type: "PERCENT" | "FIXED"
-    value: number
-}
-
 export function applyDiscount(
-    basePrice: number,
-    // discount?: Discount | null
+    price: number,
+    priceUsd: number,
     discount?: BusinessDiscount | null
 ) {
     if (!discount) {
         return {
-            finalPrice: basePrice,
+            finalPrice: price,
+            finalPriceUsd: priceUsd,
             label: null,
         }
     }
 
-    if (discount.type === "PERCENT") {
-        const final = basePrice - (basePrice * discount.value) / 100
+    if (discount.type === "percent") {
+        const final = price - (price * discount.value) / 100
+        const finalUsd = priceUsd - (priceUsd * discount.value) / 100
 
         return {
             finalPrice: Number(final.toFixed(2)),
+            finalPriceUsd: Number(finalUsd.toFixed(2)),
             label: `-${discount.value}%`,
         }
     }
 
-    if (discount.type === "FIXED") {
-        const final = basePrice - discount.value
+    if (discount.type === "fixed") {
+        const final = price - discount.value
+        const finalUsd = priceUsd - discount.value
 
         return {
             finalPrice: Math.max(0, Number(final.toFixed(2))),
+            finalPriceUsd: Math.max(0, Number(finalUsd.toFixed(2))),
             label: `-$${discount.value}`,
         }
     }
 
     return {
-        finalPrice: basePrice,
+        finalPrice: price,
+        finalPriceUsd: priceUsd,
         label: null,
     }
 }

@@ -77,6 +77,7 @@ export type Service = {
     name?: string;
     description?: string;
     price?: number;
+    price_usd?: number;
     is_active: boolean;
     product_discounts_id?: string
     images: BucketImage[];
@@ -89,7 +90,6 @@ export type Product = Service & {
     category?: BusinessCategory;
 }
 
-// export type ImageType = 'logo' | 'banner' | 'normal';
 export enum ImageType {
     logo = 'logo',
     banner = 'banner',

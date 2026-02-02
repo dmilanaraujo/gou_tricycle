@@ -9,16 +9,12 @@ import { getPublicImageUrl } from "@/lib/utils"
 import { municipalities, provinces } from "@/lib/data/locations"
 import * as React from "react";
 import {ReviewInput} from "@/components/client/review-input";
-import {QuickReviewBar} from "@/components/client/quick-review-bar";
 import {FeaturedOffersCarousel} from "@/components/client/featured-offers-carousel";
 import {ScrollableTabs} from "@/components/client/scrollable-tabs";
-import {useMemo, useState} from "react";
-import {Business, BusinessCategory, BusinessDiscount} from "@/types";
-// import {ProductWithPricing} from "@/lib/actions/product";
+import {useState} from "react";
+import {Business, Product} from "@/types";
 import {Reviews} from "@/types/reviews";
-import {FeaturedItems} from "@/types/featured-items";
 import {ServiceItems} from "@/types/service-items";
-import {BucketImage} from "@/components/ui/file-upload";
 
 const WhatsAppIcon = () => (
     <svg
@@ -34,157 +30,21 @@ const WhatsAppIcon = () => (
     </svg>
 );
 
-const featuredItems = [
-    {
-        id: "1",
-        name: "Pizza Veggie",
-        image_url: "/images/pizza1.png",
-        price: 9.59,
-        oldPrice: 15.99,
-        discountLabel: "40% off",
-        rankingLabel: "#1 most liked",
-        rating: 100,
-        likes: 5,
-    },
-]
-
-// const menuTabs = [
-//     { value: "offers", label: "Offers" },
-//     { value: "build", label: "Build Your Own" },
-//     { value: "specialty", label: "Specialty Pizzas" },
-//     { value: "breads", label: "Breads" },
-//     { value: "wings", label: "Chicken & Wings" },
-//     { value: "pasta", label: "Oven-Baked Pastas" },
-//     { value: "sandwiches", label: "Sandwiches" },
-//     { value: "salads", label: "Salads" },
-//     { value: "tots", label: "Loaded Tots" },
-//     { value: "pizza", label: "Pizzas" },
-//     { value: "aaa", label: "AAa" },
-//     { value: "bbb", label: "BBb" },
-//     { value: "ccc", label: "CCc" },
-//     { value: "ddd", label: "DDd" },
-// ]
-
-// type Product = {
-//     id: string
-//     name: string
-//     price: number
-//     image: string
-// }
-
-type Product = {
-    id: string
-    business_id?: string
-    name?: string
-    description?: string
-    price?: number
-    is_active: boolean
-    product_discounts_id?: string
-    images: BucketImage[]
-    discount?: BusinessDiscount
-    business_category_id?: string
-    is_featured: boolean
-    category?: BusinessCategory
-}
-
-type Section = {
-    id: string
-    title: string
-    products: Product[]
-}
-
-// const sections: Section[] = [
+// const featuredItems = [
 //     {
-//         id: "offers",
-//         title: "Offers",
-//         products: [{
-//             id: "string",
-//             name: "string",
-//             price: 123,
-//             image: "string",
-//         }]
-//     },
-//     {
-//         id: "build",
-//         title: "Builds",
-//         products: [{
-//             id: "string",
-//             name: "string",
-//             price: 123,
-//             image: "string",
-//         }]
-//     },
-//     {
-//         id: "pizza",
-//         title: "Pizzas",
-//         products: [{
-//             id: "pizza-1",
-//             name: "string",
-//             price: 123,
-//             image: "string",
-//         }, {
-//             id: "pizza-2",
-//             name: "string",
-//             price: 123,
-//             image: "string",
-//         }, {
-//             id: "pizza-3",
-//             name: "string",
-//             price: 123,
-//             image: "string",
-//         }, {
-//             id: "pizza-4",
-//             name: "string",
-//             price: 123,
-//             image: "string",
-//         }, {
-//             id: "pizza-5",
-//             name: "string",
-//             price: 123,
-//             image: "string",
-//         }]
-//     },
-//     {
-//         id: "pasta",
-//         title: "Pastas",
-//         products: [{
-//             id: "string",
-//             name: "string",
-//             price: 123,
-//             image: "string",
-//         }]
+//         id: "1",
+//         name: "Pizza Veggie",
+//         image_url: "/images/pizza1.png",
+//         price: 9.59,
+//         oldPrice: 15.99,
+//         discountLabel: "40% off",
+//         rankingLabel: "#1 most liked",
+//         rating: 100,
+//         likes: 5,
 //     },
 // ]
-
-function ProductCard({ product }: { product: {
-        name: string
-        price: number
-        image: string
-    } }) {
-    return (
-        <div className="rounded-xl border bg-card p-3 hover:shadow-sm transition">
-            <div className="relative h-32 w-full">
-                <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    className="object-contain"
-                />
-            </div>
-
-            <h4 className="font-semibold mt-2 text-sm">
-                {product.name}
-            </h4>
-
-            <p className="text-sm text-muted-foreground">
-                ${product.price.toFixed(2)}
-            </p>
-        </div>
-    )
-}
 
 export default function BusinessDetail({ business, reviews, products, featuredItems }: {business: Business, reviews: Reviews[], products: Product[], featuredItems: ServiceItems[]}) {
-// export default function BusinessDetail({ business, reviews, products, featuredItems }: {business: Business, reviews: Reviews[], products: [], featuredItems: Product[]}) {
     const productsRef = React.useRef<HTMLDivElement>(null)
     const [activeTab, setActiveTab] = useState("offers")
 

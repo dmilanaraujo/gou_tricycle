@@ -6,6 +6,8 @@ export type ServiceItems = {
     image_url: string
     price: number
     final_price: number
+    price_usd: number
+    final_price_usd: number
     // category: BusinessCategory | null
     discount_label?: string
     is_featured: boolean
