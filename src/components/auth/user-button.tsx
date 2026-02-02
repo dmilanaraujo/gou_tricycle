@@ -1,7 +1,6 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import {createClient} from '@/lib/supabase/server';
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger} from '../ui/dropdown-menu';
 import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
 import {LogoutButton} from '@/components/auth/logout-button';
