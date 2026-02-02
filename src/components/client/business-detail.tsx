@@ -13,11 +13,12 @@ import {QuickReviewBar} from "@/components/client/quick-review-bar";
 import {FeaturedOffersCarousel} from "@/components/client/featured-offers-carousel";
 import {ScrollableTabs} from "@/components/client/scrollable-tabs";
 import {useMemo, useState} from "react";
-import {Business, BusinessCategory} from "@/types";
+import {Business, BusinessCategory, BusinessDiscount} from "@/types";
 // import {ProductWithPricing} from "@/lib/actions/product";
 import {Reviews} from "@/types/reviews";
 import {FeaturedItems} from "@/types/featured-items";
 import {ServiceItems} from "@/types/service-items";
+import {BucketImage} from "@/components/ui/file-upload";
 
 const WhatsAppIcon = () => (
     <svg
@@ -64,11 +65,26 @@ const featuredItems = [
 //     { value: "ddd", label: "DDd" },
 // ]
 
+// type Product = {
+//     id: string
+//     name: string
+//     price: number
+//     image: string
+// }
+
 type Product = {
     id: string
-    name: string
-    price: number
-    image: string
+    business_id?: string
+    name?: string
+    description?: string
+    price?: number
+    is_active: boolean
+    product_discounts_id?: string
+    images: BucketImage[]
+    discount?: BusinessDiscount
+    business_category_id?: string
+    is_featured: boolean
+    category?: BusinessCategory
 }
 
 type Section = {
@@ -167,7 +183,8 @@ function ProductCard({ product }: { product: {
     )
 }
 
-export default function BusinessDetail({ business, reviews, products, featuredItems }: {business: Business, reviews: Reviews[], products: [], featuredItems: ServiceItems[]}) {
+export default function BusinessDetail({ business, reviews, products, featuredItems }: {business: Business, reviews: Reviews[], products: Product[], featuredItems: ServiceItems[]}) {
+// export default function BusinessDetail({ business, reviews, products, featuredItems }: {business: Business, reviews: Reviews[], products: [], featuredItems: Product[]}) {
     const productsRef = React.useRef<HTMLDivElement>(null)
     const [activeTab, setActiveTab] = useState("offers")
 

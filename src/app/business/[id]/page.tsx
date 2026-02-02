@@ -12,29 +12,37 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     const res = await getBusinessById(id)
     const { data: reviews } = await getBusinessReviews(id)
     const response = await listProducts({business_id: id, page: 0, limit: 10})
-    const rawProducts = response.success ?  response.data! : { data: [] };
-    // const featuredRaw = await getBusinessfeaturedProducts(id)
-    const featuredItems = rawProducts.data
+
+    const rawProducts = response.success
+        ? response.data
+        : {data: []}
+
+    const allProducts = rawProducts ? rawProducts.data.map(p => ({...p})) : [];
+
+    const featuredItems = rawProducts ? rawProducts.data
         .filter(p => p.is_featured)
         .map(p => {
-            // const discount = p.discount?.[0] ?? null
-            const { finalPrice, label } = applyDiscount(p.price, p.discount)
+            const price = p.price ?? 0
+            const name = p.name ?? ""
+
+            const { finalPrice, label } = applyDiscount(price ?? 0, p.discount)
             const primaryImage = p.images?.find(img => img.primary === true)
 
             return {
                 id: p.id,
-                name: p.name,
-                image_url: primaryImage?.path ?? null,
-                price: p.price,
+                name: name,
+                image_url: primaryImage?.path ?? "",
+                price: price,
                 final_price: finalPrice,
                 discount_label: label ?? undefined,
+                is_featured: p.is_featured,
             }
-        })
+        }) : []
 
-    const products: ProductWithPricing[] = rawProducts.map(p => ({
-        ...p,
-        category: p.category?.[0] ?? null,
-    }))
+    // const products: ProductWithPricing[] = rawProducts.map(p => ({
+    //     ...p,
+    //     category: p.category?.[0] ?? null,
+    // }))
 
 
     if (!res?.success || !res.data) notFound()
@@ -43,7 +51,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         <BusinessDetail
             business={res.data}
             reviews={reviews ?? []}
-            products={products ?? []}
+            products={allProducts}
             featuredItems={featuredItems}
         />
     )

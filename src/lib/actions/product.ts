@@ -26,9 +26,6 @@ export async function listProducts(params: ProductsFilterValues & PaginationRequ
        const supabase = await createClient();
 
        const { data: { user } } = await supabase.auth.getUser();
-       if (!user) {
-           return { success: false, errors: [{ message: 'customErrors.non_logged_user' }] };
-       }
 
        const {
            statusFilters,

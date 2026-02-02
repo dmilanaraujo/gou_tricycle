@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import {AuthError, PostgrestError} from '@supabase/supabase-js';
-import {ActionError, ImageType, OptimizedImages, UploadFileError, type VehicleType} from '@/types';
+import {ActionError, BusinessDiscount, ImageType, OptimizedImages, UploadFileError, type VehicleType} from '@/types';
 import imageCompression from 'browser-image-compression';
 import {z} from 'zod';
 import {Business} from '@/types/business';
@@ -319,7 +319,8 @@ type Discount = {
 
 export function applyDiscount(
     basePrice: number,
-    discount?: Discount | null
+    // discount?: Discount | null
+    discount?: BusinessDiscount | null
 ) {
     if (!discount) {
         return {

@@ -72,7 +72,7 @@ export type BusinessDiscount = {
 }
 
 export type Service = {
-    id?: string;
+    id: string;
     business_id?: string;
     name?: string;
     description?: string;
