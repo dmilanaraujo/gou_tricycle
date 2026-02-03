@@ -15,6 +15,7 @@ import {useState} from "react";
 import {Business, Product} from "@/types";
 import {Reviews} from "@/types/reviews";
 import {ServiceItems} from "@/types/service-items";
+import {ServiceCard} from "@/components/client/service-card";
 
 const WhatsAppIcon = () => (
     <svg
@@ -30,21 +31,7 @@ const WhatsAppIcon = () => (
     </svg>
 );
 
-// const featuredItems = [
-//     {
-//         id: "1",
-//         name: "Pizza Veggie",
-//         image_url: "/images/pizza1.png",
-//         price: 9.59,
-//         oldPrice: 15.99,
-//         discountLabel: "40% off",
-//         rankingLabel: "#1 most liked",
-//         rating: 100,
-//         likes: 5,
-//     },
-// ]
-
-export default function BusinessDetail({ business, reviews, products, featuredItems }: {business: Business, reviews: Reviews[], products: Product[], featuredItems: ServiceItems[]}) {
+export default function BusinessDetail({ business, reviews, products, featuredItems }: {business: Business, reviews: Reviews[], products: ServiceItems[], featuredItems: ServiceItems[]}) {
     const productsRef = React.useRef<HTMLDivElement>(null)
     const [activeTab, setActiveTab] = useState("offers")
 
@@ -61,24 +48,24 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
         const map = new Map<string, {
             id: string
             title: string
-            products: []
+            products: ServiceItems[]
         }>()
 
-        // for (const p of products) {
-        //     if (!p.category) continue
-        //
-        //     const { id, name } = p.category
-        //
-        //     if (!map.has(id)) {
-        //         map.set(id, {
-        //             id,
-        //             title: name,
-        //             products: [],
-        //         })
-        //     }
-        //
-        //     map.get(id)!.products.push(p)
-        // }
+        for (const p of products) {
+            if (!p.category) continue
+
+            const { id, name } = p.category
+
+            if (!map.has(id)) {
+                map.set(id, {
+                    id,
+                    title: name,
+                    products: [],
+                })
+            }
+
+            map.get(id)!.products.push(p)
+        }
 
         return Array.from(map.values())
     }, [products])
@@ -287,25 +274,6 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
 
             {/* Service + Products */}
             <section className="w-full mt-6 sticky top-0 bg-background z-10">
-                {/*<ScrollableTabs*/}
-                {/*    title="Productos"*/}
-                {/*    tabs={sections.map(s => ({ value: s.id, label: s.title }))}*/}
-                {/*    defaultValue="offers"*/}
-                {/*    value={activeTab}*/}
-                {/*    onChange={(value) => {*/}
-                {/*        setActiveTab(value)*/}
-
-                {/*        const container = productsRef.current*/}
-                {/*        const target = document.getElementById(value)*/}
-
-                {/*        if (!container || !target) return*/}
-
-                {/*        container.scrollTo({*/}
-                {/*            top: target.offsetTop - container.offsetTop,*/}
-                {/*            behavior: "smooth",*/}
-                {/*        })*/}
-                {/*    }}*/}
-                {/*/>*/}
                 <ScrollableTabs
                     title="Productos"
                     tabs={categories.map(c => ({
@@ -330,28 +298,10 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
                 />
 
                 {/* 2️⃣ Listado único con secciones */}
-                {/*<div className="space-y-10 mt-6">*/}
                 <div
                     ref={productsRef}
                     className="space-y-10 mt-6 max-h-[70vh] overflow-y-auto pr-2 scroll-smooth no-scrollbar"
                 >
-                    {/*{sections.map(section => (*/}
-                    {/*    <section*/}
-                    {/*        key={section.id}*/}
-                    {/*        id={section.id}*/}
-                    {/*        className="scroll-mt-32"*/}
-                    {/*    >*/}
-                    {/*        <h3 className="text-2xl font-semibold mb-4">*/}
-                    {/*            {section.title}*/}
-                    {/*        </h3>*/}
-
-                    {/*        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">*/}
-                    {/*            {section.products.map(product => (*/}
-                    {/*                <ProductCard key={product.id} product={product}/>*/}
-                    {/*            ))}*/}
-                    {/*        </div>*/}
-                    {/*    </section>*/}
-                    {/*))}*/}
                     {categories.map(category => (
                         <section
                             key={category.id}
@@ -362,18 +312,11 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
                                 {category.title}
                             </h3>
 
-                            {/*<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">*/}
-                            {/*    {category.products.map(product => (*/}
-                            {/*        <ProductCard*/}
-                            {/*            key={product.id}*/}
-                            {/*            product={{*/}
-                            {/*                ...product,*/}
-                            {/*                image: getPublicImageUrl(product.image_url),*/}
-                            {/*                price: product.base_price,*/}
-                            {/*            }}*/}
-                            {/*        />*/}
-                            {/*    ))}*/}
-                            {/*</div>*/}
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
+                                {category.products.map(product => (
+                                    <ServiceCard key={product.id} service={product} />
+                                ))}
+                            </div>
                         </section>
                     ))}
                 </div>

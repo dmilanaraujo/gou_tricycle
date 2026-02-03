@@ -8,7 +8,7 @@ export type ServiceItems = {
     final_price: string
     price_usd: number
     final_price_usd: string
-    // category: BusinessCategory | null
+    category?: BusinessCategory
     discount_label?: string
     is_featured: boolean
 }
