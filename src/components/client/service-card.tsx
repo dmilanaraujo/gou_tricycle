@@ -1,6 +1,6 @@
 'use client';
 
-import {Sparkles, StarIcon} from 'lucide-react';
+import {Dot, Sparkles, StarIcon} from 'lucide-react';
 import {
     Card,
     CardContent,
@@ -58,7 +58,7 @@ export function ServiceCard({service}: ServiceCardProps) {
     return (
         <Card onClick={() => router.push(`/business/${service.id}`)} className="max-w-md pt-0 shadow-none border-none hover:cursor-pointer">
             <CardContent className="px-0 pb-0">
-                <div className="relative w-full h-[180px] rounded-xl overflow-hidden bg-white border-1">
+                <div className="relative w-full h-[180px] rounded-xl overflow-hidden bg-muted">
                     <Image
                         src={getPublicImageUrl(process.env.NEXT_PUBLIC_SUPABASE_SERVICE_BUCKET || "", service.image_url)}
                         alt="Banner"
@@ -66,20 +66,28 @@ export function ServiceCard({service}: ServiceCardProps) {
                         className="object-contain"
                     />
                     {/* Badge de promoción opcional */}
-                    {service.discount_label && (
-                        <div className="absolute top-2 left-2">
-                            <Badge variant="destructive" className="text-xs text-white bg-primary">
-                                {service.discount_label}
-                            </Badge>
-                        </div>
-                    )}
+                    {/*{service.discount_label && (*/}
+                    {/*    <div className="absolute top-2 left-2">*/}
+                    {/*        <Badge variant="destructive" className="text-xs text-white bg-primary">*/}
+                    {/*            {service.discount_label}*/}
+                    {/*        </Badge>*/}
+                    {/*    </div>*/}
+                    {/*)}*/}
                 </div>
 
                 <div className="px-0 py-0">
-                    <div className="flex items-center justify-between">
+                    <span className="text-md block mt-1">
+                        {service.name}
+                    </span>
+                    {service.discount_label && (
+                        <Badge variant="destructive" className="text-xs text-white rounded-sm">
+                            {service.discount_label}
+                        </Badge>
+                    )}
+                    <div className="flex items-center">
                         {/* Izquierda: precios */}
                         <div className="flex items-center gap-1">
-                            <span className="text-xl font-semibold text-primary">
+                            <span className="text-md font-semibold">
                                 {service.final_price}
                             </span>
                             <span className="text-sm text-muted-foreground">
@@ -87,7 +95,10 @@ export function ServiceCard({service}: ServiceCardProps) {
                             </span>
                         </div>
                         <div className="flex items-center gap-1">
-                            <span className="text-xl font-semibold text-primary">
+                            <Dot/>
+                        </div>
+                        <div className="flex items-center gap-1">
+                            <span className="text-md font-semibold">
                                 {service.final_price_usd}
                             </span>
                             <span className="text-sm text-muted-foreground">
@@ -95,35 +106,35 @@ export function ServiceCard({service}: ServiceCardProps) {
                             </span>
                         </div>
                     </div>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center">
                         <div className="flex items-center gap-1">
-                            <span className="text-md font-semibold text-muted-foreground relative">
-                                {service.price}
-                                <span
-                                    className="absolute top-1/2 left-0 right-0 h-[1px] bg-muted-foreground transform -translate-y-1/2"></span>
-                            </span>
+                                <span className="text-md font-semibold text-muted-foreground relative">
+                                    {service.price}
+                                    <span
+                                        className="absolute top-1/2 left-0 right-0 h-[1px] bg-muted-foreground transform -translate-y-1/2"></span>
+                                </span>
                             <span className="text-sm text-muted-foreground relative">
-                                CUP
-                                <span
-                                    className="absolute top-1/2 left-0 right-0 h-[1px] bg-muted-foreground transform -translate-y-1/2"></span>
-                            </span>
+                                    CUP
+                                    <span
+                                        className="absolute top-1/2 left-0 right-0 h-[1px] bg-muted-foreground transform -translate-y-1/2"></span>
+                                </span>
                         </div>
                         <div className="flex items-center gap-1">
-                            <span className="text-md font-semibold text-muted-foreground relative">
-                                {service.price_usd}
-                                <span
-                                    className="absolute top-1/2 left-0 right-0 h-[1px] bg-muted-foreground transform -translate-y-1/2"></span>
-                            </span>
+                            <Dot/>
+                        </div>
+                        <div className="flex items-center gap-1">
+                                <span className="text-md font-semibold text-muted-foreground relative">
+                                    {service.price_usd}
+                                    <span
+                                        className="absolute top-1/2 left-0 right-0 h-[1px] bg-muted-foreground transform -translate-y-1/2"></span>
+                                </span>
                             <span className="text-sm text-muted-foreground relative">
-                                USD
-                                <span
-                                    className="absolute top-1/2 left-0 right-0 h-[1px] bg-muted-foreground transform -translate-y-1/2"></span>
-                            </span>
+                                    USD
+                                    <span
+                                        className="absolute top-1/2 left-0 right-0 h-[1px] bg-muted-foreground transform -translate-y-1/2"></span>
+                                </span>
                         </div>
                     </div>
-                    <span className="text-md block mt-1">
-                        {service.name}
-                    </span>
                 </div>
 
                 {/*<div className="gap-3 max-sm:flex-col max-sm:items-stretch px-0 pt-0 pb-0">*/}

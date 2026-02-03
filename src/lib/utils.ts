@@ -317,10 +317,10 @@ export function applyDiscount(
     priceUsd: number,
     discount?: BusinessDiscount | null
 ) {
-    if (!discount) {
+    if (!discount || !discount.is_active) {
         return {
-            finalPrice: price,
-            finalPriceUsd: priceUsd,
+            finalPrice: formatPrice(price, "CUP"),
+            finalPriceUsd: formatPrice(priceUsd, "CUP"),
             label: null,
         }
     }
@@ -330,8 +330,8 @@ export function applyDiscount(
         const finalUsd = priceUsd - (priceUsd * discount.value) / 100
 
         return {
-            finalPrice: Number(final.toFixed(2)),
-            finalPriceUsd: Number(finalUsd.toFixed(2)),
+            finalPrice: formatPrice(final, "CUP"),
+            finalPriceUsd: formatPrice(finalUsd, "CUP"),
             label: `-${discount.value}%`,
         }
     }
@@ -341,17 +341,24 @@ export function applyDiscount(
         const finalUsd = priceUsd - discount.value
 
         return {
-            finalPrice: Math.max(0, Number(final.toFixed(2))),
-            finalPriceUsd: Math.max(0, Number(finalUsd.toFixed(2))),
+            finalPrice: formatPrice(final, "CUP"),
+            finalPriceUsd: formatPrice(finalUsd, "CUP"),
             label: `-$${discount.value}`,
         }
     }
 
     return {
-        finalPrice: price,
-        finalPriceUsd: priceUsd,
+        finalPrice: formatPrice(price, "CUP"),
+        finalPriceUsd: formatPrice(priceUsd, "CUP"),
         label: null,
     }
+}
+
+function formatPrice(value: number, currency: "USD" | "CUP" = "USD",) {
+    return new Intl.NumberFormat('es-CU', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    }).format(value)
 }
 
 export function isAfterOrEqual(date: Date, compareDate: Date = new Date()) {
