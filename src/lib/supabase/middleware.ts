@@ -94,6 +94,7 @@ const isPublicRoute = (route: string) => {
     const startsWith = [
         '/api',
         '/business',
+        '/service',
     ];
 
     return (

@@ -75,29 +75,44 @@ export function ScrollableTabs({ title, tabs, defaultValue, value, onChange }: P
                             ref={listRef}
                             onScroll={updateScrollState}
                             className={cn(
-                                "flex gap-0 pl-0 pr-0 rounded-none justify-start",
-                                "overflow-x-hidden overflow-y-hidden",
-                                "bg-transparent whitespace-nowrap"
+                                "relative flex gap-0 pl-0 pr-0 rounded-none justify-start",
+                                "bg-transparent whitespace-nowrap",
+
+                                // 👇 IMPORTANT: override estilos default de shadcn
+                                "!h-auto !p-0 items-end",
+
+                                // 👇 no recortes la línea
+                                "overflow-x-hidden overflow-y-visible",
+
+                                // 👇 reserva espacio para la línea (mismo grosor)
+                                "pb-[5px]",
+
+                                // 👇 línea base muted
+                                "after:absolute after:bottom-0 after:left-0 after:w-full after:h-[5px] after:bg-muted after:z-0"
                             )}
                         >
-                            {tabs.map((tab, i) => (
-                                <TabsTrigger
-                                    key={tab.value}
-                                    value={tab.value}
-                                    className={cn(
-                                        "relative rounded-none px-4 py-2",
-                                        "cursor-pointer text-md",
-                                        "hover:bg-muted",
-                                        "after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-full",
-                                        "after:bg-primary after:scale-x-0 after:origin-left",
-                                        "after:transition-transform after:duration-300 after:ease-out",
-                                        "data-[state=active]:after:scale-x-100",
-                                        "data-[state=active]:shadow-none",
-                                    )}
-                                >
-                                    {tab.label}
-                                </TabsTrigger>
-                            ))}
+                        {tabs.map((tab, i) => (
+                            <TabsTrigger
+                                key={tab.value}
+                                value={tab.value}
+                                className={cn(
+                                    "relative rounded-none px-4 pt-2 pb-4",
+                                    "!h-auto", // 👈 override h-9 de shadcn
+
+                                    "cursor-pointer text-md hover:bg-muted",
+                                    "data-[state=active]:shadow-none",
+
+                                    // underline activo
+                                    "after:absolute after:bottom-0 after:left-0 after:h-[5px]",
+                                    "after:bg-primary after:w-0",
+                                    "after:transition-[width] after:duration-300 after:ease-out",
+                                    "data-[state=active]:after:w-full",
+                                    "after:z-10"
+                                )}
+                            >
+                                {tab.label}
+                            </TabsTrigger>
+                        ))}
                         </TabsList>
                     </div>
 
