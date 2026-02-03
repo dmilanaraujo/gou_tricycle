@@ -4,7 +4,7 @@ import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { FeaturedPromoCard } from "@/components/client/featured-promo-card"
-import { ArrowDownIcon, MapPin, StarIcon } from "lucide-react"
+import {ArrowDownIcon, MapPin, Share, Share2, StarIcon} from "lucide-react"
 import { getPublicImageUrl } from "@/lib/utils"
 import { municipalities, provinces } from "@/lib/data/locations"
 import * as React from "react";
@@ -16,6 +16,7 @@ import {Business, Product} from "@/types";
 import {Reviews} from "@/types/reviews";
 import {ServiceItems} from "@/types/service-items";
 import {ServiceCard} from "@/components/client/service-card";
+import {ServiceDetailedCard} from "@/components/client/service-detailed-card";
 
 const WhatsAppIcon = () => (
     <svg
@@ -131,19 +132,34 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
 
             {/* Info */}
             <section className="w-full mt-8">
-                <div className="flex items-center justify-between gap-4 flex-wrap">
-                    <h2 className="text-4xl font-semibold">{business.name}</h2>
+                <div className="flex items-center gap-4 flex-wrap">
+                    <h2 className="text-4xl font-semibold">
+                        {business.name}
+                    </h2>
 
-                    <Button asChild variant="outline" className="w-full md:w-auto shadow-none">
-                        <a
-                            href={`https://wa.me/${business.phone}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            <WhatsAppIcon/>
-                            Enviar mensaje
-                        </a>
-                    </Button>
+                    <div className="ml-auto flex gap-2 flex-wrap">
+                        <Button asChild variant="outline" className="w-full md:w-auto shadow-none">
+                            <a
+                                href={`https://wa.me/${business.phone}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <WhatsAppIcon/>
+                                Enviar mensaje
+                            </a>
+                        </Button>
+
+                        <Button asChild variant="outline" className="w-full md:w-auto shadow-none">
+                            <a
+                                href={`https://wa.me/${business.phone}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <Share2/>
+                                Compartir catálogo
+                            </a>
+                        </Button>
+                    </div>
                 </div>
 
                 <div className="mt-2 flex flex-wrap gap-2 text-lg text-muted-foreground">
@@ -179,7 +195,7 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
                                 <span className="text-5xl font-bold">{business.rating}</span>
 
                                 <div className="flex mt-2">
-                                    {[1, 2, 3, 4, 5].map(i => (
+                                {[1, 2, 3, 4, 5].map(i => (
                                         <StarIcon
                                             key={i}
                                             className={`w-5 h-5 ${
@@ -305,16 +321,16 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
                     {categories.map(category => (
                         <section
                             key={category.id}
-                            id={category.id}   // 🔥 ESTE ID ES CRÍTICO
-                            className="scroll-mt-32"
+                            id={category.id}
+                            className="scroll-mt-32 mb-6"
                         >
                             <h3 className="text-2xl font-semibold mb-4">
                                 {category.title}
                             </h3>
 
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 items-stretch">
                                 {category.products.map(product => (
-                                    <ServiceCard key={product.id} service={product} />
+                                    <ServiceDetailedCard key={product.id} service={product}/>
                                 ))}
                             </div>
                         </section>

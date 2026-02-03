@@ -75,7 +75,7 @@ export type Service = {
     id: string;
     business_id?: string;
     name?: string;
-    description?: string;
+    description: string;
     price?: number;
     price_usd?: number;
     is_active: boolean;

@@ -27,6 +27,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
             return {
                 id: p.id,
                 name: name,
+                description: p.description,
                 image_url: primaryImage?.path ?? "",
                 price: price,
                 final_price: finalPrice,
@@ -51,6 +52,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
             return {
                 id: p.id,
                 name: name,
+                description: p.description,
                 image_url: primaryImage?.path ?? "",
                 price: price,
                 final_price: finalPrice,

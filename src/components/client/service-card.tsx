@@ -20,7 +20,9 @@ export function ServiceCard({service}: ServiceCardProps) {
     const router = useRouter();
 
     return (
-        <Card onClick={() => router.push(`/business/${service.id}`)} className="max-w-md pt-0 shadow-none border-none hover:cursor-pointer">
+        <Card onClick={() => router.push(`/business/${service.id}`)}
+              className="max-w-md pt-0 shadow-none border-none hover:cursor-pointer"
+        >
             <CardContent className="px-0 pb-0">
                 <div className="relative w-full h-[180px] rounded-xl overflow-hidden bg-muted">
                     <Image
