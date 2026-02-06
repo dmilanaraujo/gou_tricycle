@@ -6,8 +6,11 @@ import AppProvider from '@/providers/app-provider';
 
 
 export const metadata: Metadata = {
-  title: 'Triciclos',
-  description: 'Encuentra triciclos locales cerca de ti.',
+    title: 'Triciclos',
+    description: 'Encuentra triciclos locales cerca de ti.',
+    metadataBase: new URL(
+        process.env.NEXT_PUBLIC_SITE_URL ?? "https://gou.goucorp.com"
+    ),
     openGraph: {
         siteName: 'Triciclos',
         url: process.env.NEXT_PUBLIC_SITE_URL,

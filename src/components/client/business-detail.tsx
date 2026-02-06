@@ -100,8 +100,7 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
     }, [categories])
 
     return (
-        <main className="min-h-screen bg-background pt-2 w-full max-w-screen-xl mx-auto px-10 pb-8">
-
+        <>
             {/* Banner */}
             <section className="relative h-[250px] w-full rounded-xl">
                 <Image
@@ -338,6 +337,6 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
                 </div>
             </section>
 
-        </main>
+        </>
     )
 }

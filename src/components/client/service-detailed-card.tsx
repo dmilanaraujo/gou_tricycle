@@ -24,7 +24,7 @@ export function ServiceDetailedCard({ service }: ServiceCardProps) {
 
     return (
         <Card
-            onClick={() => router.push(`/service/${service.id}`)}
+            onClick={() => router.push(`/business/${service.business_id}/service/${service.id}`)}
             className="
         h-full w-full
         py-0

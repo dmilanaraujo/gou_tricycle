@@ -2,6 +2,7 @@ import {BusinessCategory} from "@/types/business";
 
 export type ServiceItems = {
     id: string
+    business_id: string
     name: string
     description: string
     image_url: string

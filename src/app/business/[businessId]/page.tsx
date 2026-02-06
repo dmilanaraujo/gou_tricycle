@@ -4,12 +4,16 @@ import BusinessDetail from "@/components/client/business-detail";
 import {applyDiscount} from "@/lib/utils";
 import {listProducts} from "@/lib/actions/product";
 
-export default async function Page({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params
+export default async function Page({
+                                       params,
+                                   }: {
+    params: Promise<{ businessId: string }>
+}) {
+    const { businessId } = await params
 
-    const res = await getBusinessById(id)
-    const { data: reviews } = await getBusinessReviews(id)
-    const response = await listProducts({business_id: id, page: 0, limit: 10})
+    const res = await getBusinessById(businessId)
+    const { data: reviews } = await getBusinessReviews(businessId)
+    const response = await listProducts({business_id: businessId, page: 0, limit: 10})
 
     const rawProducts = response.success
         ? response.data
@@ -26,6 +30,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
             return {
                 id: p.id,
+                business_id: p.business_id ?? "",
                 name: name,
                 description: p.description,
                 image_url: primaryImage?.path ?? "",
@@ -51,6 +56,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
             return {
                 id: p.id,
+                business_id: p.business_id ?? "",
                 name: name,
                 description: p.description,
                 image_url: primaryImage?.path ?? "",
