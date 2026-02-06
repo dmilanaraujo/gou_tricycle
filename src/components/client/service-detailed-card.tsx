@@ -31,7 +31,6 @@ export function ServiceDetailedCard({ service }: ServiceCardProps) {
         cursor-pointer
         transition-all
         shadow-none
-        hover:-translate-y-1 hover:shadow-lg
         sm:flex sm:flex-row
         min-h-[180px]
       "
@@ -61,8 +60,8 @@ export function ServiceDetailedCard({ service }: ServiceCardProps) {
             </CardContent>
 
             {/* Contenido derecho */}
-            <div className="flex flex-col h-full flex-1 gap-2">
-                <CardHeader className="pt-4 pb-0">
+            <div className="flex flex-col h-full flex-1 gap-2 items-start text-left">
+                <CardHeader className="pt-4 pl-0 pb-0 w-full items-start text-left">
                     <CardTitle className="text-base leading-tight line-clamp-2">
                         {service.name}
                     </CardTitle>
@@ -72,7 +71,7 @@ export function ServiceDetailedCard({ service }: ServiceCardProps) {
                     </CardDescription>
                 </CardHeader>
 
-                <CardFooter className="flex flex-col items-start gap-1 pb-4 pt-0">
+                <CardFooter className="flex flex-col items-start text-left w-full gap-1 pb-4 pl-0 pt-0">
                     {service.discount_label && (
                         <Badge variant="destructive" className="text-xs rounded-sm text-white">
                             {service.discount_label}
@@ -82,7 +81,7 @@ export function ServiceDetailedCard({ service }: ServiceCardProps) {
                     <div className="flex items-center gap-1 text-sm">
                         <span className="font-semibold">{service.final_price}</span>
                         <span className="text-muted-foreground">CUP</span>
-                        <Dot className="h-4 w-4" />
+                        <Dot className="h-4 w-4"/>
                         <span className="font-semibold">{service.final_price_usd}</span>
                         <span className="text-muted-foreground">USD</span>
                     </div>
@@ -91,12 +90,12 @@ export function ServiceDetailedCard({ service }: ServiceCardProps) {
                         <div className="flex items-center gap-1 text-xs text-muted-foreground">
                             <span className="relative">
                                 {service.price} CUP
-                                <span className="absolute inset-x-0 top-1/2 h-px bg-muted-foreground" />
+                                <span className="absolute inset-x-0 top-1/2 h-px bg-muted-foreground"/>
                             </span>
-                            <Dot className="h-3 w-3" />
+                            <Dot className="h-3 w-3"/>
                             <span className="relative">
                                 {service.price_usd} USD
-                                <span className="absolute inset-x-0 top-1/2 h-px bg-muted-foreground" />
+                                <span className="absolute inset-x-0 top-1/2 h-px bg-muted-foreground"/>
                             </span>
                         </div>
                     )}
