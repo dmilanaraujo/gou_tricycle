@@ -14,7 +14,6 @@ import {useServiceStore} from '@/store/service';
 import {showActionErrors} from '@/lib/utils';
 import {Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger} from '@/components/ui/drawer';
 import {useIsMobile} from '@/hooks/use-mobile';
-import {useProfile} from '@/providers/profile-provider';
 
 const initialValues: Partial<ServiceFormValues> = {
 	id: '',
@@ -23,7 +22,6 @@ const initialValues: Partial<ServiceFormValues> = {
 	price: 0,
 }
 export function ServiceSheet() {
-	const profile = useProfile()
 	const { openSheet, setOpenSheet, isEditing, closeSheet, openForCreate, editingService } = useServiceStore();
 	const isMobile = useIsMobile();
 	const { mutateAsync: createService, isPending: isCreatingService } = useCreateService();

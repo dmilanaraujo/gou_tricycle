@@ -1,7 +1,7 @@
 'use client'
 
 import {UseFormReturn} from 'react-hook-form'
-import {FormControl, FormField, FormItem, FormLabel, FormMessage,} from '@/components/ui/form'
+import {FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage,} from '@/components/ui/form'
 import {Input} from '@/components/ui/input'
 import {ReusableForm} from '@/components/common/reusable-form';
 import * as React from 'react';
@@ -39,6 +39,22 @@ export const ServiceForm = ({form}: ServiceFormProps) => {
 								</FormItem>
 							)}
 						/>
+						<FormField
+							control={form.control}
+							name="external_id"
+							render={({field}) => (
+								<FormItem>
+									<FormLabel>Identificador único</FormLabel>
+									<FormControl>
+										<Input placeholder="PRD-0001" {...field} />
+									</FormControl>
+									<FormDescription>
+										Identificador único para evitar duplicados a la hora de importar listados de productos
+									</FormDescription>
+									<FormMessage/>
+								</FormItem>
+							)}
+						/>
 						
 						<FormField
 							control={form.control}
@@ -55,13 +71,34 @@ export const ServiceForm = ({form}: ServiceFormProps) => {
 						/>
 					</div>
 					
-					<div className="grid grid-cols-1 gap-4 items-start">
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
 						<FormField
 							control={form.control}
 							name="price"
 							render={({field}) => (
 								<FormItem>
-									<FormLabel>Precio</FormLabel>
+									<FormLabel>Precio CUP</FormLabel>
+									<FormControl>
+										<Input type="number"
+										       placeholder="40"
+										       min={1}
+										       {...field}
+										       value={field.value ?? ''}
+										       onChange={(e) => {
+											       const value = e.target.valueAsNumber;
+											       field.onChange(isNaN(value) ? undefined : value);
+										       }}/>
+									</FormControl>
+									<FormMessage/>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="price_usd"
+							render={({field}) => (
+								<FormItem>
+									<FormLabel>Precio USD</FormLabel>
 									<FormControl>
 										<Input type="number"
 										       placeholder="40"

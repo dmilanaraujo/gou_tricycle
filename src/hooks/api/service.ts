@@ -6,10 +6,11 @@ import {
 import {PaginationRequest, ResultList, SortRequest, Service} from '@/types';
 import {
   updateStatusService,
-  listServices
+  listServices, importServices
 } from '@/lib/actions/service';
 import {ServiceFormValues, ServicesFilterValues} from '@/lib/schemas/service';
 import {createService, deleteServices, updateService} from '@/lib/actions/service';
+import {ImportPayloadValues} from '@/lib/schemas/product';
 
 export const useGetServices = (
   filter: ServicesFilterValues & PaginationRequest & SortRequest,
@@ -60,6 +61,7 @@ export const useDeleteServices = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['services'] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
     },
   });
 };
@@ -73,7 +75,22 @@ export const useUpdateStatusService = () => {
       return await updateStatusService(serviceId, active);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['services', 'products'] });
+      queryClient.invalidateQueries({ queryKey: ['services'] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+export const useImportServices = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (params: ImportPayloadValues) => {
+      return await importServices(params);
+    },
+    onSuccess: (p, e) => {
+      queryClient.invalidateQueries({ queryKey: ['services'] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
     },
   });
 };

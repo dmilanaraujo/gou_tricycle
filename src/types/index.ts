@@ -104,5 +104,12 @@ export type IdParamsProps = {
   id: string;
 };
 
+export type ImportResult = {
+  success: boolean
+  created: number
+  updated: number
+  total: number
+  errors?: string[]
+}
 
 export * from './business';

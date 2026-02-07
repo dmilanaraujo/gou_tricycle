@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Command, Settings, Home, Grid, ListOrdered } from 'lucide-react'
+import { Command, Settings, Home, Grid, ListOrdered, CloudUpload } from 'lucide-react'
 
 import { NavUser } from "@/components/auth/nav-user"
 import {
@@ -26,6 +26,12 @@ const sidebarNavs = [
 		url: "/me",
 		icon: Home,
 		isActive: true,
+	},
+	{
+		title: "Importar",
+		url: "/me/import",
+		icon: CloudUpload,
+		isActive: false,
 	},
 	{
 		title: "Mis servicios",

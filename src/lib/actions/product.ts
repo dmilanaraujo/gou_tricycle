@@ -12,6 +12,7 @@ import {createClient} from '@/lib/supabase/server';
 
 const constraintMap = {
     'products_business_id_fkey': 'El negocio que desea asociar no existe',
+    'idx_services_business_external_unique': 'Ya existe un producto o servicio con el mismo identificador',
 };
 
 export async function listProducts(params: ProductsFilterValues & PaginationRequest & SortRequest): Promise<ActionResponse<ResultList<Product>>> {
@@ -115,9 +116,11 @@ export async function createProduct(input: ProductFormValues): Promise<ActionRes
                 name: input.name,
                 description: input.description,
                 price: input.price,
+                price_usd: input.price_usd,
                 is_featured: input.is_featured,
-                business_category_id: input.business_category_id,
-                product_discounts_id: input.product_discounts_id,
+                business_category_id: input.business_category_id || null,
+                product_discounts_id: input.product_discounts_id || null,
+                external_id: input.external_id,
                 item_type: 'product',
                 business_id: user.id
             })
@@ -152,8 +155,8 @@ export async function updateProduct(input: Partial<ProductFormValues>): Promise<
                 name: input.name,
                 description: input.description,
                 price: input.price,
-                product_discounts_id: input.product_discounts_id,
-                business_category_id: input.business_category_id,
+                product_discounts_id: input.product_discounts_id || null,
+                business_category_id: input.business_category_id || null,
                 is_featured: input.is_featured,
             })
             .eq("id", input.id)

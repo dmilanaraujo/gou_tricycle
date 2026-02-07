@@ -1,6 +1,6 @@
 "use server"
 
-import {ActionResponse, PaginationRequest, Product, ResultList, Service, SortRequest} from '@/types';
+import {ActionResponse, ImportResult, PaginationRequest, Product, ResultList, Service, SortRequest} from '@/types';
 import {
     ServiceFormValues,
     ServiceSchema,
@@ -9,9 +9,12 @@ import {
 } from '@/lib/schemas/service';
 import {formatSupabaseFunctionErrors, formatSupabasePostgrestErrors, formatZodErrors} from '@/lib/utils';
 import {createClient} from '@/lib/supabase/server';
+import {ImportPayloadSchema, ImportPayloadValues} from '@/lib/schemas/product';
+import {z} from 'zod';
 
 const constraintMap = {
     'services_business_id_fkey': 'El negocio que desea asociar no existe',
+    'idx_services_business_external_unique': 'Ya existe un producto o servicio con el mismo identificador',
 };
 
 export async function listServices(params: ServicesFilterValues & PaginationRequest & SortRequest): Promise<ActionResponse<ResultList<Service>>> {
@@ -141,7 +144,11 @@ export async function createService(input: ServiceFormValues): Promise<ActionRes
                 name: input.name,
                 description: input.description,
                 price: input.price,
-                business_id: user.id
+                price_usd: input.price_usd,
+                product_discounts_id: input.product_discounts_id || null,
+                external_id: input.external_id,
+                item_type: 'service',
+                business_id: user.id,
             })
             .select("*");
         
@@ -174,7 +181,7 @@ export async function updateService(input: Partial<ServiceFormValues>): Promise<
                 name: input.name,
                 description: input.description,
                 price: input.price,
-                product_discounts_id: input.product_discounts_id,
+                product_discounts_id: input.product_discounts_id || null,
             })
             .eq("id", input.id)
             .select("*");
@@ -240,5 +247,181 @@ export const updateStatusService = async (serviceId: string, active: boolean) =>
     } catch (error) {
         console.log('Unexpected error in updateStatusService:', error);
         throw new Error('Error no especificado');
+    }
+}
+
+export async function importServices(payload: ImportPayloadValues): Promise<ImportResult> {
+    try {
+        const parsed = ImportPayloadSchema.safeParse(payload)
+        
+        if (!parsed.success) {
+            return {
+                success: false,
+                created: 0,
+                updated: 0,
+                total: 0,
+                // errors: ["Datos inválidos", JSON.stringify(parsed.error.flatten())],
+                errors: ["Datos inválidos", JSON.stringify(z.treeifyError(parsed.error))],
+            }
+        }
+        
+        const { services } = parsed.data
+        const supabase = await createClient();
+
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        
+        if (userError || !user) {
+            return {
+                success: false,
+                created: 0,
+                updated: 0,
+                total: 0,
+                errors: ['Usuario no autenticado o no se pudo obtener el usuario.']
+            };
+        }
+        
+        const withoutExternalId = services.filter(
+            (s) => !s.external_id || s.external_id.trim() === ""
+        )
+        
+        const withExternalId = services.filter(
+            (s) => s.external_id && s.external_id.trim() !== ""
+        )
+        
+        let createdCount = 0
+        let updatedCount = 0
+        const errors: string[] = []
+        
+        // 1) INSERT sin external_id (siempre nuevos)
+        if (withoutExternalId.length > 0) {
+            const insertData = withoutExternalId.map((s) => ({
+                name: s.name,
+                description: s.description,
+                price: s.price,
+                price_usd: s.price_usd,
+                item_type: s.item_type,
+                // is_active: s.is_active,
+                is_featured: s.is_featured,
+                external_id: null,
+                business_id: user.id
+            }))
+            
+            const { error } = await supabase
+                .from("services")
+                .insert(insertData)
+            
+            if (error) {
+                errors.push(`Error al insertar nuevos: ${error.message}`)
+            } else {
+                createdCount += withoutExternalId.length
+            }
+        }
+        
+        // 2) Con external_id → UPSERT lógico
+        if (withExternalId.length > 0) {
+            const externalIds = withExternalId
+                .map((s) => s.external_id!.trim())
+                .filter(Boolean)
+            
+            const { data: existingServices, error: fetchError } = await supabase
+                .from("services")
+                .select("id, external_id")
+                .in("external_id", externalIds)
+            
+            if (fetchError) {
+                errors.push(`Error al buscar existentes: ${fetchError.message}`)
+            } else {
+                const existingExternalIds = new Set(
+                    (existingServices ?? []).map((s) => s.external_id)
+                )
+                
+                const toCreate: typeof withExternalId = []
+                const toUpdate: typeof withExternalId = []
+                
+                for (const service of withExternalId) {
+                    const eid = service.external_id!.trim()
+                    if (existingExternalIds.has(eid)) {
+                        toUpdate.push(service)
+                    } else {
+                        toCreate.push(service)
+                    }
+                }
+                
+                // INSERT nuevos con external_id
+                if (toCreate.length > 0) {
+                    const insertData = toCreate.map((s) => ({
+                        name: s.name,
+                        description: s.description,
+                        price: s.price,
+                        price_usd: s.price_usd,
+                        item_type: s.item_type,
+                        // is_active: s.is_active,
+                        is_featured: s.is_featured,
+                        external_id: s.external_id!.trim(),
+                        business_id: user.id
+                    }))
+                    
+                    const { error } = await supabase
+                        .from("services")
+                        .insert(insertData)
+                    
+                    if (error) {
+                        errors.push(`Error al insertar con external_id: ${error.message}`)
+                    } else {
+                        createdCount += toCreate.length
+                    }
+                }
+                
+                // UPDATE existentes
+                for (const service of toUpdate) {
+                    const eid = service.external_id!.trim()
+                    
+                    const { error } = await supabase
+                        .from("services")
+                        .update({
+                            name: service.name,
+                            description: service.description,
+                            price: service.price,
+                            price_usd: service.price_usd,
+                            item_type: service.item_type,
+                            // is_active: service.is_active,
+                            is_featured: service.is_featured,
+                        })
+                        .eq("external_id", eid)
+                    
+                    if (error) {
+                        errors.push(`Error al actualizar ${eid}: ${error.message}`)
+                    } else {
+                        updatedCount++
+                    }
+                }
+            }
+        }
+        
+        if (errors.length > 0) {
+            return {
+                success: false,
+                created: createdCount,
+                updated: updatedCount,
+                total: services.length,
+                errors,
+            }
+        }
+        
+        return {
+            success: true,
+            created: createdCount,
+            updated: updatedCount,
+            total: services.length,
+        }
+    } catch (error) {
+        console.error("Import error:", error)
+        return {
+            success: false,
+            created: 0,
+            updated: 0,
+            total: 0,
+            errors: ["Error interno del servidor"],
+        }
     }
 }

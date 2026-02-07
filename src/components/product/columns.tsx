@@ -112,12 +112,38 @@ export const columns: ColumnDef<Product>[] = [
     {
         accessorKey: "price",
         header: () => (
-            <div className="flex justify-end font-medium">Precio</div>
+            <div className="flex justify-end font-medium">Precio CUP</div>
         ),
         cell: ({ row }) => (
             <div className="flex justify-end font-medium">
                 {row.original.price ? `$${row.original.price}` : "-"}
             </div>
+        ),
+        meta: {
+            headerClassName: "w-[120px]",
+        },
+    },
+    {
+        accessorKey: "price_usd",
+        header: () => (
+            <div className="flex justify-end font-medium">Precio USD</div>
+        ),
+        cell: ({ row }) => (
+            <div className="flex justify-end font-medium">
+                {row.original.price ? `$${row.original.price_usd}` : "-"}
+            </div>
+        ),
+        meta: {
+            headerClassName: "w-[120px]",
+        },
+    },
+    {
+        accessorKey: "external_id",
+        header: () => (
+            <div className="flex justify-center font-medium">Identificador</div>
+        ),
+        cell: ({ row }) => (
+            <span className="flex justify-center font-medium">{row.original.external_id}</span>
         ),
         meta: {
             headerClassName: "w-[120px]",

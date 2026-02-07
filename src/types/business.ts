@@ -80,6 +80,7 @@ export type Service = {
     price_usd?: number;
     is_active: boolean;
     product_discounts_id?: string
+    external_id?: string
     images: BucketImage[];
     discount?: BusinessDiscount;
 }

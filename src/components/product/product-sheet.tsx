@@ -14,16 +14,17 @@ import {Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTr
 import {useIsMobile} from '@/hooks/use-mobile';
 import {ProductFormValues, ProductSchema} from '@/lib/schemas/product';
 import {ProductForm} from '@/components/product/product-form';
-import {useProfile} from '@/providers/profile-provider';
 
 const initialValues: Partial<ProductFormValues> = {
 	id: '',
 	name: '',
 	description: '',
 	price: 0,
+	price_usd: 0,
 	business_category_id: '',
 	product_discounts_id: '',
-	is_featured: false
+	is_featured: false,
+	external_id: '',
 }
 export function ProductSheet() {
 	const { openSheet, setOpenSheet, isEditing, closeSheet, openForCreate, editingProduct } = useProductStore();
