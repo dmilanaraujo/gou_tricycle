@@ -80,7 +80,7 @@ export default function ProductPageClient({
                         style={{
                             backgroundImage: `url(${zoom.image})`,
                             backgroundRepeat: "no-repeat",
-                            backgroundSize: "250%",
+                            backgroundSize: `${2.5 * 100}%`,
                             backgroundPosition: `${zoom.pos.x}% ${zoom.pos.y}%`,
                         }}
                     />
