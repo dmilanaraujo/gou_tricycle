@@ -41,7 +41,7 @@ export const ServiceForm = ({form}: ServiceFormProps) => {
 						/>
 						<FormField
 							control={form.control}
-							name="external_id"
+							name="sku"
 							render={({field}) => (
 								<FormItem>
 									<FormLabel>Identificador único</FormLabel>

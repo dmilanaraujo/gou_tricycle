@@ -4,17 +4,18 @@ create table public.services (
   business_id uuid null,
   name text not null,
   description text null,
-  price numeric null,
+  price numeric null default '0'::numeric,
   is_active boolean null default false,
   item_type text not null default 'service'::text,
   business_category_id uuid null,
-  image_url text null,
   is_featured boolean not null default false,
   product_discounts_id uuid null,
+  price_usd numeric not null default '0'::numeric,
+  sku character varying(255) null,
   constraint services_pkey primary key (id),
-  constraint services_business_category_id_fkey foreign KEY (business_category_id) references business_categories (id),
+  constraint services_business_category_id_fkey foreign KEY (business_category_id) references business_categories (id) on delete set null,
   constraint services_business_id_fkey foreign KEY (business_id) references businesses (id) on delete CASCADE,
-  constraint services_product_discounts_id_fkey foreign KEY (product_discounts_id) references product_discounts (id),
+  constraint services_product_discounts_id_fkey foreign KEY (product_discounts_id) references product_discounts (id) on delete set null,
   constraint services_item_type_check check (
     (
       item_type = any (array['service'::text, 'product'::text])
@@ -29,6 +30,9 @@ create index IF not exists idx_services_item_type on public.services using btree
 create index IF not exists idx_services_business_category_id on public.services using btree (business_category_id) TABLESPACE pg_default;
 
 create index IF not exists idx_services_is_featured on public.services using btree (is_featured) TABLESPACE pg_default;
+
+create unique INDEX IF not exists idx_services_business_external_unique on public.services using btree (business_id, sku) TABLESPACE pg_default
+where (sku is not null);
 
 --------------------------------------------------------
 

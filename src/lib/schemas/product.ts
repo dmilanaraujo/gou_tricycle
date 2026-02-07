@@ -45,5 +45,5 @@ export const TEMPLATE_COLUMNS = [
     { header: "item_type", description: "Tipo: Servicio o Producto" },
     // { header: "is_active", description: "Activo: SI o NO" },
     { header: "is_featured", description: "Destacado: SI o NO" },
-    { header: "external_id", description: "Identificador único (para actualizar existentes, Ej: PRD-0001 o SRV-0002)" },
+    { header: "sku", description: "SKU - Identificador único (para actualizar existentes, Ej: PRD-0001 o SRV-0002)" },
 ] as const

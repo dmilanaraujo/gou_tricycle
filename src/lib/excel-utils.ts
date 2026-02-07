@@ -186,7 +186,7 @@ export function parseExcelFile(file: File): Promise<ImportServiceRow[]> {
             item_type: mapItemType(row.item_type),
             // is_active: parseBool(row.is_active),
             is_featured: parseBool(row.is_featured),
-            external_id: String(row.external_id ?? ""),
+            sku: String(row.sku ?? ""),
           })
           
           const errors: Record<string, string> = {}
@@ -210,10 +210,10 @@ export function parseExcelFile(file: File): Promise<ImportServiceRow[]> {
                 item_type: mapItemType(row.item_type),
                 // is_active: parseBool(row.is_active),
                 is_featured: parseBool(row.is_featured),
-                external_id: String(row.external_id ?? ""),
+                sku: String(row.sku ?? ""),
               }
           
-          const hasExternalId = serviceData.external_id && serviceData.external_id.trim() !== ""
+          const hasExternalId = serviceData.sku && serviceData.sku.trim() !== ""
           
           return {
             ...serviceData,

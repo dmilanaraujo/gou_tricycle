@@ -24,7 +24,7 @@ const initialValues: Partial<ProductFormValues> = {
 	business_category_id: '',
 	product_discounts_id: '',
 	is_featured: false,
-	external_id: '',
+	sku: '',
 }
 export function ProductSheet() {
 	const { openSheet, setOpenSheet, isEditing, closeSheet, openForCreate, editingProduct } = useProductStore();

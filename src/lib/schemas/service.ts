@@ -8,7 +8,7 @@ export const ServiceSchema = z.object({
     price: z.number().optional(),
     price_usd: z.number().optional(),
     product_discounts_id: z.string().optional().nullable(),
-    external_id: z.string().optional(),
+    sku: z.string().optional(),
 });
 
 export const ServicesFilterSchema = z.object({

@@ -86,7 +86,7 @@ export function ImportDrawer({
             item_type: updated.item_type,
             // is_active: updated.is_active,
             is_featured: updated.is_featured,
-            external_id: updated.external_id,
+            sku: updated.sku,
           })
 
           const errors: Record<string, string> = {}
@@ -103,7 +103,7 @@ export function ImportDrawer({
           updated._errors = errors
 
           // Recalculate status
-          if (field === "external_id") {
+          if (field === "sku") {
             updated._status = String(value).trim() !== "" ? "update" : "new"
           }
 
@@ -160,7 +160,7 @@ export function ImportDrawer({
         item_type: r.item_type,
         // is_active: r.is_active,
         is_featured: r.is_featured,
-        external_id: r.external_id || '',
+        sku: r.sku || '',
       }))
 
       const result = await importServices({ services });
@@ -323,16 +323,16 @@ export function ImportDrawer({
         size: 80,
       },
       {
-        accessorKey: "external_id",
+        accessorKey: "sku",
         header: "External ID",
         cell: ({ row }) => (
           <EditableCell
-            value={row.original.external_id || ''}
+            value={row.original.sku || ''}
             onChange={(v) =>
-              updateRow(row.original._rowIndex, "external_id", v)
+              updateRow(row.original._rowIndex, "sku", v)
             }
             type="text"
-            error={row.original._errors.external_id}
+            error={row.original._errors.sku}
           />
         ),
         size: 140,

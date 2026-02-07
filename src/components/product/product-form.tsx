@@ -50,7 +50,7 @@ export const ProductForm = ({form}: ProductFormProps) => {
 						/>
 						<FormField
 							control={form.control}
-							name="external_id"
+							name="sku"
 							render={({field}) => (
 								<FormItem>
 									<FormLabel>Identificador único</FormLabel>

@@ -146,7 +146,7 @@ export async function createService(input: ServiceFormValues): Promise<ActionRes
                 price: input.price,
                 price_usd: input.price_usd,
                 product_discounts_id: input.product_discounts_id || null,
-                external_id: input.external_id,
+                sku: input.sku,
                 item_type: 'service',
                 business_id: user.id,
             })
@@ -281,18 +281,18 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
         }
         
         const withoutExternalId = services.filter(
-            (s) => !s.external_id || s.external_id.trim() === ""
+            (s) => !s.sku || s.sku.trim() === ""
         )
         
         const withExternalId = services.filter(
-            (s) => s.external_id && s.external_id.trim() !== ""
+            (s) => s.sku && s.sku.trim() !== ""
         )
         
         let createdCount = 0
         let updatedCount = 0
         const errors: string[] = []
         
-        // 1) INSERT sin external_id (siempre nuevos)
+        // 1) INSERT sin sku (siempre nuevos)
         if (withoutExternalId.length > 0) {
             const insertData = withoutExternalId.map((s) => ({
                 name: s.name,
@@ -302,7 +302,7 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
                 item_type: s.item_type,
                 // is_active: s.is_active,
                 is_featured: s.is_featured,
-                external_id: null,
+                sku: null,
                 business_id: user.id
             }))
             
@@ -317,29 +317,29 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
             }
         }
         
-        // 2) Con external_id → UPSERT lógico
+        // 2) Con sku → UPSERT lógico
         if (withExternalId.length > 0) {
             const externalIds = withExternalId
-                .map((s) => s.external_id!.trim())
+                .map((s) => s.sku!.trim())
                 .filter(Boolean)
             
             const { data: existingServices, error: fetchError } = await supabase
                 .from("services")
-                .select("id, external_id")
-                .in("external_id", externalIds)
+                .select("id, sku")
+                .in("sku", externalIds)
             
             if (fetchError) {
                 errors.push(`Error al buscar existentes: ${fetchError.message}`)
             } else {
                 const existingExternalIds = new Set(
-                    (existingServices ?? []).map((s) => s.external_id)
+                    (existingServices ?? []).map((s) => s.sku)
                 )
                 
                 const toCreate: typeof withExternalId = []
                 const toUpdate: typeof withExternalId = []
                 
                 for (const service of withExternalId) {
-                    const eid = service.external_id!.trim()
+                    const eid = service.sku!.trim()
                     if (existingExternalIds.has(eid)) {
                         toUpdate.push(service)
                     } else {
@@ -347,7 +347,7 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
                     }
                 }
                 
-                // INSERT nuevos con external_id
+                // INSERT nuevos con sku
                 if (toCreate.length > 0) {
                     const insertData = toCreate.map((s) => ({
                         name: s.name,
@@ -357,7 +357,7 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
                         item_type: s.item_type,
                         // is_active: s.is_active,
                         is_featured: s.is_featured,
-                        external_id: s.external_id!.trim(),
+                        sku: s.sku!.trim(),
                         business_id: user.id
                     }))
                     
@@ -366,7 +366,7 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
                         .insert(insertData)
                     
                     if (error) {
-                        errors.push(`Error al insertar con external_id: ${error.message}`)
+                        errors.push(`Error al insertar con sku: ${error.message}`)
                     } else {
                         createdCount += toCreate.length
                     }
@@ -374,7 +374,7 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
                 
                 // UPDATE existentes
                 for (const service of toUpdate) {
-                    const eid = service.external_id!.trim()
+                    const eid = service.sku!.trim()
                     
                     const { error } = await supabase
                         .from("services")
@@ -387,7 +387,7 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
                             // is_active: service.is_active,
                             is_featured: service.is_featured,
                         })
-                        .eq("external_id", eid)
+                        .eq("sku", eid)
                     
                     if (error) {
                         errors.push(`Error al actualizar ${eid}: ${error.message}`)

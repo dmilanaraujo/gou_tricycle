@@ -82,12 +82,12 @@ export const columns: ColumnDef<Service>[] = [
     },
     
     {
-        accessorKey: "external_id",
+        accessorKey: "sku",
         header: () => (
             <div className="flex justify-center font-medium">Identificador</div>
         ),
         cell: ({ row }) => (
-            <span className="flex justify-center font-medium">{row.original.external_id}</span>
+            <span className="flex justify-center font-medium">{row.original.sku}</span>
         ),
         meta: {
             headerClassName: "w-[120px]",

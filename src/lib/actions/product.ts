@@ -120,7 +120,7 @@ export async function createProduct(input: ProductFormValues): Promise<ActionRes
                 is_featured: input.is_featured,
                 business_category_id: input.business_category_id || null,
                 product_discounts_id: input.product_discounts_id || null,
-                external_id: input.external_id,
+                sku: input.sku,
                 item_type: 'product',
                 business_id: user.id
             })
