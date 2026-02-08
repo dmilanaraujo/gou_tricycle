@@ -1,14 +1,15 @@
 'use client'
 
 import { ProductGallery } from "@/components/client/product-gallery"
-import { Product } from "@/types"
+import {Business, Product} from "@/types"
 import * as React from "react"
 import {applyDiscount} from "@/lib/utils";
 import {Dot, PlusIcon, Slash} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {QuantitySelector} from "@/components/client/quantity-selector";
+import Link from "next/link";
 
-export default function ProductPageClient({product}: {product: Product}) {
+export default function ProductPageClient({product, business}: {product: Product, business: Business}) {
     const [zoom, setZoom] = React.useState<{
         active: boolean
         pos: { x: number; y: number }
@@ -25,17 +26,18 @@ export default function ProductPageClient({product}: {product: Product}) {
     };
 
     return (
-        <div className="relative px-4 py-8 max-w-7xl mx-auto">
+        <div className="relative px-4 py-4 max-w-7xl mx-auto">
             {/* Breadcrumb */}
             <nav className="text-sm text-muted-foreground mb-6">
-                <span className="hover:underline cursor-pointer">Home</span>
+                <Link href="/" className="hover:underline cursor-pointer">Home</Link>
+                <span className="mx-2">/</span>
+                <Link href={`/business/${business.id}`} className="hover:underline cursor-pointer">{business.name}</Link>
                 <span className="mx-2">/</span>
                 <span className="text-foreground font-medium">
-                  {product.name}
+                    {product.name}
                 </span>
             </nav>
 
-            {/*<div className="grid grid-cols-1 lg:grid-cols-2 gap-2">*/}
             <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-4">
                 {/* LEFT */}
                 <ProductGallery
@@ -76,7 +78,7 @@ export default function ProductPageClient({product}: {product: Product}) {
                             min={1}
                             max={50}
                         />
-                        <Button size="lg" onClick={handleAdd}>
+                        <Button className="hover:cursor-pointer" size="lg" onClick={handleAdd}>
                             Agregar al Pedido
                         </Button>
                     </div>

@@ -35,7 +35,7 @@ export function QuantitySelector({
                 variant="secondary"
                 onClick={decrease}
                 disabled={value <= min}
-                className="text-muted-foreground text-xl rounded-r-none hover:bg-muted disabled:opacity-50"
+                className="text-muted-foreground text-xl rounded-r-none hover:bg-muted hover:cursor-pointer disabled:opacity-50"
             >
                 <span className="text-lg font-bold">-</span>
             </Button>
@@ -49,7 +49,7 @@ export function QuantitySelector({
                 variant="secondary"
                 onClick={increase}
                 disabled={value >= max}
-                className="text-muted-foreground text-xl rounded-l-none hover:bg-muted disabled:opacity-50"
+                className="text-muted-foreground text-xl rounded-l-none hover:bg-muted hover:cursor-pointer disabled:opacity-50"
             >
                 +
             </Button>
