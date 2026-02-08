@@ -13,7 +13,7 @@ export default async function Page({
 
     const res = await getBusinessById(businessId)
     const { data: reviews } = await getBusinessReviews(businessId)
-    const response = await listProducts({business_id: businessId, page: 0, limit: 10})
+    const response = await listProducts({business_id: businessId, page: 0, limit: 1000})
 
     const rawProducts = response.success
         ? response.data
