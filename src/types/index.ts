@@ -1,4 +1,5 @@
-import {DriverImage} from '@/components/ui/file-upload';
+import {BucketImage} from '@/components/ui/file-upload';
+import {SortingState} from '@tanstack/react-table';
 
 export const VEHICLE_TYPES = ['electric', 'combustion', 'hybrid'] as const
 
@@ -10,19 +11,11 @@ export enum VehicleTypeEnum {
   hybrid = 'hybrid',
 }
 
-// export type VehicleType = 'electric' | 'combustion' | 'hybrid';
-//
-// export enum VehicleTypeEnum {
-//   electric = 'electric',
-//   combustion = 'combustion',
-//   hybrid = 'hybrid',
-// }
-
 export type Driver = {
   id: string;
   phone: string;
   alias: string;
-  images: DriverImage[];
+  images: BucketImage[];
   province: string;
   municipality: string;
   vehicle_type: VehicleType;
@@ -37,11 +30,31 @@ export type Location = {
 
 export type ActionError = {
   message: string;
+  code?: string;
   path?: (string|number|PropertyKey)[]
 }
 export type ActionResponse<T> =
     | { success: true; data?: T }
     | { success: false; errors?: ActionError[] };
+
+export type Option = {
+  value: string|number;
+  label: string;
+  disabled?: boolean;
+};
+export type ColumnMeta = {
+  columnDef?: {
+    meta?: {
+      filterName?: string
+    }
+  },
+  headerClassName?: string;
+  cellClassName?: string;
+}
+
+export type SortRequest = {
+  sorting?: SortingState;
+};
 
 export type PaginationRequest = {
   page?: number;
@@ -61,9 +74,9 @@ export type ResultList<TData> = {
 };
 
 export interface OptimizedImages {
-  thumbnail: File;
+  thumbnail?: File;
   fullSize: File;
-  thumbnailUrl: string;
+  thumbnailUrl?: string;
   fullSizeUrl: string;
 }
 
@@ -81,3 +94,22 @@ export class UploadFileError extends Error {
     this.file = file;
   }
 }
+
+export enum ActiveStatus {
+  active = 'active',
+  inactive = 'inactive',
+}
+
+export type IdParamsProps = {
+  id: string;
+};
+
+export type ImportResult = {
+  success: boolean
+  created: number
+  updated: number
+  total: number
+  errors?: string[]
+}
+
+export * from './business';

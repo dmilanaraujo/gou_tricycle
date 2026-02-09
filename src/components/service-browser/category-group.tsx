@@ -13,9 +13,16 @@ type CategoryOption = {
     icon: React.ReactNode
 }
 
+// type Props = {
+//     section: "transport" | "market" | "beauty" | "restaurant"
+//     onCategoryChange: (value: string | null) => void
+// }
 type Props = {
     section: "transport" | "market" | "beauty" | "restaurant"
+    value: string | null
+    onCategoryChange: (value: string | null) => void
 }
+
 
 const sectionColorClasses: Record<Props["section"], string> = {
     transport: "data-[state=on]:*:[svg]:fill-yellow-500 data-[state=on]:*:[svg]:stroke-yellow-500",
@@ -41,7 +48,7 @@ const categories: Record<"transport" | "market" | "beauty" | "restaurant", Categ
         { label: "Cosméticos", value: "cosmeticos", icon: <HeartIcon className="mr-1" /> },
         { label: "Cuidado Personal", value: "cuidado", icon: <StarIcon className="mr-1" /> },
         { label: "Perfumería", value: "perfumeria", icon: <BookmarkIcon className="mr-1" /> },
-        { label: "Pestañs", value: "electro-belleza", icon: <PlugIcon className="mr-1" /> },
+        { label: "Pestañas", value: "electro-belleza", icon: <PlugIcon className="mr-1" /> },
         { label: "Manicury", value: "bienestar", icon: <LeafIcon className="mr-1" /> },
     ],
     restaurant: [
@@ -53,12 +60,20 @@ const categories: Record<"transport" | "market" | "beauty" | "restaurant", Categ
     ],
 }
 
-export function CategoryGroup({ section }: Props) {
+export function CategoryGroup({ section, value, onCategoryChange }: Props) {
     const options = categories[section]
-
+    
     return (
-        <ToggleGroup type="single" variant="outline" size="sm" spacing={2} onValueChange={(values) => console.log(values)}>
-            {options.map(({ value, label, icon }) => (
+        <ToggleGroup
+            type="single"
+            variant="outline"
+            size="sm"
+            spacing={2}
+            value={value ?? ""}
+            onValueChange={(value) => onCategoryChange(value || null)}
+            className={'w-full'}
+        >
+        {options.map(({ value, label, icon }) => (
                 <ToggleGroupItem
                     key={value}
                     value={value}

@@ -12,11 +12,10 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import {getPublicImageUrl} from '@/lib/utils';
-import {DriverImage} from '@/components/ui/file-upload';
+import {BucketImage} from '@/components/ui/file-upload';
 
 interface ImageCarouselModalProps {
-  images: DriverImage[];
+  images: BucketImage[];
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
 }
@@ -32,12 +31,12 @@ export function ImageCarouselModal({ images, isOpen, onOpenChange }: ImageCarous
       <DialogContent className="max-w-3xl p-0 bg-transparent border-0">
         <Carousel className="w-full">
           <CarouselContent>
-            {images.map((src, index) => (
+            {images.filter(im => !!im.fullPublicUrl).map((src, index) => (
               <CarouselItem key={index}>
                 <div className="aspect-[3/2] w-full relative">
                   <Image
-                    src={getPublicImageUrl(src.path)}
-                    alt={`Imagen de vehículo ${index + 1}`}
+                    src={src.fullPublicUrl!}
+                    alt={`Imagen ${index + 1}`}
                     fill
                     unoptimized
                     className="object-cover rounded-lg"

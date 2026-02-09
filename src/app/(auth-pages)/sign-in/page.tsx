@@ -4,6 +4,10 @@ import React from 'react';
 export default async function SigninPage() {
   
   return (
-        <LoginForm/>
+      <div className={'flex justify-center items-center'}>
+            <div className='space-y-5 p-0'>
+              <LoginForm/>
+            </div>
+      </div>
   );
 }

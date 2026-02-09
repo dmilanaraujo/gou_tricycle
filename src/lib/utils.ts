@@ -1,10 +1,12 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import {AuthError, PostgrestError} from '@supabase/supabase-js';
-import {ActionError, Driver, OptimizedImages, UploadFileError, type VehicleType} from '@/types';
+import {ActionError, BusinessDiscount, ImageType, OptimizedImages, UploadFileError, type VehicleType} from '@/types';
 import imageCompression from 'browser-image-compression';
 import {z} from 'zod';
-import {isAfter, parseISO, startOfDay} from 'date-fns';
+import {Business} from '@/types/business';
+import {toast} from 'sonner';
+import {format, isAfter, isEqual, parseISO, startOfDay} from 'date-fns';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -95,41 +97,42 @@ export const formatSupabasePostgrestErrors = (error: PostgrestError, constraintM
 export const formatSupabaseAuthErrors = (error: AuthError): ActionError[] => {
 
     console.log('formatSupabaseAuthErrors', error);
+    const code = error.code;
     switch (error.code) {
         case "email_exists":
-            return [{ message: 'El correo electrónico ya existe.' }]
+            return [{ code, message: 'El correo electrónico ya existe.' }]
         case "captcha_failed": // not_null_violation
-            return [{ message: 'La verificación del captcha ha fallado.' }]
+            return [{ code, message: 'La verificación del captcha ha fallado.' }]
         case "email_address_invalid": // foreign_key_violation
-            return [{ message: 'Use otro correo electrónico.' }]
+            return [{ code, message: 'Use otro correo electrónico.' }]
         case "email_address_not_authorized": // unique_violation
-            return [{ message: 'Este correo electrónico no está autorizado.' }]
+            return [{ code, message: 'Este correo electrónico no está autorizado.' }]
         case "email_not_confirmed": // unique_violation
-            return [{ message: 'Este correo electrónico no ha sido confirmado.' }]
+            return [{ code, message: 'Este correo electrónico no ha sido confirmado.' }]
         
         case "phone_exists":
-            return [{ message: 'El teléfono ya existe.' }]
+            return [{ code, message: 'El teléfono ya existe.' }]
         case "phone_not_confirmed": // unique_violation
-            return [{ message: 'Este teléfono no ha sido confirmado.' }]
+            return [{ code, message: 'Este teléfono no ha sido confirmado.' }]
         
         case "invalid_credentials": // check_violation
-            return [{ message: 'Credenciales incorrectas' }]
+            return [{ code, message: 'Credenciales incorrectas' }]
         case "invite_not_found": // check_violation
-            return [{ message: 'La invitación no existe o expiró' }]
+            return [{ code, message: 'La invitación no existe o expiró' }]
         case "otp_expired": // check_violation
-            return [{ message: 'El código expiró' }]
+            return [{ code, message: 'El código expiró' }]
         case "same_password": // check_violation
-            return [{ message: 'No puede usar la misma contraseña' }]
+            return [{ code, message: 'No puede usar la misma contraseña' }]
         case "session_expired": // check_violation
-            return [{ message: 'Sesión expiró' }]
+            return [{ code, message: 'Sesión expiró' }]
         case "sms_send_failed": // check_violation
-            return [{ message: 'El envio del SMS ha fallado' }]
+            return [{ code, message: 'El envio del SMS ha fallado' }]
         case "user_already_exists": // check_violation
-            return [{ message: 'El usuario ya existe' }]
+            return [{ code, message: 'El usuario ya existe' }]
         case "user_banned": // check_violation
-            return [{ message: 'El usuario ha sido desabilitado' }]
+            return [{ code, message: 'El usuario ha sido desabilitado' }]
         case "user_not_found": // check_violation
-            return [{ message: 'El usuario no existe' }]
+            return [{ code, message: 'El usuario no existe' }]
        
         default:
             if (error.message == "fetch failed") {
@@ -145,16 +148,19 @@ export const getTimeBySeconds = (secondsTime: number) => {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 }
 
-export const isProfileComplete = (profile: Driver) => {
-    return !(profile.images.length == 0 || !profile.alias || !profile.province || !profile.municipality || !profile.vehicle_type);
+export const isProfileComplete = (profile: Business) => {
+    return profile.name && profile.province && profile.municipality;
 }
-export const incompleteProfileData = (profile: Driver) => {
+export const incompleteProfileData = (profile: Business) => {
     const incompleteData = [];
-    if (profile.images.length == 0) {
-        incompleteData.push('Imágenes');
+    // if (profile.images.length == 0) {
+    //     incompleteData.push('Imágenes');
+    // }
+    if (!profile.section) {
+        incompleteData.push('Sección');
     }
-    if (!profile.alias) {
-        incompleteData.push('Alias');
+    if (!profile.name) {
+        incompleteData.push('Nombre');
     }
     if (!profile.province) {
         incompleteData.push('Provincia');
@@ -162,17 +168,25 @@ export const incompleteProfileData = (profile: Driver) => {
     if (!profile.municipality) {
         incompleteData.push('Municipio');
     }
-    if (!profile.vehicle_type) {
-        incompleteData.push('Tipo combustible');
-    }
+    // if (!profile.vehicle_type) {
+    //     incompleteData.push('Tipo combustible');
+    // }
     return incompleteData;
 }
 
-export const isDriverActive = (driver: Driver) => {
-    if (!driver.active_at) return false;
-    const inputDate = startOfDay(parseISO(driver.active_at))
-    const today = startOfDay(new Date())
-    return isAfter(inputDate, today)
+export const isBusinessActive = (business: Business) => {
+    // if (!business.active_at) return false;
+    // const inputDate = startOfDay(parseISO(business.active_at))
+    // const today = startOfDay(new Date())
+    // return isAfter(inputDate, today)
+    return true;
+}
+
+export const isBusinessProducts = (business: Business) => {
+    if (business.section.slug == 'transport'){
+        return false;
+    }
+    return true;
 }
 
 export const combustionTypes: { value: VehicleType; label: string }[] = [
@@ -184,6 +198,8 @@ export const combustionTypes: { value: VehicleType; label: string }[] = [
 export async function optimizeImage(
     file: File,
     userId: string,
+    type: ImageType,
+    extraPath?: string,
     imageIndex?: number
 ): Promise<OptimizedImages> {
     
@@ -211,28 +227,31 @@ export async function optimizeImage(
     };
     
     try {
-        // Comprimir ambas versiones en paralelo
-        const [thumbnailBlob, fullSizeBlob] = await Promise.all([
-            imageCompression(file, thumbnailOptions),
+        const compressionTasks = [
             imageCompression(file, fullSizeOptions)
-        ]);
+        ];
+        if (type == ImageType.normal) {
+            compressionTasks.push(imageCompression(file, thumbnailOptions))
+        }
+        // Comprimir ambas versiones en paralelo
+        const [fullSizeBlob, thumbnailBlob] = await Promise.all(compressionTasks);
         
         // Crear nombres únicos para Supabase
         const timestamp = Date.now();
-        const thumbnailName = `${userId}/thumb_${!!imageIndex ? imageIndex + '_' : ''}${timestamp}.webp`;
-        const fullSizeName = `${userId}/full_${!!imageIndex ? imageIndex + '_' : ''}${timestamp}.webp`;
+        const thumbnailName = `${userId}${extraPath}/thumb_${!!imageIndex ? imageIndex + '_' : ''}${timestamp}.webp`;
+        const fullSizeName = `${userId}${extraPath}/full_${!!imageIndex ? imageIndex + '_' : ''}${timestamp}.webp`;
         
         // Convertir Blobs a Files
-        const thumbnailFile = new File([thumbnailBlob], thumbnailName, {
+        const thumbnailFile = type == ImageType.normal ? new File([thumbnailBlob], thumbnailName, {
             type: 'image/webp'
-        });
+        }) : undefined;
         
         const fullSizeFile = new File([fullSizeBlob], fullSizeName, {
             type: 'image/webp'
         });
         
         // Crear URLs temporales para preview (opcional)
-        const thumbnailUrl = URL.createObjectURL(thumbnailBlob);
+        const thumbnailUrl = type == ImageType.normal ? URL.createObjectURL(thumbnailBlob) : '';
         const fullSizeUrl = URL.createObjectURL(fullSizeBlob);
         
         return {
@@ -248,34 +267,106 @@ export async function optimizeImage(
 }
 
 /**
- * Procesa múltiples imágenes (hasta 3 para el perfil)
- */
-export async function optimizeMultipleImages(
-    files: File[],
-    userId: string
-): Promise<OptimizedImages[]> {
-    
-    // if (files.length > 3) {
-    //     throw new Error('Máximo 3 imágenes permitidas');
-    // }
-    
-    const optimizationPromises = files.map((file, index) =>
-        optimizeImage(file, userId, index)
-    );
-    
-    return Promise.all(optimizationPromises);
-}
-
-/**
  * Limpia las URLs temporales creadas para preview
  */
 export function revokeImageUrls(images: OptimizedImages[]): void {
     images.forEach(img => {
-        URL.revokeObjectURL(img.thumbnailUrl);
+        if (!!img.thumbnailUrl) {
+            URL.revokeObjectURL(img.thumbnailUrl);
+        }
         URL.revokeObjectURL(img.fullSizeUrl);
     });
 }
 
-export function getPublicImageUrl(path: string) {
-    return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/driver_images/${path}`;
+export function getPublicImageUrl(bucket: string, path: string) {
+    return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucket}/${path}`;
+}
+
+export function getPublicBusinessImageUrl(path: string) {
+    return getPublicImageUrl('business_images', path);
+}
+
+export function getPublicServiceImageUrl(path: string) {
+    return getPublicImageUrl('service_images', path);
+}
+
+export const showActionErrors = (errors?: ActionError[], toastId?: string|number) => {
+    errors?.forEach((error) => {
+        toast.error('Error', {
+            id: toastId,
+            description: error.message,
+        });
+    });
+}
+
+export function getInitials(...words: string[]) {
+    return words.filter(n => !!n).map(w => w.charAt(0).toUpperCase()).join('');
+}
+
+export function slugify(name: string) {
+    const schema = z.string().slugify();
+    return schema.parse(name);
+}
+
+export function formatDateByString(date: string, f: string = 'dd/MM/yyyy') {
+    return format(parseISO(date), f);
+}
+
+export function applyDiscount(
+    price: number,
+    priceUsd: number,
+    discount?: BusinessDiscount | null
+) {
+    if (!discount || !discount.is_active) {
+        return {
+            finalPrice: formatPrice(price, "CUP"),
+            finalPriceUsd: formatPrice(priceUsd, "CUP"),
+            label: null,
+        }
+    }
+
+    if (discount.type === "percent") {
+        const final = price - (price * discount.value) / 100
+        const finalUsd = priceUsd - (priceUsd * discount.value) / 100
+
+        return {
+            finalPrice: formatPrice(final, "CUP"),
+            finalPriceUsd: formatPrice(finalUsd, "CUP"),
+            label: `-${discount.value}%`,
+        }
+    }
+
+    if (discount.type === "fixed") {
+        const final = price - discount.value
+        const finalUsd = priceUsd - discount.value
+
+        return {
+            finalPrice: formatPrice(final, "CUP"),
+            finalPriceUsd: formatPrice(finalUsd, "CUP"),
+            label: `-$${discount.value}`,
+        }
+    }
+
+    return {
+        finalPrice: formatPrice(price, "CUP"),
+        finalPriceUsd: formatPrice(priceUsd, "CUP"),
+        label: null,
+    }
+}
+
+function formatPrice(value: number, currency: "USD" | "CUP" = "USD",) {
+    return new Intl.NumberFormat('es-CU', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    }).format(value)
+}
+
+export function isAfterOrEqual(date: Date, compareDate: Date = new Date()) {
+    const today = startOfDay(compareDate);
+    return  isAfter(date, today)  || isEqual(date, today);
+}
+
+export function isAfterToday(date: Date) {
+    const today = startOfDay(new Date());
+    return  isAfter(date, today);
 }

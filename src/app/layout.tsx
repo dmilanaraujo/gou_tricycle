@@ -2,12 +2,15 @@ import type {Metadata} from 'next';
 import { cn } from "@/lib/utils";
 import './globals.css';
 import { Toaster } from "@/components/ui/sonner";
-import AppQueryClientProvider from '@/providers/app-query-client-provider';
+import AppProvider from '@/providers/app-provider';
 
 
 export const metadata: Metadata = {
-  title: 'Triciclos',
-  description: 'Encuentra triciclos locales cerca de ti.',
+    title: 'Triciclos',
+    description: 'Encuentra triciclos locales cerca de ti.',
+    metadataBase: new URL(
+        process.env.NEXT_PUBLIC_SITE_URL ?? "https://gou.goucorp.com"
+    ),
     openGraph: {
         siteName: 'Triciclos',
         url: process.env.NEXT_PUBLIC_SITE_URL,
@@ -47,9 +50,9 @@ export default function RootLayout({
       </head>
       <body className={cn("font-body antialiased")}>
           <Toaster richColors={true}/>
-          <AppQueryClientProvider>
+          <AppProvider>
             {children}
-          </AppQueryClientProvider>
+          </AppProvider>
       </body>
     </html>
   );

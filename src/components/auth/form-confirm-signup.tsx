@@ -78,7 +78,7 @@ export function ConfirmSignupForm({ phone }: { phone: string }) {
 			const response = await verifyOtpSms(values);
 			if (!response.success) {
 				response.errors?.forEach((error) => {
-					if (error.message == 'Token has expired or is invalid') {
+					if (error.code == 'otp_expired' || error.code == 'invite_not_found') {
 						setActiveResend(true);
 						stopCounter();
 					}
@@ -91,8 +91,7 @@ export function ConfirmSignupForm({ phone }: { phone: string }) {
 			toast.success('Hecho!', {
 				description: 'Cuenta confirmada.',
 			});
-			// router.push("/auth/sign-up-success");
-			router.push("/me");
+			router.push("/complete-profile");
 		} catch (e) {
 			toast.error('Error', {
 				// @ts-expect-error only
@@ -179,7 +178,7 @@ export function ConfirmSignupForm({ phone }: { phone: string }) {
 			                </span>
 						</div>
 					)}
-					<Button type='submit' className='w-full !text-lg h-12' disabled={!isValid || isSubmitting}>
+					<Button type='submit' className='w-full' disabled={!isValid || isSubmitting}>
 						{isSubmitting ? (
 							<span className="flex items-center">
 			                    <LoaderCircle className="mr-3 animate-spin"/>
@@ -192,7 +191,7 @@ export function ConfirmSignupForm({ phone }: { phone: string }) {
 						¿Ya tienes una cuenta?
 					</div>
 					<Button asChild>
-						<Link href='/sign-in' className={'w-full !text-lg h-12 bg-success'}>
+						<Link href='/sign-in' className={'w-full bg-success'}>
 							Iniciar sesión
 						</Link>
 					</Button>

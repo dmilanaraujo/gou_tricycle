@@ -4,16 +4,14 @@ import { Form } from "@/components/ui/form"
 import {FieldValues, FormProvider, UseFormReturn} from 'react-hook-form'
 import { ReactNode } from "react"
 
-interface ReusableFormProps<T extends FieldValues> {
-	// form: ReturnType<typeof useForm<T>>;
-	form: UseFormReturn<T>;
+interface ReusableFormProps<T extends FieldValues, TContext = any, TOutput = T> {
+	form: UseFormReturn<T, TContext, TOutput>;
 	children: ReactNode;
-	onSubmit?: (values: T) => void;
+	onSubmit?: (values: TOutput) => void;
 	className?: string;
 }
 
-// export function ReusableForm<T extends IntrinsicAttributes & { children: ReactNode | ReactNode[] } & UseFormReturn<FieldValues, never, T>>({ form, children, onSubmit, className }: ReusableFormProps<T>) {
-export function ReusableForm<T extends FieldValues>({ form, children, onSubmit, className }: ReusableFormProps<T>){
+export function ReusableForm<T extends FieldValues, TContext = any, TOutput = T>({ form, children, onSubmit, className }: ReusableFormProps<T, TContext, TOutput>){
 return (
 		<FormProvider {...form}>
 			<Form {...form}>

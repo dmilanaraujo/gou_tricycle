@@ -47,7 +47,16 @@ export const login = async (params: unknown): Promise<ActionResponse<User>> => {
     const supabase = await createClient();
     const { error, data } = await supabase.auth.signInWithPassword(body);
     if (error) {
+      console.log('auth error', error);
       if (error.code == 'phone_not_confirmed') {
+        const { error: errorResend } = await supabase.auth.resend({
+          type: 'sms',
+          phone
+        });
+        if (errorResend) {
+          const errors = formatSupabaseAuthErrors(errorResend);
+          return { success: false, errors }
+        }
         await createCookieConfirmSignup(phone);
       }
       const errors = formatSupabaseAuthErrors(error);
@@ -75,7 +84,7 @@ export const logout = async (): Promise<ActionResponse<void>> => {
   }
 }
 
-export const signUp = async (params: unknown, emailRedirectTo = ''): Promise<ActionResponse<User>> => {
+export const signUp = async (params: unknown): Promise<ActionResponse<User>> => {
   // const schema = createSignUpSchema(type);
   const validatedFields = SignUpSchema.safeParse(params);
   if (!validatedFields.success) {
@@ -83,7 +92,7 @@ export const signUp = async (params: unknown, emailRedirectTo = ''): Promise<Act
     return { success: false, errors: [] };
   }
   try {
-    const { phone, password } = validatedFields.data;
+    const { phone, password, name } = validatedFields.data;
     // const verifyCaptchaRes = await verifyCaptchaToken(captcha_token!);
     // if (!verifyCaptchaRes.success) {
     //   return { success: false, errors: [{ message: 'customErrors.captcha_error' }] };
@@ -95,7 +104,8 @@ export const signUp = async (params: unknown, emailRedirectTo = ''): Promise<Act
         channel: 'whatsapp',
         // captchaToken: captcha_token,
         data: {
-          role: 'driver'
+          role: 'business',
+          name
         }
       }
     };
@@ -183,11 +193,12 @@ export const verifyOtpSms = async (params: VerifyOtpFormValues): Promise<ActionR
     }
     const cookieStore = await cookies();
     cookieStore.delete('confirm-signup');
-    cookieStore.set('sign-up-success', 'true', {
-      path: '/',
-      maxAge: 60, // Cookie válida por 60 segundos
-      httpOnly: true,
-    })
+    // cookieStore.set('sign-up-success', 'true', {
+    //   path: '/',
+    //   maxAge: 60, // Cookie válida por 60 segundos
+    //   httpOnly: true,
+    // })
+    // redirect('/complete-profile');
     return { success: true };
   } catch (error) {
     console.log('Unexpected error in verifyOtpSms:', error);
