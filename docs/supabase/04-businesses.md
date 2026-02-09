@@ -20,7 +20,10 @@ create table public.businesses (
   featured boolean null default false,
   address text null,
   section_id uuid null,
+  slug text null,
   constraint businesses_pkey primary key (id),
+  constraint businesses_slug_key unique (slug),
+  constraint businesses_id_fkey foreign KEY (id) references auth.users (id) on delete CASCADE,
   constraint businesses_section_id_fkey foreign KEY (section_id) references sections (id)
 ) TABLESPACE pg_default;
 

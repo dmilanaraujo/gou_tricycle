@@ -1,11 +1,17 @@
 'use server';
-import {ActionResponse, Driver} from '@/types';
+import {ActionResponse} from '@/types';
 import {createClient} from '@/lib/supabase/server';
-import {formatSupabaseFunctionErrors, formatSupabasePostgrestErrors} from '@/lib/utils';
+import {formatSupabaseFunctionErrors, formatSupabasePostgrestErrors, formatZodErrors} from '@/lib/utils';
 import {cookies} from 'next/headers';
 import {UpdateProfileSchema, UpdateProfileValues} from '@/lib/schemas/auth';
 import {Business} from '@/types/business';
 import {cache} from 'react';
+import {BusinessSettingsCatalogSchema, BusinessSettingsCatalogValues} from '@/lib/schemas/business';
+
+const constraintMap = {
+  'businesses_section_id_fkey': 'La sección no existe',
+  'businesses_slug_key': 'Ya existe un negocio con este slug',
+}
 
 export const getProfile = async (cStore?: ReturnType<typeof cookies>): Promise<ActionResponse<Business>> => {
   try{
@@ -79,11 +85,47 @@ export const updateProfile = async (params: UpdateProfileValues): Promise<Action
         .select("*");
     
     if (error) {
-      return { success: false, errors: formatSupabasePostgrestErrors(error) }
+      return { success: false, errors: formatSupabasePostgrestErrors(error, constraintMap) }
     }
     return { success: true, data: data?.[0] };
   } catch (error) {
     console.log('Unexpected error in updateProfile:', error);
+    throw new Error('Ha ocurrido un error no especificado');
+  }
+};
+
+export const updateSettingsCatalog = async (businessId: string, params: BusinessSettingsCatalogValues): Promise<ActionResponse<Business>> => {
+  const validatedFields = BusinessSettingsCatalogSchema.safeParse(params);
+  if (!validatedFields.success) {
+    const errors = formatZodErrors(validatedFields.error);
+    return { success: false, errors };
+  }
+  try {
+    
+    const supabase = await createClient();
+    if (!businessId) {
+      return { success: false, errors: [{ message: 'ID del negocio es requerido para actualizar' }] };
+    }
+    
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    
+    if (userError || !user) {
+      return { success: false, errors: [{ message: 'Usuario no autenticado o no se pudo obtener el usuario.' }] };
+    }
+    const { slug } = validatedFields.data;
+    const { data, error } = await supabase
+        .from("businesses")
+        .update({ slug })
+        .eq("id", businessId)
+        .select("*");
+    
+    if (error) {
+      return { success: false, errors: formatSupabasePostgrestErrors(error, constraintMap) }
+    }
+    
+    return { success: true, data: data[0] };
+  } catch (error) {
+    console.log('Unexpected error in updateSettingsCatalog:', error);
     throw new Error('Ha ocurrido un error no especificado');
   }
 };

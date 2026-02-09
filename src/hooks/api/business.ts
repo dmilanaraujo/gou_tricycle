@@ -10,7 +10,8 @@ import {
   getBusinesses,
   updateBusinessCategory, updateBusinessDiscount
 } from '@/lib/actions/business';
-import {BusinessCategoryValues, BusinessDiscountValues, BusinessFiltersValues} from '@/lib/schemas/business';
+import {BusinessCategoryValues, BusinessDiscountValues, BusinessFiltersValues, BusinessSettingsCatalogValues} from '@/lib/schemas/business';
+import {updateSettingsCatalog} from '@/lib/actions/profile';
 
 type TDataResultBusiness = {
   pageParams: number[];
@@ -140,5 +141,13 @@ export const useDeleteBusinessDiscounts = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['business-discounts'] });
     },
+  });
+};
+
+export const useUpdateSettingsCatalog = () => {
+  return useMutation({
+    mutationFn: async ({ businessId, params }: { businessId: string, params: BusinessSettingsCatalogValues}) => {
+      return await updateSettingsCatalog(businessId, params);
+    }
   });
 };
