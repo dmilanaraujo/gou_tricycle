@@ -138,6 +138,42 @@ export const getBusinessById = async (id: string) => {
   };
 };
 
+export const getBusinessBySlug = async (slug: string) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+      .from("businesses")
+      .select(`
+      *,
+      vehicles:vehicles(
+        id,
+        vehicle_type
+      ),
+      section:sections!inner(id, name, slug),
+      categories:business_system_categories!inner(
+        category:system_categories!inner(id, name, slug)
+      ),
+      images:business_images(*)
+    `)
+      .eq("slug", slug)
+      .eq("is_active", true)
+      .single();
+
+  if (error || !data) {
+    return { success: false, data: null };
+  }
+
+  return {
+    success: true,
+    data: {
+      ...data,
+      vehicles: data.vehicles ?? [],
+      sections: data.sections?.map((s: any) => s.section) ?? [],
+      categories: data.categories?.map((c: any) => c.category) ?? [],
+    },
+  };
+};
+
 export const getBusinessReviews = async (businessId: string) => {
   const supabase = await createClient()
 

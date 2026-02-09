@@ -95,6 +95,7 @@ const isPublicRoute = (route: string) => {
         '/api',
         '/business',
         '/service',
+        '/c',
     ];
 
     return (
