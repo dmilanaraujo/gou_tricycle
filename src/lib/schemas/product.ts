@@ -1,10 +1,31 @@
 import {z} from 'zod'
-import {ActiveStatus} from '@/types';
+import {ActiveStatus, MeasureUnit} from '@/types';
 import {ServiceSchema} from '@/lib/schemas/service';
 
 export const ProductSchema = ServiceSchema.extend({
     business_category_id: z.string().optional().nullable(),
     is_featured: z.boolean().optional(),
+    um: z.enum([
+        MeasureUnit.kg,
+        MeasureUnit.gramo,
+        MeasureUnit.libra,
+        MeasureUnit.onza,
+        MeasureUnit.metro,
+        MeasureUnit.cm,
+        MeasureUnit.mm,
+        MeasureUnit.litro,
+        MeasureUnit.ml,
+        MeasureUnit.galon,
+        MeasureUnit.m2,
+        MeasureUnit.cm2,
+        MeasureUnit.unidad,
+        MeasureUnit.paquete,
+        MeasureUnit.caja,
+    ]).optional(),
+});
+
+export const UpdateStockSchema = z.object({
+    quantity: z.coerce.number().int({ message: 'Cantidad requerida' }).positive()
 });
 
 export const ProductsFilterSchema = z.object({
@@ -29,6 +50,8 @@ export type ProductFormValues = z.infer<typeof ProductSchema>;
 export type ProductsFilterValues = z.infer<typeof ProductsFilterSchema>;
 export type ImportPayloadValues = z.infer<typeof ImportPayloadSchema>;
 export type ImportProductValues = z.infer<typeof ImportProductSchema>;
+export type UpdateStockInput = z.input<typeof UpdateStockSchema>;
+export type UpdateStockOutput = z.output<typeof UpdateStockSchema>;
 
 export interface ImportServiceRow extends ImportProductValues {
     _rowIndex: number

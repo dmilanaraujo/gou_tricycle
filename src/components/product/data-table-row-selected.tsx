@@ -3,17 +3,16 @@
 import {Table} from "@tanstack/react-table"
 import {Button} from "@/components/ui/button";
 import * as React from "react";
-import {CloudOff, MapPin, Power, X} from 'lucide-react';
+import {Power, PowerOff, X} from 'lucide-react';
 import {useState} from "react";
 import {toast} from "sonner";
 import {Separator} from "@/components/ui/separator";
-import {useRouter} from "next/navigation";
-import {useNavigationLoading} from "@/providers/navigation-loading-provider";
 import {Product} from '@/types';
 import {ConfirmDeleteDialog} from '@/components/common/confirm-delete-dialog';
 import {showActionErrors} from '@/lib/utils';
 import {ConfirmDialog} from '@/components/common/confirm-dialog';
 import {useUpdateStatusService} from '@/hooks/api/service';
+import {UpdateStockDialog} from '@/components/product/update-stock-dialog';
 
 export interface DataTableRowSelectedProps<TData> {
     table: Table<TData>,
@@ -34,8 +33,7 @@ export function DataTableRowSelected({
     const [isDeleting, setIsDeleting] = useState(false);
     const [isDialogActivateProductOpen, setIsDialogActivateProductOpen] = useState(false);
     const selectedRows = table.getSelectedRowModel().rows.map(row => row.original);
-    const router = useRouter();
-    const { setIsNavigating } = useNavigationLoading()
+    const [isDialogUpdateStockOpen, setIsDialogUpdateStockOpen] = useState(false);
     
     const { mutateAsync: updateStatusProduct, isPending: isPendingActiveProduct} = useUpdateStatusService();
     
@@ -91,7 +89,13 @@ export function DataTableRowSelected({
         }
     };
     
-
+    const handleUpdateStock = async () => {
+        const toastId = toast.loading('Refrescando datos')
+        reload?.();
+        setIsDialogUpdateStockOpen(false);
+        toast.dismiss(toastId);
+    };
+    
     return (
         <div className="flex items-center space-x-2">
             <ConfirmDeleteDialog
@@ -103,12 +107,22 @@ export function DataTableRowSelected({
             />
             
             
+            {selectedRows.length == 1 && (
+                <UpdateStockDialog
+                    isOpen={isDialogUpdateStockOpen}
+                    onOpenChange={setIsDialogUpdateStockOpen}
+                    product={selectedRows[0]}
+                    onSuccess={handleUpdateStock}
+                    disabled={selectedRows.length != 1}
+                />
+            )}
+            
             {selectedRows.length == 1 && selectedRows[0].is_active && (
                 <ConfirmDialog
                     isOpen={isDialogDisassociateDeviceOpen}
                     onOpenChange={setIsDialogDisassociateDeviceOpen}
                     triggerLabel={'Desactivar'}
-                    ButtonIcon={CloudOff}
+                    ButtonIcon={PowerOff}
                     description={'Desea desactivar el servicio?'}
                     onConfirm={handleDesactivateProduct}
                 />

@@ -8,6 +8,7 @@ import {Badge} from '@/components/ui/badge';
 import {Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui/tooltip';
 import {Button} from '@/components/ui/button';
 import Link from 'next/link';
+import {cn} from '@/lib/utils';
 
 export const columns: ColumnDef<Product>[] = [
     {
@@ -106,7 +107,7 @@ export const columns: ColumnDef<Product>[] = [
         },
         enableColumnFilter: false,
         meta: {
-            headerClassName: 'w-[180px]'
+            headerClassName: 'w-[150px]'
         }
     },
     {
@@ -148,6 +149,41 @@ export const columns: ColumnDef<Product>[] = [
         meta: {
             headerClassName: "w-[120px]",
         },
+    },
+    {
+        accessorKey: "stock",
+        header: () => (
+            <div className="flex justify-end font-medium">Disponible</div>
+        ),
+        cell: ({ row }) => (
+            <div className={
+                cn(
+                    'flex justify-end font-medium',
+                    row.original.stock == 0 ? 'text-red-600' : ''
+                )
+            }
+            title={row.original.stock == 0 ? 'Sin stock. Agotado' : ''}
+            >
+                {row.original.stock}
+            </div>
+        ),
+        meta: {
+            headerClassName: 'w-[50px]'
+        }
+    },
+    {
+        accessorKey: "um",
+        header: () => (
+            <div className="flex justify-end font-medium">Medida</div>
+        ),
+        cell: ({ row }) => (
+            <div className="flex justify-end font-medium">
+                {row.original.um}
+            </div>
+        ),
+        meta: {
+            headerClassName: 'w-[50px]'
+        }
     },
     {
         accessorKey: "description",

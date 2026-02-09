@@ -17,7 +17,10 @@ export function ProductEdit({ product }: { product: Product }) {
 	
 	const form = useForm<ProductFormValues>({
 		resolver: zodResolver(ProductSchema),
-		defaultValues: product,
+		defaultValues: {
+			...product,
+			sku: product.sku || undefined
+		},
 		mode: 'onBlur'
 	})
 	

@@ -467,7 +467,7 @@ export function ImportDrawer({
               )}
             </div>
           ) : (
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between md:justify-end gap-4">
               <Button
                 variant="outline"
                 onClick={() => onOpenChange(false)}
@@ -491,7 +491,7 @@ export function ImportDrawer({
                 ) : (
                   <>
                     <Upload className="h-4 w-4" />
-                    Importar {selectedRows.length} servicio(s)
+                    Importar ({selectedRows.length})
                   </>
                 )}
               </Button>

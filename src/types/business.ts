@@ -89,10 +89,30 @@ export type Product = Service & {
     business_category_id?: string
     is_featured: boolean;
     category?: BusinessCategory;
+    um?: MeasureUnit
+    stock: number
 }
 
 export enum ImageType {
     logo = 'logo',
     banner = 'banner',
     normal = 'normal'
+}
+
+export enum MeasureUnit {
+    kg = 'kg',
+    gramo = 'gramo',
+    libra = 'libra',
+    onza = 'onza',
+    metro = 'metro',
+    cm = 'cm',
+    mm = 'mm',
+    litro = 'litro',
+    ml = 'ml',
+    galon = 'galon',
+    m2 = 'm2',
+    cm2 = 'cm2',
+    unidad = 'unidad',
+    paquete = 'paquete',
+    caja = 'caja',
 }
