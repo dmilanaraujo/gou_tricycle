@@ -3,7 +3,7 @@
 import {Table} from "@tanstack/react-table"
 import {Button} from "@/components/ui/button";
 import * as React from "react";
-import {CloudOff, MapPin, Power, X} from 'lucide-react';
+import {PowerOff, Power, X} from 'lucide-react';
 import {useState} from "react";
 import {toast} from "sonner";
 import {Separator} from "@/components/ui/separator";
@@ -108,7 +108,7 @@ export function DataTableRowSelected({
                     isOpen={isDialogDisassociateDeviceOpen}
                     onOpenChange={setIsDialogDisassociateDeviceOpen}
                     triggerLabel={'Desactivar'}
-                    ButtonIcon={CloudOff}
+                    ButtonIcon={PowerOff}
                     description={'Desea desactivar el servicio?'}
                     onConfirm={handleDesactivateService}
                 />

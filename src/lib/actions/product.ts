@@ -177,3 +177,33 @@ export async function updateProduct(input: Partial<ProductFormValues>): Promise<
 }
 
 
+export const updateStock = async (serviceId: string, stock: number) => {
+    try {
+        const supabase = await createClient();
+        
+        if (!serviceId) {
+            return { success: false, errors: [{ message: 'ID del servicio es requerido' }] };
+        }
+        
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        
+        if (userError || !user) {
+            return { success: false, errors: [{ message: 'Usuario no autenticado o no se pudo obtener el usuario.' }] };
+        }
+        const { data, error } = await supabase
+            .from("services")
+            .update({
+                stock
+            })
+            .eq("id", serviceId)
+            .select("*");
+        
+        if (error) {
+            return { success: false, errors: formatSupabasePostgrestErrors(error, constraintMap) }
+        }
+        return { success: true, data: data?.[0] };
+    } catch (error) {
+        console.log('Unexpected error in updateStock:', error);
+        throw new Error('Error no especificado');
+    }
+}
