@@ -170,12 +170,7 @@ export function parseExcelFile(file: File): Promise<ImportServiceRow[]> {
         )
         
         // Skip description row if it matches our template descriptions
-        const firstRow = jsonData[0]
-        const isDescriptionRow =
-            firstRow &&
-            typeof firstRow.name === "string" &&
-            firstRow.name.includes("Nombre del servicio")
-        const dataRows = isDescriptionRow ? jsonData.slice(1) : jsonData
+        const dataRows = jsonData?.slice(1) || []
         
         const rows: ImportServiceRow[] = dataRows.map((row, index) => {
           const parsed = ImportProductSchema.safeParse({
