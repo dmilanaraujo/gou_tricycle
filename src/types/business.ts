@@ -8,6 +8,7 @@ export type PromotionType = typeof PROMOTION_TYPES[number]
 
 export type Business = {
     id: string;
+    slug: string;
     phone: string;
     whatsapp: string;
     name: string;

@@ -1,8 +1,15 @@
 'use server';
-import {ActionResponse, Business, BusinessCategory, BusinessDiscount, BusinessSystemCategory, PaginationRequest, ResultList} from '@/types';
+import {ActionResponse, Business, BusinessCategory, BusinessDiscount, PaginationRequest, ResultList} from '@/types';
 import {createClient} from '@/lib/supabase/server';
-import {formatSupabaseFunctionErrors, formatSupabasePostgrestErrors, formatZodErrors, shuffleArray, slugify} from '@/lib/utils';
-import {BusinessCategorySchema, BusinessCategoryValues, BusinessDiscountSchema, BusinessDiscountValues, BusinessFiltersSchema, BusinessFiltersValues} from '@/lib/schemas/business';
+import {formatSupabaseFunctionErrors, formatSupabasePostgrestErrors, formatZodErrors, slugify} from '@/lib/utils';
+import {
+  BusinessCategorySchema,
+  BusinessCategoryValues,
+  BusinessDiscountSchema,
+  BusinessDiscountValues,
+  BusinessFiltersSchema,
+  BusinessFiltersValues
+} from '@/lib/schemas/business';
 
 const constraintCategoryMap = {
   business_categories_section_id_slug_key: 'El slug debe ser único para este negocio',

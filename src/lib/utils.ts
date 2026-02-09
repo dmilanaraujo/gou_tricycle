@@ -370,3 +370,8 @@ export function isAfterToday(date: Date) {
     const today = startOfDay(new Date());
     return  isAfter(date, today);
 }
+
+export function getPublicUrl() {
+    const url = process.env.NEXT_PUBLIC_SITE_URL! || '';
+    return url.endsWith('/') ? url.slice(-1) : url;
+}

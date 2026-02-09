@@ -40,9 +40,25 @@ export const BusinessDiscountSchema = z.object({
 	path: ["ends_at"],
 });
 
+const slugSchema = z
+	.string()
+	.min(3, { message: "El slug debe tener al menos 3 caracteres" })
+	.max(100, { message: "El slug no puede superar los 100 caracteres" })
+	.regex(
+		/^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+		{
+			message: "El slug solo puede contener letras minúsculas, números y guiones, y no puede empezar ni terminar con un guión",
+		}
+	);
+
+export const BusinessSettingsCatalogSchema = z.object({
+	slug: slugSchema
+})
+
 export type BusinessFiltersValues = z.infer<typeof BusinessFiltersSchema>
 export type BusinessCategoryValues = z.infer<typeof BusinessCategorySchema>
 export type BusinessDiscountValues = z.infer<typeof BusinessDiscountSchema>
+export type BusinessSettingsCatalogValues = z.infer<typeof BusinessSettingsCatalogSchema>
 
 export type BusinessDiscountInput = z.input<typeof BusinessDiscountSchema>;
 export type BusinessDiscountOutput = z.output<typeof BusinessDiscountSchema>;
