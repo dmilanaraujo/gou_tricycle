@@ -1,4 +1,6 @@
 ```sql
+CREATE TYPE measure_unit AS ENUM ( 'kg', 'gramo', 'libra', 'onza', 'metro', 'cm', 'mm', 'litro', 'ml', 'galon', 'm2', 'cm2', 'unidad', 'paquete', 'caja');
+
 create table public.services (
   id uuid not null default gen_random_uuid (),
   business_id uuid null,
@@ -12,6 +14,7 @@ create table public.services (
   product_discounts_id uuid null,
   price_usd numeric not null default '0'::numeric,
   sku character varying(255) null,
+  um public.measure_unit null,
   constraint services_pkey primary key (id),
   constraint services_business_category_id_fkey foreign KEY (business_category_id) references business_categories (id) on delete set null,
   constraint services_business_id_fkey foreign KEY (business_id) references businesses (id) on delete CASCADE,

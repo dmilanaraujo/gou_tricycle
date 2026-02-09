@@ -20,10 +20,16 @@ import {Loader2} from 'lucide-react';
 import {useProfile} from '@/providers/profile-provider';
 import {BusinessCategoryDialog} from '@/components/business-category/business-category-dialog';
 import {BusinessDiscountDialog} from '@/components/business-discount/business-discount-dialog';
+import {MeasureUnit} from '@/types';
 
 interface ProductFormProps {
 	form: UseFormReturn<ProductFormValues>
 }
+
+const measureUnitArray = Object.entries(MeasureUnit).map(([, value]) => ({
+	value: value,
+	label: value
+}));
 
 export const ProductForm = ({form}: ProductFormProps) => {
 	const profile = useProfile();
@@ -228,6 +234,30 @@ export const ProductForm = ({form}: ProductFormProps) => {
 							)}
 						/>
 						<BusinessDiscountDialog/>
+					</div>
+					<div className="grid grid-cols-1 gap-1 items-start">
+						<FormField
+							control={form.control}
+							name="um"
+							render={({field}) => (
+								<FormItem>
+									<FormLabel>Unidad de medida</FormLabel>
+									<Select onValueChange={field.onChange} value={field.value ?? ''}>
+										<FormControl className={'w-full'}>
+											<SelectTrigger>
+												<SelectValue placeholder="Seleccione..."/>
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+											{measureUnitArray.map(ft => (
+												<SelectItem key={ft.value} value={ft.value}>{ft.label}</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+									<FormMessage/>
+								</FormItem>
+							)}
+						/>
 					</div>
 				</div>
 			

@@ -106,7 +106,7 @@ export const columns: ColumnDef<Product>[] = [
         },
         enableColumnFilter: false,
         meta: {
-            headerClassName: 'w-[180px]'
+            headerClassName: 'w-[150px]'
         }
     },
     {
@@ -148,6 +148,20 @@ export const columns: ColumnDef<Product>[] = [
         meta: {
             headerClassName: "w-[120px]",
         },
+    },
+    {
+        accessorKey: "um",
+        header: () => (
+            <div className="flex justify-end font-medium">Medida</div>
+        ),
+        cell: ({ row }) => (
+            <div className="flex justify-end font-medium">
+                {row.original.um}
+            </div>
+        ),
+        meta: {
+            headerClassName: 'w-[50px]'
+        }
     },
     {
         accessorKey: "description",

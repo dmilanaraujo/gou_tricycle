@@ -121,6 +121,7 @@ export async function createProduct(input: ProductFormValues): Promise<ActionRes
                 business_category_id: input.business_category_id || null,
                 product_discounts_id: input.product_discounts_id || null,
                 sku: input.sku,
+                um: input.um,
                 item_type: 'product',
                 business_id: user.id
             })
@@ -155,9 +156,12 @@ export async function updateProduct(input: Partial<ProductFormValues>): Promise<
                 name: input.name,
                 description: input.description,
                 price: input.price,
+                price_usd: input.price_usd,
                 product_discounts_id: input.product_discounts_id || null,
                 business_category_id: input.business_category_id || null,
+                sku: input.sku,
                 is_featured: input.is_featured,
+                um: input.um,
             })
             .eq("id", input.id)
             .select("*");

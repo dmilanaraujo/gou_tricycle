@@ -1,10 +1,27 @@
 import {z} from 'zod'
-import {ActiveStatus} from '@/types';
+import {ActiveStatus, MeasureUnit} from '@/types';
 import {ServiceSchema} from '@/lib/schemas/service';
 
 export const ProductSchema = ServiceSchema.extend({
     business_category_id: z.string().optional().nullable(),
     is_featured: z.boolean().optional(),
+    um: z.enum([
+        MeasureUnit.kg,
+        MeasureUnit.gramo,
+        MeasureUnit.libra,
+        MeasureUnit.onza,
+        MeasureUnit.metro,
+        MeasureUnit.cm,
+        MeasureUnit.mm,
+        MeasureUnit.litro,
+        MeasureUnit.ml,
+        MeasureUnit.galon,
+        MeasureUnit.m2,
+        MeasureUnit.cm2,
+        MeasureUnit.unidad,
+        MeasureUnit.paquete,
+        MeasureUnit.caja,
+    ]).optional(),
 });
 
 export const ProductsFilterSchema = z.object({

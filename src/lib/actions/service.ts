@@ -181,7 +181,9 @@ export async function updateService(input: Partial<ServiceFormValues>): Promise<
                 name: input.name,
                 description: input.description,
                 price: input.price,
+                price_usd: input.price_usd,
                 product_discounts_id: input.product_discounts_id || null,
+                sku: input.sku,
             })
             .eq("id", input.id)
             .select("*");
