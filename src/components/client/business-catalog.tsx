@@ -180,31 +180,25 @@ export default function BusinessCatalog({ business, products }: {business: Busin
             {/*    </p>*/}
             {/*</section>*/}
 
-            <section className="w-full mt-6">
-                {/*<h2 className="text-2xl font-semibold mb-6">*/}
-                {/*    Productos*/}
-                {/*</h2>*/}
+            <section className="w-full mt-6 space-y-10">
+                {categories.map(category => (
+                    <div key={category.id}>
+                        {/* Subtítulo de la categoría */}
+                        <h3 className="text-xl font-semibold mb-4">
+                            {category.title}
+                        </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
-                    {categories.flatMap(category =>
-                        category.products.map(product => (
-                            <ServiceDetailedCard
-                                key={product.id}
-                                service={product}
-                            />
-                        ))
-                    )}
-                </div>
-                {/*<div className="grid grid-cols-2 md:grid-cols-5 gap-4 items-stretch">*/}
-                {/*    {categories.flatMap(category =>*/}
-                {/*        category.products.map(product => (*/}
-                {/*            <ServiceCard*/}
-                {/*                key={product.id}*/}
-                {/*                service={product}*/}
-                {/*            />*/}
-                {/*        ))*/}
-                {/*    )}*/}
-                {/*</div>*/}
+                        {/* Grid de productos de esa categoría */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+                            {category.products.map(product => (
+                                <ServiceDetailedCard
+                                    key={product.id}
+                                    service={product}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                ))}
             </section>
         </>
     )
