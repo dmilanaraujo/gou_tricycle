@@ -87,7 +87,7 @@ export function ServiceDetailedCard({ service }: ServiceCardProps) {
                                 <span className="
                                   inline-flex
                                   items-center
-                                  rounded-full
+                                  rounded-md
                                   bg-primary/10
                                   text-primary
                                   px-3
@@ -105,7 +105,7 @@ export function ServiceDetailedCard({ service }: ServiceCardProps) {
                                     className="
                                     inline-flex
                                     items-center
-                                    rounded-full
+                                    rounded-md
                                     bg-amber-50
                                     text-amber-700
                                     border
@@ -113,7 +113,7 @@ export function ServiceDetailedCard({ service }: ServiceCardProps) {
                                     px-3
                                     py-1
                                     text-xs
-                                    font-medium
+                                    font-semibold
                                   ">
                                   Min. {service.min_buy}
                                 </span>
@@ -149,6 +149,28 @@ export function ServiceDetailedCard({ service }: ServiceCardProps) {
                             </div>
                         )}
                     </CardFooter>
+                    <div className="flex flex-row gap-1">
+                        {service.format && (
+                            <div>
+                                <span
+                                    className="
+                                    inline-flex
+                                    items-center
+                                    rounded-md
+                                    bg-indigo-50
+                                    text-indigo-700
+                                    border
+                                    border-indigo-200
+                                    px-3
+                                    py-1
+                                    text-xs
+                                    font-semibold
+                                  ">
+                                  {service.format} {service.format_value}u
+                                </span>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </Card>

@@ -17,4 +17,6 @@ export type ServiceItems = {
     um?: MeasureUnit
     um_value?: number
     min_buy: number
+    format?: MeasureUnit
+    format_value?: number
 }

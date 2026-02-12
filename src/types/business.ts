@@ -91,9 +91,11 @@ export type Product = Service & {
     is_featured: boolean;
     category?: BusinessCategory;
     um?: MeasureUnit;
+    format?: MeasureUnit;
     stock: number;
-    um_value: number;
+    um_value?: number;
     min_buy: number;
+    format_value?: number;
 }
 
 export enum ImageType {

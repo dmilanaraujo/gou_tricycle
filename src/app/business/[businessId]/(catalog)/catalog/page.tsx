@@ -50,7 +50,9 @@ export default async function Page({
                 stock: p.stock,
                 um: p.um,
                 um_value: p.um_value,
-                min_buy: p.min_buy
+                min_buy: p.min_buy,
+                format: p.format,
+                format_value: p.format_value,
             }
         }) : [];
 
