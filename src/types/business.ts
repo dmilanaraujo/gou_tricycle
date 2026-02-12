@@ -93,6 +93,7 @@ export type Product = Service & {
     um?: MeasureUnit;
     stock: number;
     um_value: number;
+    min_buy: number;
 }
 
 export enum ImageType {

@@ -81,23 +81,45 @@ export function ServiceDetailedCard({ service }: ServiceCardProps) {
                             {service.description}
                         </CardDescription>
                     </CardHeader>
-                    {service.um && (
-                        <div>
-    <span className="
-      inline-flex
-      items-center
-      rounded-full
-      bg-primary/10
-      text-primary
-      px-3
-      py-1
-      text-xs
-      font-semibold
-    ">
-      {service.um_value}{service.um}
-    </span>
-                        </div>
-                    )}
+                    <div className="flex flex-row gap-1">
+                        {service.um && (
+                            <div>
+                                <span className="
+                                  inline-flex
+                                  items-center
+                                  rounded-full
+                                  bg-primary/10
+                                  text-primary
+                                  px-3
+                                  py-1
+                                  text-xs
+                                  font-semibold
+                                ">
+                                  {service.um_value}{service.um}
+                                </span>
+                            </div>
+                        )}
+                        {service.min_buy > 1 && (
+                            <div>
+                                <span
+                                    className="
+                                    inline-flex
+                                    items-center
+                                    rounded-full
+                                    bg-amber-50
+                                    text-amber-700
+                                    border
+                                    border-amber-200
+                                    px-3
+                                    py-1
+                                    text-xs
+                                    font-medium
+                                  ">
+                                  Min. {service.min_buy}
+                                </span>
+                            </div>
+                        )}
+                    </div>
                     <CardFooter className="flex flex-col items-start text-left w-full gap-1 p-0">
                         {service.discount_label && (
                             <Badge variant="destructive" className="text-xs rounded-sm text-white">

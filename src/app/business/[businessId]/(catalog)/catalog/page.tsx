@@ -49,7 +49,8 @@ export default async function Page({
                 category: p.category,
                 stock: p.stock,
                 um: p.um,
-                um_value: p.um_value
+                um_value: p.um_value,
+                min_buy: p.min_buy
             }
         }) : [];
 

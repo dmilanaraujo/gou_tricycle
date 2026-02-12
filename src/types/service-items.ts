@@ -16,4 +16,5 @@ export type ServiceItems = {
     stock: number
     um?: MeasureUnit
     um_value?: number
+    min_buy: number
 }
