@@ -46,7 +46,13 @@ export default async function Page({
                 final_price_usd: finalPriceUsd,
                 discount_label: label ?? undefined,
                 is_featured: p.is_featured,
-                category: p.category
+                category: p.category,
+                stock: p.stock,
+                um: p.um,
+                um_value: p.um_value,
+                min_buy: p.min_buy,
+                format: p.format,
+                format_value: p.format_value,
             }
         }) : [];
 

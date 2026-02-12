@@ -189,7 +189,7 @@ export default function BusinessCatalog({ business, products }: {business: Busin
                         </h3>
 
                         {/* Grid de productos de esa categoría */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+                        <div className="grid grid-cols-2 md:grid-cols-2 gap-4 items-stretch">
                             {category.products.map(product => (
                                 <ServiceDetailedCard
                                     key={product.id}

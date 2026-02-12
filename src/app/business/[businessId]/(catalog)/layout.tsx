@@ -21,7 +21,7 @@ export default async function BusinessLayout({
     return (
         <div data-business-id={res.data.id}>
             <BusinessNavBar business={res.data} />
-            <main className="bg-background pt-2 pb-2 w-full max-w-screen-xl mx-auto px-10">
+            <main className="bg-background pt-2 pb-2 w-full max-w-screen-xl mx-auto px-4">
                 {children}
             </main>
             <FooterSection/>
