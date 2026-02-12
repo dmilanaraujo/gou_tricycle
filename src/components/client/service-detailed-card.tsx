@@ -24,20 +24,24 @@ export function ServiceDetailedCard({ service }: ServiceCardProps) {
 
     return (
         <Card
-            onClick={() => router.push(`/business/${service.business_id}/service/${service.id}`)}
+            onClick={() => {
+                if (service.stock === 0) return
+                router.push(`/business/${service.business_id}/service/${service.id}`)
+            }}
             className="
-    h-full w-full
-    py-0
-    cursor-pointer
-    transition-all
-    shadow-none
-    flex flex-col sm:flex-row
-    min-h-[200px]
-  "
+                h-full w-full
+                py-0
+                cursor-pointer
+                transition-all
+                shadow-none
+                flex flex-col sm:flex-row
+                min-h-[200px]
+              "
         >
             {/* Imagen */}
-            <div className="flex flex-col sm:flex-row">
-                <div className="bg-muted rounded-t-xl sm:rounded-l-xl sm:rounded-tr-none relative overflow-hidden w-full sm:w-[200px] h-[200px] sm:h-auto">
+            <div className="flex flex-1 flex-col sm:flex-row">
+                <div
+                    className="bg-muted rounded-t-xl sm:rounded-l-xl sm:rounded-tr-none relative overflow-hidden w-full sm:w-[200px] h-[200px] sm:h-auto">
                     <Image
                         src={getPublicImageUrl(
                             process.env.NEXT_PUBLIC_SUPABASE_SERVICE_BUCKET || '',
@@ -47,6 +51,24 @@ export function ServiceDetailedCard({ service }: ServiceCardProps) {
                         fill
                         className="object-contain"
                     />
+                    {service.stock === 0 && (
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                            <span className="
+                              bg-white/90
+                              text-black
+                              text-sm
+                              font-bold
+                              uppercase
+                              tracking-widest
+                              px-4
+                              py-2
+                              rounded-md
+                              shadow-lg
+                            ">
+                              Agotado
+                            </span>
+                        </div>
+                    )}
                 </div>
                 {/* Contenido derecho */}
                 <div className="flex flex-col flex-1 h-full items-start text-left gap-1 p-2">
@@ -59,7 +81,23 @@ export function ServiceDetailedCard({ service }: ServiceCardProps) {
                             {service.description}
                         </CardDescription>
                     </CardHeader>
-
+                    {service.um && (
+                        <div>
+    <span className="
+      inline-flex
+      items-center
+      rounded-full
+      bg-primary/10
+      text-primary
+      px-3
+      py-1
+      text-xs
+      font-semibold
+    ">
+      {service.um_value}{service.um}
+    </span>
+                        </div>
+                    )}
                     <CardFooter className="flex flex-col items-start text-left w-full gap-1 p-0">
                         {service.discount_label && (
                             <Badge variant="destructive" className="text-xs rounded-sm text-white">

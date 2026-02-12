@@ -1,4 +1,4 @@
-import {BusinessCategory} from "@/types/business";
+import {BusinessCategory, MeasureUnit} from "@/types/business";
 
 export type ServiceItems = {
     id: string
@@ -13,4 +13,7 @@ export type ServiceItems = {
     category?: BusinessCategory
     discount_label?: string
     is_featured: boolean
+    stock: number
+    um?: MeasureUnit
+    um_value?: number
 }
