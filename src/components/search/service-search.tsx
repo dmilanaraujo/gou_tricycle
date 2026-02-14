@@ -13,6 +13,7 @@ const TABS = [
     { key: "market", label: "Mercado" },
     { key: "beauty", label: "Belleza" },
     { key: "restaurant", label: "Restaurantes" },
+    { key: "patisserie", label: "Repostería" },
 ];
 
 type ServiceSearchProps = {

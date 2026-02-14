@@ -98,7 +98,7 @@ export default function BusinessSearch({
     const { data, isLoading } = useInfinityBusinesses(params, {
         enabled: !selectedBusinessId && (!!activeTab || !!category || !!searchQuery),
     })
-
+// console.log(data)
     const businesses = useMemo(() => {
         if (singleBusiness) return [singleBusiness]
         return data?.pages.flatMap(p => p.data || []) || []
