@@ -1,6 +1,5 @@
 import { getBusinessById } from "@/lib/actions/business"
 import { notFound } from "next/navigation"
-import NavBar from "@/components/layout/nav-bar";
 import FooterSection from "@/components/layout/footer-section";
 import BusinessNavBar from "@/components/layout/business-nav-bar";
 
@@ -19,12 +18,18 @@ export default async function BusinessLayout({
     }
 
     return (
-        <div data-business-id={res.data.id}>
+        <div
+            data-business-id={res.data.id}
+            className="min-h-screen flex flex-col"
+        >
             <BusinessNavBar business={res.data} />
-            <main className="bg-background pt-2 pb-2 w-full max-w-screen-xl mx-auto px-4">
+
+            <main className="flex-1 bg-background pt-2 pb-2 w-full max-w-screen-xl mx-auto px-4">
                 {children}
             </main>
-            <FooterSection/>
+
+            <FooterSection />
         </div>
-)
+    )
 }
+

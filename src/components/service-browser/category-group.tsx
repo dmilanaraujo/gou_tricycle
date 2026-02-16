@@ -18,7 +18,7 @@ type CategoryOption = {
 //     onCategoryChange: (value: string | null) => void
 // }
 type Props = {
-    section: "transport" | "market" | "beauty" | "restaurant"
+    section: "transport" | "market" | "beauty" | "restaurant" | "patisserie"
     value: string | null
     onCategoryChange: (value: string | null) => void
 }
@@ -29,9 +29,10 @@ const sectionColorClasses: Record<Props["section"], string> = {
     market: "data-[state=on]:*:[svg]:fill-green-500 data-[state=on]:*:[svg]:stroke-green-500",
     beauty: "data-[state=on]:*:[svg]:fill-pink-500 data-[state=on]:*:[svg]:stroke-pink-500",
     restaurant: "data-[state=on]:*:[svg]:fill-red-500 data-[state=on]:*:[svg]:stroke-red-500",
+    patisserie: "data-[state=on]:*:[svg]:fill-red-500 data-[state=on]:*:[svg]:stroke-red-500",
 }
 
-const categories: Record<"transport" | "market" | "beauty" | "restaurant", CategoryOption[]> = {
+const categories: Record<"transport" | "market" | "beauty" | "restaurant" | "patisserie", CategoryOption[]> = {
     transport: [
         { label: "Mercancia", value: "mercancia", icon: <StarIcon className="mr-1" /> },
         { label: "Materiales de Construccion", value: "materiales", icon: <HeartIcon className="mr-1" /> },
@@ -57,6 +58,9 @@ const categories: Record<"transport" | "market" | "beauty" | "restaurant", Categ
         { label: "Sushi", value: "utensilios", icon: <HammerIcon className="mr-1" /> },
         { label: "Comida Rapida", value: "equipamiento", icon: <PlugIcon className="mr-1" /> },
         { label: "Variado", value: "desechables", icon: <BoxesIcon className="mr-1" /> },
+    ],
+    patisserie: [
+        { label: "cakes", value: "cakes", icon: <LeafIcon className="mr-1" /> },
     ],
 }
 
