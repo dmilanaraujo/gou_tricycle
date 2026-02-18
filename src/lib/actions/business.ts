@@ -120,11 +120,20 @@ export const getBusinessById = async (id: string) => {
         id,
         vehicle_type
       ),
-      section:sections!inner(id, name, slug),
-      categories:business_system_categories!inner(
-        category:system_categories!inner(id, name, slug)
+      section:sections!inner(
+        id,
+        name,
+        slug
       ),
-      images:business_images(*)
+      categories:business_system_categories!inner(
+        category:system_categories!inner(
+          id,
+          name,
+          slug
+        )
+      ),
+      images:business_images(*),
+      hours:business_hours(*)
     `)
       .eq("id", id)
       .eq("is_active", true)
@@ -139,8 +148,10 @@ export const getBusinessById = async (id: string) => {
     data: {
       ...data,
       vehicles: data.vehicles ?? [],
-      sections: data.sections?.map((s: any) => s.section) ?? [],
+      section: data.section ?? null,
       categories: data.categories?.map((c: any) => c.category) ?? [],
+      images: data.images ?? [],
+      hours: data.hours ?? [],
     },
   };
 };

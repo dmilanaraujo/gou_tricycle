@@ -32,6 +32,7 @@ export type Business = {
         vehicle_type: VehicleTypeEnum
     }[];
     images: BucketImage[];
+    hours?: BusinessHours[];
 };
 
 export const promotions = [
@@ -61,6 +62,15 @@ export type BusinessCategory = {
         name: string
         slug: string
         icon?: IconName
+}
+
+export type BusinessHours = {
+    id: string
+    day_of_week?: number
+    date?: string
+    open_time?: string
+    close_time?: string
+    is_closed: boolean
 }
 
 export type BusinessDiscount = {
