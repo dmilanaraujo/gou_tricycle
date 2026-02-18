@@ -151,35 +151,13 @@ export const getTimeBySeconds = (secondsTime: number) => {
 export const isProfileComplete = (profile: Business) => {
     return profile.name && profile.province && profile.municipality;
 }
-export const incompleteProfileData = (profile: Business) => {
-    const incompleteData = [];
-    // if (profile.images.length == 0) {
-    //     incompleteData.push('Imágenes');
-    // }
-    if (!profile.section) {
-        incompleteData.push('Sección');
-    }
-    if (!profile.name) {
-        incompleteData.push('Nombre');
-    }
-    if (!profile.province) {
-        incompleteData.push('Provincia');
-    }
-    if (!profile.municipality) {
-        incompleteData.push('Municipio');
-    }
-    // if (!profile.vehicle_type) {
-    //     incompleteData.push('Tipo combustible');
-    // }
-    return incompleteData;
-}
 
 export const isBusinessActive = (business: Business) => {
     // if (!business.active_at) return false;
     // const inputDate = startOfDay(parseISO(business.active_at))
     // const today = startOfDay(new Date())
     // return isAfter(inputDate, today)
-    return true;
+    return business.is_active;
 }
 
 export const isBusinessProducts = (business: Business) => {

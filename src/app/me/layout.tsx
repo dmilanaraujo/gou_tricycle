@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {LoadingOverlay} from '@/components/common/loading-overlay';
-import {isProfileComplete} from '@/lib/utils';
+import {isBusinessActive, isProfileComplete} from '@/lib/utils';
 import {redirect} from 'next/navigation';
 import {AppSidebar} from '@/components/layout/app-sidebar';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
@@ -21,6 +21,10 @@ export default async function ManagerLayout({ children }: Readonly<ManagerLayout
 
   if (!isProfileComplete(business)) {
       redirect('/complete-profile')
+  }
+  
+  if (!isBusinessActive(business)) {
+      redirect('/inative-profile')
   }
   
   return (
