@@ -253,50 +253,85 @@ export const updateStatusService = async (serviceId: string, active: boolean) =>
 }
 
 export async function importServices(payload: ImportPayloadValues): Promise<ImportResult> {
+    const formatError = (errors: string[]) => {
+        return {
+            success: false,
+            created: 0,
+            updated: 0,
+            total: 0,
+            errors,
+        }
+    }
     try {
         const parsed = ImportPayloadSchema.safeParse(payload)
         
         if (!parsed.success) {
-            return {
-                success: false,
-                created: 0,
-                updated: 0,
-                total: 0,
-                // errors: ["Datos inválidos", JSON.stringify(parsed.error.flatten())],
-                errors: ["Datos inválidos", JSON.stringify(z.treeifyError(parsed.error))],
-            }
+            return formatError(parsed.error.issues.map(issue => issue.message));
         }
         
-        const { services } = parsed.data
+        const { services, disable_others } = parsed.data
         const supabase = await createClient();
 
         const { data: { user }, error: userError } = await supabase.auth.getUser();
         
         if (userError || !user) {
-            return {
-                success: false,
-                created: 0,
-                updated: 0,
-                total: 0,
-                errors: ['Usuario no autenticado o no se pudo obtener el usuario.']
-            };
+            return formatError(['Usuario no autenticado o no se pudo obtener el usuario.']);
         }
         
-        const withoutExternalId = services.filter(
+        const { data: allServices, error: fetchError } = await supabase
+            .from("services")
+            .select("id, sku")
+            .eq('business_id', user.id);
+        
+        if (fetchError) {
+            return formatError(['Error obteniendo los productos y servicios']);
+        }
+        
+        const withoutSku = services.filter(
             (s) => !s.sku || s.sku.trim() === ""
         )
         
-        const withExternalId = services.filter(
+        const withSku = services.filter(
             (s) => s.sku && s.sku.trim() !== ""
+        )
+        
+        const dbSkuSet = new Set(allServices.map(s => s.sku));
+        const localSkuSet = new Set(withSku.map(s => s.sku))
+        
+        // withSku que ya existen en BD
+        const existingInDb = withSku.filter(s => dbSkuSet.has(s.sku))
+        // allServices que no están en withSku
+        const notInLocal = allServices.filter(s => !!s.sku && !localSkuSet.has(s.sku))
+
+        const existingInDbSkus = existingInDb
+            .map((s) => s.sku!.trim())
+            .filter(Boolean)
+        
+        const notInLocalSkus = notInLocal
+            .map((s) => s.sku!.trim())
+            .filter(Boolean)
+        
+        const existingInDbSkusSet = new Set(
+            (existingInDbSkus ?? []).map((s) => s)
         )
         
         let createdCount = 0
         let updatedCount = 0
         const errors: string[] = []
         
+        if (disable_others) {
+            const { error: disableFetchError } = await supabase
+                .from("services")
+                .update({ is_active: false })
+                .in("sku", notInLocalSkus)
+            if (disableFetchError) {
+                errors.push('Error deshabilitando productos y servicios no importados');
+            }
+        }
+        
         // 1) INSERT sin sku (siempre nuevos)
-        if (withoutExternalId.length > 0) {
-            const insertData = withoutExternalId.map((s) => ({
+        if (withoutSku.length > 0) {
+            const insertData = withoutSku.map((s) => ({
                 name: s.name,
                 description: s.description,
                 price: s.price,
@@ -321,99 +356,83 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
             if (error) {
                 errors.push(`Error al insertar nuevos: ${error.message}`)
             } else {
-                createdCount += withoutExternalId.length
+                createdCount += withoutSku.length
             }
         }
         
         // 2) Con sku → UPSERT lógico
-        if (withExternalId.length > 0) {
-            const externalIds = withExternalId
-                .map((s) => s.sku!.trim())
-                .filter(Boolean)
+        if (withSku.length > 0) {
+
+            const toCreate: typeof withSku = []
+            const toUpdate: typeof withSku = []
             
-            const { data: existingServices, error: fetchError } = await supabase
-                .from("services")
-                .select("id, sku")
-                .in("sku", externalIds)
+            for (const service of withSku) {
+                const eid = service.sku!.trim()
+                if (existingInDbSkusSet.has(eid)) {
+                    toUpdate.push(service)
+                } else {
+                    toCreate.push(service)
+                }
+            }
             
-            if (fetchError) {
-                errors.push(`Error al buscar existentes: ${fetchError.message}`)
-            } else {
-                const existingExternalIds = new Set(
-                    (existingServices ?? []).map((s) => s.sku)
-                )
+            // INSERT nuevos con sku
+            if (toCreate.length > 0) {
+                const insertData = toCreate.map((s) => ({
+                    name: s.name,
+                    description: s.description,
+                    price: s.price,
+                    price_usd: s.price_usd,
+                    item_type: s.item_type,
+                    // is_active: s.is_active,
+                    is_featured: s.is_featured,
+                    stock: s.stock,
+                    um: s.um,
+                    um_value: s.um_value,
+                    format: s.format,
+                    format_value: s.format_value,
+                    min_buy: s.min_buy,
+                    sku: s.sku!.trim(),
+                    business_id: user.id
+                }))
                 
-                const toCreate: typeof withExternalId = []
-                const toUpdate: typeof withExternalId = []
+                const { error } = await supabase
+                    .from("services")
+                    .insert(insertData)
                 
-                for (const service of withExternalId) {
-                    const eid = service.sku!.trim()
-                    if (existingExternalIds.has(eid)) {
-                        toUpdate.push(service)
-                    } else {
-                        toCreate.push(service)
-                    }
+                if (error) {
+                    errors.push(`Error al insertar con sku: ${error.message}`)
+                } else {
+                    createdCount += toCreate.length
                 }
+            }
+            
+            // UPDATE existentes
+            for (const service of toUpdate) {
+                const eid = service.sku!.trim()
                 
-                // INSERT nuevos con sku
-                if (toCreate.length > 0) {
-                    const insertData = toCreate.map((s) => ({
-                        name: s.name,
-                        description: s.description,
-                        price: s.price,
-                        price_usd: s.price_usd,
-                        item_type: s.item_type,
-                        // is_active: s.is_active,
-                        is_featured: s.is_featured,
-                        stock: s.stock,
-                        um: s.um,
-                        um_value: s.um_value,
-                        format: s.format,
-                        format_value: s.format_value,
-                        min_buy: s.min_buy,
-                        sku: s.sku!.trim(),
-                        business_id: user.id
-                    }))
-                    
-                    const { error } = await supabase
-                        .from("services")
-                        .insert(insertData)
-                    
-                    if (error) {
-                        errors.push(`Error al insertar con sku: ${error.message}`)
-                    } else {
-                        createdCount += toCreate.length
-                    }
-                }
+                const { error } = await supabase
+                    .from("services")
+                    .update({
+                        name: service.name,
+                        description: service.description,
+                        price: service.price,
+                        price_usd: service.price_usd,
+                        item_type: service.item_type,
+                        // is_active: service.is_active,
+                        is_featured: service.is_featured,
+                        stock: service.stock,
+                        um: service.um,
+                        um_value: service.um_value,
+                        format: service.format,
+                        format_value: service.format_value,
+                        min_buy: service.min_buy,
+                    })
+                    .eq("sku", eid)
                 
-                // UPDATE existentes
-                for (const service of toUpdate) {
-                    const eid = service.sku!.trim()
-                    
-                    const { error } = await supabase
-                        .from("services")
-                        .update({
-                            name: service.name,
-                            description: service.description,
-                            price: service.price,
-                            price_usd: service.price_usd,
-                            item_type: service.item_type,
-                            // is_active: service.is_active,
-                            is_featured: service.is_featured,
-                            stock: service.stock,
-                            um: service.um,
-                            um_value: service.um_value,
-                            format: service.format,
-                            format_value: service.format_value,
-                            min_buy: service.min_buy,
-                        })
-                        .eq("sku", eid)
-                    
-                    if (error) {
-                        errors.push(`Error al actualizar ${eid}: ${error.message}`)
-                    } else {
-                        updatedCount++
-                    }
+                if (error) {
+                    errors.push(`Error al actualizar ${eid}: ${error.message}`)
+                } else {
+                    updatedCount++
                 }
             }
         }
@@ -436,12 +455,6 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
         }
     } catch (error) {
         console.error("Import error:", error)
-        return {
-            success: false,
-            created: 0,
-            updated: 0,
-            total: 0,
-            errors: ["Error interno del servidor"],
-        }
+        return formatError(["Error interno del servidor"]);
     }
 }
