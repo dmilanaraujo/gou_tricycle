@@ -1,7 +1,7 @@
 'use client'
 
 import Image from "next/image"
-import { useState } from "react"
+import {useMemo, useState} from "react"
 import { Button } from "@/components/ui/button"
 import { Business } from "@/types"
 import { getPublicImageUrl } from "@/lib/utils"
@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/sheet"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import {WhatsAppFlatIcon, WhatsAppIcon} from "@/components/common/whatsapp-icon";
+import {DAYS} from "@/components/common/days";
 
 interface BusinessNavBarProps {
     business: Business
@@ -30,6 +31,35 @@ interface BusinessNavBarProps {
 
 export default function BusinessNavBar({ business }: BusinessNavBarProps) {
     const [infoOpen, setInfoOpen] = useState(false)
+
+    const sortedHours = useMemo(() => {
+        if (!business.hours?.length) return [];
+
+        const order = [1,2,3,4,5,6,0];
+
+        return [...business.hours].sort(
+            (a, b) =>
+                order.indexOf(a.day_of_week ?? 0) -
+                order.indexOf(b.day_of_week ?? 0)
+        );
+    }, [business.hours]);
+
+    const isOpenNow = useMemo(() => {
+        if (!business.hours) return false;
+
+        const now = new Date();
+        const currentDay = now.getDay();
+        const currentTime = now.toTimeString().slice(0, 8);
+
+        const today = business.hours.find(h => h.day_of_week === currentDay);
+
+        if (!today || today.is_closed) return false;
+
+        return (
+            currentTime >= (today.open_time ?? "00:00:00") &&
+            currentTime <= (today.close_time ?? "00:00:00")
+        );
+    }, [business.hours]);
 
     return (
         <>
@@ -88,13 +118,12 @@ export default function BusinessNavBar({ business }: BusinessNavBarProps) {
                                     </Button>
                                 </DropdownMenuTrigger>
 
-                                <DropdownMenuContent align="end" className="w-48">
-
+                                <DropdownMenuContent align="end" className="w-56">
                                     <DropdownMenuItem
                                         onClick={() => setInfoOpen(true)}
-                                        className="cursor-pointer"
+                                        className="cursor-pointer text-base py-2"
                                     >
-                                        <Info className="w-4 h-4 mr-2" />
+                                        <Info className="w-8 h-8" />
                                         Info. del Comercio
                                     </DropdownMenuItem>
 
@@ -103,18 +132,17 @@ export default function BusinessNavBar({ business }: BusinessNavBarProps) {
                                             href={`https://wa.me/${business.phone}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="flex items-center"
+                                            className="flex items-center text-base py-2"
                                         >
                                             <WhatsAppFlatIcon />
                                             WhatsApp
                                         </a>
                                     </DropdownMenuItem>
 
-                                    <DropdownMenuItem>
-                                        <Share2 className="w-4 h-4 mr-2" />
+                                    <DropdownMenuItem className="text-base py-2">
+                                        <Share2 className="w-8 h-8" />
                                         Compartir
                                     </DropdownMenuItem>
-
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
@@ -143,10 +171,10 @@ export default function BusinessNavBar({ business }: BusinessNavBarProps) {
                     <div className="flex items-center px-4 py-4">
                         <Button
                             variant="ghost"
-                            size="icon"
                             onClick={() => setInfoOpen(false)}
+                            className="h-12 w-12 rounded-full hover:bg-muted"
                         >
-                            <ArrowLeft className="w-5 h-5" />
+                            <ArrowLeft className="!w-8 !h-8"/>
                         </Button>
                     </div>
 
@@ -178,7 +206,7 @@ export default function BusinessNavBar({ business }: BusinessNavBarProps) {
                     </div>
 
                     {/* Divider */}
-                    <div className="border-t" />
+                    <div className="border-t"/>
 
                     {/* Información adicional */}
                     <div className="px-6 space-y-5">
@@ -188,8 +216,35 @@ export default function BusinessNavBar({ business }: BusinessNavBarProps) {
                         </div>
 
                         <div>
-                            <p className="text-muted-foreground">Horarios</p>
-                            <p className="font-medium">{business.description}</p>
+                            <p className="text-muted-foreground mb-2">Horarios</p>
+                            <span className={isOpenNow ? "text-green-600" : "text-red-600"}>
+                              {isOpenNow ? "Abierto ahora" : "Cerrado ahora"}
+                            </span>
+
+                            <div className="space-y-1 text-sm">
+                                {sortedHours.map((h) => (
+                                    <div
+                                        key={h.id}
+                                        className="flex justify-between items-center border-b border-muted pb-1"
+                                    >
+                                          <span className="font-medium">
+                                            {typeof h.day_of_week === "number"
+                                                ? DAYS[h.day_of_week]
+                                                : "Sin definir"}
+                                          </span>
+
+                                        {h.is_closed ? (
+                                            <span className="text-red-500 font-semibold">
+                                              Cerrado
+                                            </span>
+                                        ) : (
+                                            <span className="text-muted-foreground">
+                                              {h.open_time?.slice(0, 5)} - {h.close_time?.slice(0, 5)}
+                                            </span>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </SheetContent>
