@@ -59,9 +59,9 @@ export const ProductForm = ({form}: ProductFormProps) => {
 							name="sku"
 							render={({field}) => (
 								<FormItem>
-									<FormLabel>Identificador único</FormLabel>
+									<FormLabel>SKU</FormLabel>
 									<FormControl>
-										<Input placeholder="PRD-0001" {...field} />
+										<Input placeholder="PRD-00001" {...field} />
 									</FormControl>
 									<FormDescription>
 										Identificador único para evitar duplicados a la hora de importar listados de productos
@@ -235,7 +235,7 @@ export const ProductForm = ({form}: ProductFormProps) => {
 						/>
 						<BusinessDiscountDialog/>
 					</div>
-					<div className="grid grid-cols-1 gap-1 items-start">
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-2 items-start">
 						<FormField
 							control={form.control}
 							name="um"
@@ -254,6 +254,98 @@ export const ProductForm = ({form}: ProductFormProps) => {
 											))}
 										</SelectContent>
 									</Select>
+									<FormMessage/>
+								</FormItem>
+							)}
+						/>
+						
+						<FormField
+							control={form.control}
+							name="um_value"
+							render={({field}) => (
+								<FormItem>
+									<FormLabel>Valor UM</FormLabel>
+									<FormControl>
+										<Input type="number"
+										       placeholder="40"
+										       min={0}
+										       {...field}
+										       value={field.value ?? ''}
+										       onChange={(e) => {
+											       const value = e.target.valueAsNumber;
+											       field.onChange(isNaN(value) ? undefined : value);
+										       }}/>
+									</FormControl>
+									<FormMessage/>
+								</FormItem>
+							)}
+						/>
+					</div>
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-2 items-start">
+						<FormField
+							control={form.control}
+							name="format"
+							render={({field}) => (
+								<FormItem>
+									<FormLabel>Formato UM</FormLabel>
+									<Select onValueChange={field.onChange} value={field.value ?? ''}>
+										<FormControl className={'w-full'}>
+											<SelectTrigger>
+												<SelectValue placeholder="Seleccione..."/>
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+											{measureUnitArray.map(ft => (
+												<SelectItem key={ft.value} value={ft.value}>{ft.label}</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+									<FormMessage/>
+								</FormItem>
+							)}
+						/>
+						
+						<FormField
+							control={form.control}
+							name="format_value"
+							render={({field}) => (
+								<FormItem>
+									<FormLabel>Valor formato UM</FormLabel>
+									<FormControl>
+										<Input type="number"
+										       placeholder="40"
+										       min={0}
+										       {...field}
+										       value={field.value ?? ''}
+										       onChange={(e) => {
+											       const value = e.target.valueAsNumber;
+											       field.onChange(isNaN(value) ? undefined : value);
+										       }}/>
+									</FormControl>
+									<FormMessage/>
+								</FormItem>
+							)}
+						/>
+						
+					</div>
+					<div className="grid grid-cols-1 items-start">
+						<FormField
+							control={form.control}
+							name="min_buy"
+							render={({field}) => (
+								<FormItem>
+									<FormLabel>Compra mínima</FormLabel>
+									<FormControl>
+										<Input type="number"
+										       placeholder="40"
+										       min={0}
+										       {...field}
+										       value={field.value ?? ''}
+										       onChange={(e) => {
+											       const value = e.target.valueAsNumber;
+											       field.onChange(isNaN(value) ? undefined : value);
+										       }}/>
+									</FormControl>
 									<FormMessage/>
 								</FormItem>
 							)}

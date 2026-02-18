@@ -1,7 +1,8 @@
 "use server"
 
-import {ActionResponse, PaginationRequest, ResultList, Product, SortRequest} from '@/types';
+import {ActionResponse, PaginationRequest, ResultList, Product, SortRequest, ImportResult} from '@/types';
 import {
+    ImportProductsStockSchema, ImportProductsStockValues,
     ProductFormValues,
     ProductSchema,
     ProductsFilterSchema,
@@ -122,6 +123,10 @@ export async function createProduct(input: ProductFormValues): Promise<ActionRes
                 product_discounts_id: input.product_discounts_id || null,
                 sku: input.sku,
                 um: input.um,
+                um_value: input.um_value,
+                format: input.format,
+                format_value: input.format_value,
+                min_buy: input.min_buy,
                 item_type: 'product',
                 business_id: user.id
             })
@@ -162,6 +167,10 @@ export async function updateProduct(input: Partial<ProductFormValues>): Promise<
                 sku: input.sku,
                 is_featured: input.is_featured,
                 um: input.um,
+                um_value: input.um_value,
+                format: input.format,
+                format_value: input.format_value,
+                min_buy: input.min_buy,
             })
             .eq("id", input.id)
             .select("*");
@@ -205,5 +214,90 @@ export const updateStock = async (serviceId: string, stock: number) => {
     } catch (error) {
         console.log('Unexpected error in updateStock:', error);
         throw new Error('Error no especificado');
+    }
+}
+
+export async function updateStocks(payload: ImportProductsStockValues): Promise<ImportResult> {
+    try {
+        const parsed = ImportProductsStockSchema.safeParse(payload)
+        
+        if (!parsed.success) {
+            return {
+                success: false,
+                created: 0,
+                updated: 0,
+                total: 0,
+                // errors: ["Datos inválidos", JSON.stringify(parsed.error.flatten())],
+                errors: parsed.error.issues.map(issue => issue.message),
+            }
+        }
+        
+        const { products } = parsed.data
+        const supabase = await createClient();
+        
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        
+        if (userError || !user) {
+            return {
+                success: false,
+                created: 0,
+                updated: 0,
+                total: 0,
+                errors: ['Usuario no autenticado o no se pudo obtener el usuario.']
+            };
+        }
+        
+        const productsWithSku = products.filter((s) => s.sku && s.sku.trim() !== "")
+        
+        let updatedCount = 0
+        const errors: string[] = []
+        
+        // 2) Con sku → UPSERT lógico
+        if (productsWithSku.length > 0) {
+            
+            // UPDATE existentes
+            for (const service of productsWithSku) {
+                const eid = service.sku!.trim()
+                
+                const { error } = await supabase
+                    .from("services")
+                    .update({
+                        stock: service.stock,
+                    })
+                    .eq("sku", eid)
+                
+                if (error) {
+                    errors.push(`Error al actualizar ${eid}: ${error.message}`)
+                } else {
+                    updatedCount++
+                }
+            }
+        }
+        
+        if (errors.length > 0) {
+            return {
+                success: false,
+                created: 0,
+                updated: updatedCount,
+                total: products.length,
+                errors,
+            }
+        }
+        
+        return {
+            success: true,
+            created: 0,
+            updated: updatedCount,
+            total: products.length,
+        }
+    } catch (error) {
+        console.error("Import error:", error)
+        return {
+            success: false,
+            created: 0,
+            updated: 0,
+            total: 0,
+            errors: ["Error interno del servidor"],
+        }
     }
 }

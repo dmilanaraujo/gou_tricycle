@@ -16,6 +16,7 @@ import {useProductStore} from '@/store/product';
 import {useGetProducts} from '@/hooks/api/product';
 import {useDeleteServices} from '@/hooks/api/service';
 import {useProfile} from '@/providers/profile-provider';
+import ExportButton from '@/components/product/export-button';
 
 export default function ProductTable() {
 	const profile = useProfile()
@@ -108,7 +109,7 @@ export default function ProductTable() {
 			onSortChange={handleSortChange}
 			onFilterChange={handleFilterChange}
 			ColumnFiltersComponent={DataTableColumnFilters}
-			// ExportComponent={ExportButton}
+			ExportComponent={ExportButton}
 			RowSelectedActionsComponent={DataTableRowSelected}
 			// onRowClick={(row) => openForEdit(row)}
 			onDeleteSelected={handleDeleteSelected}

@@ -101,10 +101,8 @@ export function ServiceSheet() {
 					<DrawerTitle>{!isEditing() ? 'Registrar Servicio' : 'Modificar Servicio'}</DrawerTitle>
 					{/*<DrawerDescription>Set your daily activity goal.</DrawerDescription>*/}
 				</DrawerHeader>
-				<div className="no-scrollbar overflow-y-auto px-4">
-					<div className="flex-1 overflow-y-auto overscroll-contain py-2">
-						<ServiceForm form={form}/>
-					</div>
+				<div className="no-scrollbar overflow-y-auto p-4">
+					<ServiceForm form={form}/>
 				</div>
 				
 				<DrawerFooter className="flex flex-row justify-end items-center gap-2 border-t shadow-sm pt-4 shrink-0">

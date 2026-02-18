@@ -52,9 +52,7 @@ export function ProductEdit({ product }: { product: Product }) {
 	return (
 		<div className=''>
 			<div className="no-scrollbar overflow-y-auto px-0">
-				<div className="flex-1 overflow-y-auto overscroll-contain py-2">
-					<ProductForm form={form}/>
-				</div>
+				<ProductForm form={form}/>
 			</div>
 			
 			<div className="flex justify-end py-4">
