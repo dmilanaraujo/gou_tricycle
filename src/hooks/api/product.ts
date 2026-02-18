@@ -5,9 +5,9 @@ import {
 } from '@tanstack/react-query';
 import {PaginationRequest, ResultList, SortRequest, Product} from '@/types';
 import {
-  listProducts, updateStock
+  listProducts, updateStock, updateStocks
 } from '@/lib/actions/product';
-import {ProductFormValues, ProductsFilterValues} from '@/lib/schemas/product';
+import {ImportProductsStockValues, ProductFormValues, ProductsFilterValues} from '@/lib/schemas/product';
 import {createProduct, updateProduct} from '@/lib/actions/product';
 
 export const useGetProducts = (
@@ -63,5 +63,16 @@ export const useUpdateStock = () => {
   });
 };
 
-
+export const useUpdateStocks = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (params: ImportProductsStockValues) => {
+        return await updateStocks(params);
+    },
+    onSuccess: (p, e) => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
 

@@ -15,6 +15,7 @@ import {ServicesFilterValues} from '@/lib/schemas/service';
 import {showActionErrors} from '@/lib/utils';
 import {useServiceStore} from '@/store/service';
 import {useProfile} from '@/providers/profile-provider';
+import ExportButton from '@/components/service/export-button';
 
 export default function ServiceTable() {
 	const profile = useProfile()
@@ -107,7 +108,7 @@ export default function ServiceTable() {
 			onSortChange={handleSortChange}
 			onFilterChange={handleFilterChange}
 			ColumnFiltersComponent={DataTableColumnFilters}
-			// ExportComponent={ExportButton}
+			ExportComponent={ExportButton}
 			RowSelectedActionsComponent={DataTableRowSelected}
 			// onRowClick={(row) => openForEdit(row)}
 			onDeleteSelected={handleDeleteSelected}

@@ -112,4 +112,8 @@ export type ImportResult = {
   errors?: string[]
 }
 
+export type ServiceRow = {
+  [key: string]: any;
+};
+
 export * from './business';

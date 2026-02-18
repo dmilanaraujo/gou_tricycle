@@ -304,6 +304,12 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
                 item_type: s.item_type,
                 // is_active: s.is_active,
                 is_featured: s.is_featured,
+                stock: s.stock,
+                um: s.um,
+                um_value: s.um_value,
+                format: s.format,
+                format_value: s.format_value,
+                min_buy: s.min_buy,
                 sku: null,
                 business_id: user.id
             }))
@@ -359,6 +365,12 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
                         item_type: s.item_type,
                         // is_active: s.is_active,
                         is_featured: s.is_featured,
+                        stock: s.stock,
+                        um: s.um,
+                        um_value: s.um_value,
+                        format: s.format,
+                        format_value: s.format_value,
+                        min_buy: s.min_buy,
                         sku: s.sku!.trim(),
                         business_id: user.id
                     }))
@@ -388,6 +400,12 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
                             item_type: service.item_type,
                             // is_active: service.is_active,
                             is_featured: service.is_featured,
+                            stock: service.stock,
+                            um: service.um,
+                            um_value: service.um_value,
+                            format: service.format,
+                            format_value: service.format_value,
+                            min_buy: service.min_buy,
                         })
                         .eq("sku", eid)
                     

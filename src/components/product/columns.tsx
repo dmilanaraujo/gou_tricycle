@@ -43,7 +43,18 @@ export const columns: ColumnDef<Product>[] = [
             headerClassName: "w-[15px]",
         },
     },
-    
+    {
+        accessorKey: "sku",
+        header: () => (
+            <div className="flex justify-center font-medium">SKU</div>
+        ),
+        cell: ({ row }) => (
+            <span className="flex justify-center font-medium">{row.original.sku}</span>
+        ),
+        meta: {
+            headerClassName: "w-[120px]",
+        },
+    },
     {
         accessorKey: "name",
         header: "Nombre",
@@ -53,6 +64,27 @@ export const columns: ColumnDef<Product>[] = [
         meta: {
             headerClassName: "w-[250px]",
         },
+    },
+    {
+        accessorKey: "stock",
+        header: () => (
+            <div className="flex justify-end font-medium">Existencia</div>
+        ),
+        cell: ({ row }) => (
+            <div className={
+                cn(
+                    'flex justify-end font-medium',
+                    row.original.stock == 0 ? 'text-red-600' : ''
+                )
+            }
+                 title={row.original.stock == 0 ? 'Sin stock. Agotado' : ''}
+            >
+                {row.original.stock}
+            </div>
+        ),
+        meta: {
+            headerClassName: 'w-[50px]'
+        }
     },
     {
         accessorKey: 'is_featured',
@@ -137,39 +169,6 @@ export const columns: ColumnDef<Product>[] = [
         meta: {
             headerClassName: "w-[120px]",
         },
-    },
-    {
-        accessorKey: "sku",
-        header: () => (
-            <div className="flex justify-center font-medium">Identificador</div>
-        ),
-        cell: ({ row }) => (
-            <span className="flex justify-center font-medium">{row.original.sku}</span>
-        ),
-        meta: {
-            headerClassName: "w-[120px]",
-        },
-    },
-    {
-        accessorKey: "stock",
-        header: () => (
-            <div className="flex justify-end font-medium">Disponible</div>
-        ),
-        cell: ({ row }) => (
-            <div className={
-                cn(
-                    'flex justify-end font-medium',
-                    row.original.stock == 0 ? 'text-red-600' : ''
-                )
-            }
-            title={row.original.stock == 0 ? 'Sin stock. Agotado' : ''}
-            >
-                {row.original.stock}
-            </div>
-        ),
-        meta: {
-            headerClassName: 'w-[50px]'
-        }
     },
     {
         accessorKey: "um",

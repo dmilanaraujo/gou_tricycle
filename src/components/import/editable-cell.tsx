@@ -13,19 +13,29 @@ import {
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
+import {MeasureUnit} from '@/types';
 
 interface EditableCellProps {
   value: string | number | boolean
   onChange: (value: string | number | boolean) => void
-  type: "text" | "number" | "boolean" | "item_type"
+  type: "text" | "number" | "boolean" | "item_type" | "um"
   error?: string
+  disabled?: boolean
+  underline?: boolean
 }
+
+const measureUnitArray = Object.entries(MeasureUnit).map(([, value]) => ({
+  value: value,
+  label: value
+}));
 
 export function EditableCell({
   value,
   onChange,
   type,
   error,
+  disabled,
+  underline
 }: EditableCellProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValue] = useState(String(value))
@@ -69,6 +79,7 @@ export function EditableCell({
         checked={Boolean(value)}
         onCheckedChange={(checked) => onChange(checked)}
         aria-label="Toggle value"
+        disabled={disabled}
       />
     )
   }
@@ -78,6 +89,7 @@ export function EditableCell({
       <Select
         value={String(value)}
         onValueChange={(v) => onChange(v)}
+        disabled={disabled}
       >
         <SelectTrigger className="h-8 w-[110px] text-xs">
           <SelectValue />
@@ -85,6 +97,25 @@ export function EditableCell({
         <SelectContent>
           <SelectItem value="service">Servicio</SelectItem>
           <SelectItem value="product">Producto</SelectItem>
+        </SelectContent>
+      </Select>
+    )
+  }
+
+  if (type === "um") {
+    return (
+      <Select
+        value={String(value)}
+        onValueChange={(v) => onChange(v)}
+        disabled={disabled}
+      >
+        <SelectTrigger className="h-8 w-[110px] text-xs">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {measureUnitArray.map(ft => (
+              <SelectItem key={ft.value} value={ft.value}>{ft.label}</SelectItem>
+          ))}
         </SelectContent>
       </Select>
     )
@@ -100,9 +131,11 @@ export function EditableCell({
         onKeyDown={handleKeyDown}
         type={type === "number" ? "number" : "text"}
         step={type === "number" ? "0.01" : undefined}
+        disabled={disabled}
         className={cn(
           "h-8 text-xs",
-          error && "border-destructive focus-visible:ring-destructive"
+          error && "border-destructive focus-visible:ring-destructive",
+            underline && 'line-through'
         )}
       />
     )
@@ -112,11 +145,14 @@ export function EditableCell({
     <button
       type="button"
       onClick={() => setIsEditing(true)}
+      disabled={disabled}
       className={cn(
-        "w-full cursor-pointer rounded px-2 py-1 text-left text-xs transition-colors hover:bg-muted",
-        error && "text-destructive"
+        "w-full rounded px-2 py-1 text-left text-xs transition-colors hover:bg-muted",
+        !disabled && ' cursor-pointer',
+        error && "text-destructive",
+        underline && 'line-through'
       )}
-      title={error || "Click para editar"}
+      title={disabled ? '' : (error || "Click para editar")}
     >
       {value === "" || value === undefined ? (
         <span className="text-muted-foreground italic">-</span>

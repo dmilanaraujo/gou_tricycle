@@ -1,6 +1,7 @@
 import * as XLSX from 'xlsx-js-style'
-import {type ImportServiceRow, type ProductFormValues, ImportProductSchema, TEMPLATE_COLUMNS, ImportProductValues,} from './schemas/product'
+import {type ImportServiceRow, ImportProductSchema, TEMPLATE_COLUMNS, ImportProductValues,} from './schemas/product'
 import {formatZodErrors} from '@/lib/utils';
+import {ServiceRow} from '@/types';
 
 const headerStyle = {
   fill: {
@@ -24,36 +25,13 @@ const headerStyle = {
   protection: { locked: true }
 }
 
-export function generateTemplate(): XLSX.WorkBook {
+export function generateTemplate(data: (string | number)[][] = []): XLSX.WorkBook {
   const wb = XLSX.utils.book_new()
   
   const headers = TEMPLATE_COLUMNS.map((c) => c.header)
   const descriptions = TEMPLATE_COLUMNS.map((c) => c.description)
   
-  const exampleRows = [
-    [
-      "Corte de cabello",
-      "Corte clasico para hombre",
-      15,
-      5,
-      "Servicio",
-      // "SI",
-      "NO",
-      "SVC-001",
-    ],
-    [
-      "Shampoo Premium",
-      "Shampoo para cabello seco",
-      25,
-      8,
-      "Producto",
-      // "SI",
-      "SI",
-      "PRD-001",
-    ],
-  ]
-  
-  const wsData = [headers, descriptions, ...exampleRows]
+  const wsData = [headers, descriptions, ...data]
   const ws = XLSX.utils.aoa_to_sheet(wsData)
   
   const range = XLSX.utils.decode_range(ws["!ref"]!)
@@ -147,7 +125,36 @@ export function generateTemplate(): XLSX.WorkBook {
 }
 
 export function downloadTemplate() {
-  const wb = generateTemplate()
+  const exampleRows = [
+    [
+      "Corte de cabello",
+      "Corte clasico para hombre",
+      15,
+      5,
+      "Servicio",
+      // "SI",
+      "NO",
+      "SVC-00001"
+    ],
+    [
+      "Shampoo Premium",
+      "Shampoo para cabello seco",
+      25,
+      8,
+      "Producto",
+      // "SI",
+      "SI",
+      "PRD-00001",
+      "unidad",
+      1,
+      10,
+      2,
+      "paquete",
+      1
+    ],
+  ];
+
+  const wb = generateTemplate(exampleRows)
   XLSX.writeFile(wb, "plantilla_productos_servicios.xlsx")
 }
 
@@ -256,4 +263,23 @@ function parseBool(value: unknown): boolean {
     )
   }
   return false
+}
+
+export function formatDataForExcel(data: ServiceRow[]) {
+  return data.map((row) => {
+    return TEMPLATE_COLUMNS.map((col) => {
+      const value = row?.[col.header];
+      
+      switch (col.header) {
+        case "item_type":
+          return value === "service" ? "Servicio" : "Producto";
+        
+        case "is_featured":
+          return value ? "SI" : "NO";
+        
+        default:
+          return value ?? "";
+      }
+    });
+  });
 }

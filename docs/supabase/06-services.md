@@ -39,6 +39,75 @@ where (sku is not null);
 
 --------------------------------------------------------
 
+---------------Triggers-----------------------------------------
+
+CREATE OR REPLACE FUNCTION public.fn_autogenerate_service_sku()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    prefix TEXT;
+    last_number INTEGER;
+    new_number INTEGER;
+    new_sku TEXT;
+BEGIN
+    -- Solo autogenerar si viene NULL o vacío
+    IF NEW.sku IS NULL OR NEW.sku = '' THEN
+
+        -- Validar que exista business_id
+        IF NEW.business_id IS NULL THEN
+            RAISE EXCEPTION 'business_id is required to autogenerate SKU';
+        END IF;
+
+        -- Definir prefijo según item_type
+        IF NEW.item_type = 'service' THEN
+            prefix := 'SRV-';
+        ELSE
+            prefix := 'PRD-';
+        END IF;
+
+        -- Obtener último número usado para ese business_id y prefijo
+        SELECT COALESCE(
+            MAX(CAST(SUBSTRING(sku FROM 5) AS INTEGER)),
+            0
+        )
+        INTO last_number
+        FROM public.services
+        WHERE business_id = NEW.business_id
+          AND sku LIKE prefix || '%';
+
+        new_number := last_number + 1;
+
+        -- Generar SKU con padding a 5 dígitos
+        new_sku := prefix || LPAD(new_number::TEXT, 5, '0');
+
+        -- Verificación extra por seguridad (por concurrencia)
+        WHILE EXISTS (
+            SELECT 1 
+            FROM public.services 
+            WHERE business_id = NEW.business_id
+              AND sku = new_sku
+        ) LOOP
+            new_number := new_number + 1;
+            new_sku := prefix || LPAD(new_number::TEXT, 5, '0');
+        END LOOP;
+
+        NEW.sku := new_sku;
+    END IF;
+
+    RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_autogenerate_service_sku ON public.services;
+
+CREATE TRIGGER trg_autogenerate_service_sku
+BEFORE INSERT ON public.services
+FOR EACH ROW
+EXECUTE FUNCTION public.fn_autogenerate_service_sku();
+
+--------------------------------------------------------
+
   
 ALTER TABLE public.services ENABLE ROW LEVEL SECURITY;
 
