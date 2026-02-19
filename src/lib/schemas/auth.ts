@@ -66,6 +66,7 @@ export const VerifyOtpSchema = z.object({
 	captcha_token: z.string().optional().describe("Token del captcha"),
 })
 
+export type SignUpFormValues = z.infer<typeof SignUpSchema>;
 export type UpdatePasswordValues = z.infer<typeof UpdatePasswordSchema>;
 export type UpdateProfileValues = z.infer<typeof UpdateProfileSchema>;
 export type CompleteProfileValues = z.infer<typeof CompleteProfileSchema>;

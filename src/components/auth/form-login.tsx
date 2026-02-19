@@ -46,10 +46,7 @@ export function LoginForm() {
         if (!response.success) {
             response.errors?.forEach((error) => {
                 if (error.code == 'phone_not_confirmed') {
-                    toast.success('Información', {
-                        description: 'Un código de verificación ha sido enviado a su WhatsApp',
-                    });
-                    router.push("/confirm-signup");
+                    router.push("/inactive-profile");
                     return;
                 }
                 toast.error('Error', {

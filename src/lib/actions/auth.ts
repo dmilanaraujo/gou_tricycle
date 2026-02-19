@@ -3,62 +3,31 @@ import {
   LoginSchema, SignUpSchema, ForgotPasswordFormValues, ForgotPasswordSchema,
   UpdatePasswordSchema,
   UpdatePasswordValues,
-  VerifyOtpFormValues, VerifyOtpSchema
+  SignUpFormValues
 } from '@/lib/schemas/auth';
-import {createClient} from '@/lib/supabase/server';
-import {SignInWithPasswordCredentials, SignUpWithPasswordCredentials, User, UserAttributes} from '@supabase/auth-js';
+import {createAdminClient, createClient} from '@/lib/supabase/server';
+import {SignInWithPasswordCredentials, User} from '@supabase/auth-js';
 import {ActionResponse} from '@/types';
-// import {formatZodErrors} from '@/lib/utils';
-import {cache} from 'react';
+import {formatSupabaseAuthErrors, formatZodErrors} from '../utils';
 import {redirect} from 'next/navigation';
-import {cookies} from 'next/headers';
-import { formatSupabaseAuthErrors } from '../utils';
-
-const createCookieConfirmSignup = async (phone: string) => {
-  const cookieStore = await cookies();
-  cookieStore.set('confirm-signup', phone, {
-    path: '/',
-    // maxAge: 60 * 5 * 1000, // Cookie válida por 5 min
-    httpOnly: true,
-  })
-}
 
 export const login = async (params: unknown): Promise<ActionResponse<User>> => {
-  // const schema = createLogInSchema(type);
   const validatedFields = LoginSchema.safeParse(params);
   if (!validatedFields.success) {
-    // const errors = formatZodErrors(validatedFields.error);
-    return { success: false, errors: [] };
+    const errors = formatZodErrors(validatedFields.error);
+    return { success: false, errors };
   }
   try{
     const { phone, password } = validatedFields.data;
-    // const verifyCaptchaRes = await verifyCaptchaToken(captcha_token!);
-    // if (!verifyCaptchaRes.success) {
-    //   return { success: false, errors: [{ message: 'customErrors.captcha_error' }] };
-    // }
     const body: SignInWithPasswordCredentials = {
       phone: phone!,
       password,
-      options: {
-        // captchaToken: captcha_token
-      }
     };
     
     const supabase = await createClient();
     const { error, data } = await supabase.auth.signInWithPassword(body);
     if (error) {
       console.log('auth error', error);
-      if (error.code == 'phone_not_confirmed') {
-        const { error: errorResend } = await supabase.auth.resend({
-          type: 'sms',
-          phone
-        });
-        if (errorResend) {
-          const errors = formatSupabaseAuthErrors(errorResend);
-          return { success: false, errors }
-        }
-        await createCookieConfirmSignup(phone);
-      }
       const errors = formatSupabaseAuthErrors(error);
       return { success: false, errors }
     }
@@ -84,44 +53,40 @@ export const logout = async (): Promise<ActionResponse<void>> => {
   }
 }
 
-export const signUp = async (params: unknown): Promise<ActionResponse<User>> => {
-  // const schema = createSignUpSchema(type);
+export const createUser = async (params: SignUpFormValues): Promise<ActionResponse<User>> => {
   const validatedFields = SignUpSchema.safeParse(params);
   if (!validatedFields.success) {
-    // const errors = formatZodErrors(validatedFields.error);
-    return { success: false, errors: [] };
+    const errors = formatZodErrors(validatedFields.error);
+    return { success: false, errors };
   }
   try {
     const { phone, password, name } = validatedFields.data;
-    // const verifyCaptchaRes = await verifyCaptchaToken(captcha_token!);
-    // if (!verifyCaptchaRes.success) {
-    //   return { success: false, errors: [{ message: 'customErrors.captcha_error' }] };
-    // }
-    const body: SignUpWithPasswordCredentials = {
-      phone: phone!,
-      password,
-      options: {
-        channel: 'whatsapp',
-        // captchaToken: captcha_token,
-        data: {
-          role: 'business',
-          name
-        }
-      }
-    };
 
-    const supabase = await createClient();
-    const { error, data } = await supabase.auth.signUp(body);
-    if (error) {
-      const errors = formatSupabaseAuthErrors(error);
-      return { success: false, errors }
+    const supabaseAdmin = await createAdminClient();
+    const { error: errorCreateUser } = await supabaseAdmin.auth.admin.createUser({
+      phone,
+      phone_confirm: true,
+      password,
+      user_metadata: {
+        name,
+        role: 'business',
+      },
+    });
+    if (errorCreateUser) {
+      return { success: false, errors: formatSupabaseAuthErrors(errorCreateUser) }
     }
-    
-    await createCookieConfirmSignup(phone);
+    const supabase = await createClient();
+    const { error: errorAuth, data } = await supabase.auth.signInWithPassword({
+      phone,
+      password
+    });
+    if (errorAuth) {
+      redirect('/sign-in');
+    }
     
     return { success: true, data: data.user! };
   } catch (error) {
-    console.log('Unexpected error in signUp:', error);
+    console.log('Unexpected error in createUser:', error);
     throw new Error('Ha ocurrido un error no especificado');
   }
 };
@@ -175,54 +140,3 @@ export const forgotPassword = async (params: ForgotPasswordFormValues, redirectT
   }
 };
 
-export const verifyOtpSms = async (params: VerifyOtpFormValues): Promise<ActionResponse<void>> => {
-  const validatedFields = VerifyOtpSchema.safeParse(params);
-  if (!validatedFields.success) {
-    // const errors = formatZodErrors(validatedFields.error);
-    return { success: false, errors: [] };
-  }
-  try{
-    const { phone, otp: token } = validatedFields.data;
-    
-    const supabase = await createClient();
-    const { error } = await supabase.auth.verifyOtp({ phone, token, type: 'sms'})
-    
-    if (error) {
-      const errors = formatSupabaseAuthErrors(error);
-      return { success: false, errors }
-    }
-    const cookieStore = await cookies();
-    cookieStore.delete('confirm-signup');
-    // cookieStore.set('sign-up-success', 'true', {
-    //   path: '/',
-    //   maxAge: 60, // Cookie válida por 60 segundos
-    //   httpOnly: true,
-    // })
-    // redirect('/complete-profile');
-    return { success: true };
-  } catch (error) {
-    console.log('Unexpected error in verifyOtpSms:', error);
-    throw new Error('Ha ocurrido un error no especificado');
-  }
-};
-
-export const resendOtpSms = async (phone: string): Promise<ActionResponse<void>> => {
-  if (!phone) {
-    return { success: false, errors: [{ message: 'Teléfono inválido' }] };
-  }
-  try{
-    const supabase = await createClient();
-    const { error } = await supabase.auth.resend({
-      type: 'sms',
-      phone
-    })
-    if (error) {
-      const errors = formatSupabaseAuthErrors(error);
-      return { success: false, errors }
-    }
-    return { success: true };
-  } catch (error) {
-    console.log('Unexpected error in resendOtpSms:', error);
-    throw new Error('Ha ocurrido un error no especificado');
-  }
-};

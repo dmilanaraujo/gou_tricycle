@@ -10,7 +10,7 @@ create table public.businesses (
   municipality character varying null,
   phone text null,
   whatsapp text null,
-  is_active boolean null default true,
+  is_active boolean null default false,
   created_at timestamp with time zone null default now(),
   logo text null,
   banner text null,

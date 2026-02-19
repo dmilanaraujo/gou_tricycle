@@ -51,6 +51,7 @@ export const ImportProductSchema = ProductSchema.extend({
 
 export const ImportPayloadSchema = z.object({
     services: z.array(ImportProductSchema).min(1, "Debe enviar al menos un producto o servicio"),
+    disable_others: z.boolean()
 })
 
 export const UpdateProductStockSchema = z.object({

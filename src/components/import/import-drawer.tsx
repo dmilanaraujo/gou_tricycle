@@ -54,6 +54,7 @@ export function ImportDrawer({
 }: ImportDrawerProps) {
   const [rows, setRows] = useState<ImportServiceRow[]>(initialRows)
   const [updateOnlyStock, setUpdateOnlyStock] = useState(false)
+  const [disableOtherToImport, setDisableOtherToImport] = useState(false)
   const [importResult, setImportResult] = useState<{
     created: number
     updated: number
@@ -199,8 +200,7 @@ export function ImportDrawer({
               format: r.format,
               format_value: r.format_value,
           }))
-          console.log('services', services);
-          result = await importServices({ services });
+          result = await importServices({ services, disable_others: disableOtherToImport });
       }
 
       setImportResult({
@@ -554,6 +554,13 @@ export function ImportDrawer({
                 
                 </div>
                 <div className="flex items-center gap-2">
+                  <Label>
+                      Deshabilitar los no existentes
+                  </Label>
+                  <Switch
+                      checked={disableOtherToImport}
+                      onCheckedChange={setDisableOtherToImport}
+                  />
                   <Label>
                       Actualizar solo existencia
                   </Label>
