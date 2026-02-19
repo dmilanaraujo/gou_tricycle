@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import {
     Form,
-    FormControl, FormDescription,
+    FormControl,
     FormField,
     FormItem,
     FormLabel,
@@ -13,20 +13,18 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {SignUpSchema} from '@/lib/schemas/auth';
+import {SignUpFormValues, SignUpSchema} from '@/lib/schemas/auth';
 import Link from 'next/link';
-import {signUp} from '@/lib/actions/auth';
+import {createUser} from '@/lib/actions/auth';
 import {toast} from 'sonner';
 import {LoaderCircle} from 'lucide-react';
 import React from 'react';
 import {PhoneInput} from '@/components/ui/phone-input';
-import * as z from 'zod';
 import {useLoadingRouter} from '@/providers/navigation-loading-provider';
 
 export function SignupForm() {
   const router = useLoadingRouter();
   
-  type SignUpFormValues = z.infer<typeof SignUpSchema>;
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
@@ -45,7 +43,7 @@ export function SignupForm() {
       // Do something with the form values.
       // ✅ This will be type-safe and validated.
       try {
-          const response = await signUp(values);
+          const response = await createUser(values);
           if (!response.success) {
               response.errors?.forEach((error) => {
                   toast.error('Error', {
@@ -57,7 +55,7 @@ export function SignupForm() {
           toast.success('Hecho', {
               description: 'Cuenta creada correctamente',
           });
-          router.push("/confirm-signup");
+          router.push("/complete-profile");
       } catch (e) {
           toast.error('Error', {
               // @ts-expect-error only

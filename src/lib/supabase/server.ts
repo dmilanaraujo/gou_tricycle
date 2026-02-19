@@ -1,12 +1,12 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
-export async function createClient(cStore?: ReturnType<typeof cookies>) {
+export async function createClient(cStore?: ReturnType<typeof cookies>, supabaseKey?: string) {
 	const cookieStore = cStore ? (await cStore) : (await cookies());
-	
+	supabaseKey = supabaseKey || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY!
 	return createServerClient(
 		process.env.NEXT_PUBLIC_SUPABASE_URL!,
-		process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY!,
+		supabaseKey,
 		{
 			cookies: {
 				getAll() {
@@ -26,4 +26,8 @@ export async function createClient(cStore?: ReturnType<typeof cookies>) {
 			},
 		},
 	);
+}
+
+export async function createAdminClient(cStore?: ReturnType<typeof cookies>) {
+	return createClient(cStore, process.env.SUPABASE_SECRET_KEY);
 }

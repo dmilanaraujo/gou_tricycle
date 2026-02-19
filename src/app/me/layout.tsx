@@ -24,7 +24,7 @@ export default async function ManagerLayout({ children }: Readonly<ManagerLayout
   }
   
   if (!isBusinessActive(business)) {
-      redirect('/inative-profile')
+      redirect('/inactive-profile')
   }
   
   return (

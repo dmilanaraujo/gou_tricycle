@@ -88,7 +88,6 @@ const isPublicRoute = (route: string) => {
         '/sign-in',
         '/sign-up',
         '/forgot-password',
-        '/confirm-signup',
     ];
 
     const startsWith = [
