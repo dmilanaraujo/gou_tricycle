@@ -2,10 +2,10 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger} from '../ui/dropdown-menu';
-import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
+import {Avatar, AvatarFallback} from '@/components/ui/avatar';
 import {LogoutButton} from '@/components/auth/logout-button';
 import {ChevronsUpDown} from 'lucide-react';
-import {getInitials, getPublicBusinessImageUrl} from '@/lib/utils';
+import {getInitials} from '@/lib/utils';
 import {getProfileCachedData} from '@/lib/actions/profile';
 
 export async function UserButton() {
@@ -27,7 +27,7 @@ export async function UserButton() {
                     className="flex items-center"
                 >
                     <Avatar className="h-8 w-8 rounded-lg">
-                        <AvatarImage src={getPublicBusinessImageUrl(profile.logo)} alt={profile.name} />
+                        {/*<AvatarImage src={getPublicBusinessImageUrl(profile.logo)} alt={profile.name} />*/}
                         <AvatarFallback className="rounded-lg">{getInitials(profile.name)}</AvatarFallback>
                     </Avatar>
                     {/*<div className="grid flex-1 text-left text-sm leading-tight">*/}

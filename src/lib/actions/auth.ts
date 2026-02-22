@@ -69,7 +69,7 @@ export const createUser = async (params: SignUpFormValues): Promise<ActionRespon
       password,
       user_metadata: {
         name,
-        role: 'business',
+        role: 'business_admin',
       },
     });
     if (errorCreateUser) {

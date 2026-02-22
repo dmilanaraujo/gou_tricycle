@@ -2,6 +2,21 @@ import {z} from 'zod'
 import {VehicleTypeEnum} from '@/types';
 import {isAfterOrEqual, isAfterToday} from '@/lib/utils';
 import {startOfDay} from 'date-fns';
+import {PhoneSchema} from '@/lib/schemas/auth';
+
+export const BusinessSchema = z.object({
+	name: z.string(),
+	section_id: z.string({ error: 'El tipo de negocio es requerido'}).min(1),
+	whatsapp: PhoneSchema,
+	province: z.string({ error: 'La provincia es requerida'}).min(1),
+	municipality: z.string({ error: 'El municipio es requerido' }).min(1),
+	description: z.string().optional(),
+	address: z.string().optional(),
+});
+
+export const UpdateBusinessSchema = BusinessSchema.partial().extend({
+	id: z.string(),
+});
 
 export const BusinessFiltersSchema = z.object({
 	province: z.string().optional(),
@@ -11,16 +26,20 @@ export const BusinessFiltersSchema = z.object({
 	section: z.string().optional().nullable(),
 	category: z.string().optional().nullable(),
 	q: z.string().optional().nullable(),
+	is_active: z.boolean().optional().nullable(),
+	only_logged_user: z.boolean().optional().nullable(),
 })
 
 export const BusinessCategorySchema = z.object({
 	id: z.number().optional(),
+	business_id: z.string().optional(),
 	name: z.string({ error: 'El nombre es requerido'}).min(1, "El nombre es requerido"),
 	icon: z.string().optional(),
 })
 
 export const BusinessDiscountSchema = z.object({
 	id: z.number().optional(),
+	business_id: z.string().optional(),
 	type: z.enum(['percentage', 'fixed'], {
 		error: 'El tipo es requerido',
 	}),
@@ -55,10 +74,11 @@ export const BusinessSettingsCatalogSchema = z.object({
 	slug: slugSchema
 })
 
+export type UpdateBusinessValues = z.infer<typeof UpdateBusinessSchema>;
+export type BusinessFormValues = z.infer<typeof BusinessSchema>;
 export type BusinessFiltersValues = z.infer<typeof BusinessFiltersSchema>
 export type BusinessCategoryValues = z.infer<typeof BusinessCategorySchema>
 export type BusinessDiscountValues = z.infer<typeof BusinessDiscountSchema>
 export type BusinessSettingsCatalogValues = z.infer<typeof BusinessSettingsCatalogSchema>
-
 export type BusinessDiscountInput = z.input<typeof BusinessDiscountSchema>;
 export type BusinessDiscountOutput = z.output<typeof BusinessDiscountSchema>;

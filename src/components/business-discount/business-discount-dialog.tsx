@@ -18,6 +18,7 @@ import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Dia
 import {BusinessDiscountList} from '@/components/business-discount/business-discount-list';
 import {ScrollArea} from '@/components/ui/scroll-area';
 import {Separator} from '@/components/ui/separator';
+import {useBusiness} from '@/providers/business-provider';
 
 const initialValues: Partial<BusinessDiscountInput> = {
 	value: '',
@@ -27,6 +28,7 @@ const initialValues: Partial<BusinessDiscountInput> = {
 	is_active: false
 }
 export function BusinessDiscountDialog() {
+	const business = useBusiness();
 	const { opened, setOpenDialog, openDialog, closeDialog } = useBusinessDiscountStore();
 	const isMobile = useIsMobile();
 	const { mutateAsync: createBusinessDiscount, isPending: isCreatingBusinessDiscount } = useCreateBusinessDiscount();
@@ -49,7 +51,7 @@ export function BusinessDiscountDialog() {
 		const toastId = toast.loading("Guardando descuento...")
 		
 		try {
-			const result = await createBusinessDiscount(data)
+			const result = await createBusinessDiscount({...data, business_id: business.id})
 			if (!result.success) {
 				showActionErrors(result.errors, toastId)
 				return;

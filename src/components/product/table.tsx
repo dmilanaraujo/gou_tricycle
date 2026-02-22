@@ -15,11 +15,11 @@ import {showActionErrors} from '@/lib/utils';
 import {useProductStore} from '@/store/product';
 import {useGetProducts} from '@/hooks/api/product';
 import {useDeleteServices} from '@/hooks/api/service';
-import {useProfile} from '@/providers/profile-provider';
 import ExportButton from '@/components/product/export-button';
+import {useBusiness} from '@/providers/business-provider';
 
 export default function ProductTable() {
-	const profile = useProfile()
+	const business = useBusiness()
 	const pathname = usePathname()
 	const { openForEdit } = useProductStore()
 	const { setIsNavigating } = useNavigationLoading();
@@ -32,7 +32,7 @@ export default function ProductTable() {
 	const [filter, setFilter] = useState<ProductsFilterValues>({
 		columnId: null,
 		value: "",
-		business_id: profile.id,
+		business_id: business.id,
 		statusFilters: {
 			[ActiveStatus.active]: true,
 			[ActiveStatus.inactive]: true,

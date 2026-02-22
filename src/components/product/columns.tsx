@@ -9,15 +9,29 @@ import {Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui/tooltip';
 import {Button} from '@/components/ui/button';
 import Link from 'next/link';
 import {cn} from '@/lib/utils';
+import * as React from 'react';
+import {useBusiness} from '@/providers/business-provider';
+
+
+function ActionCell({ item }: { item: Product }) {
+    const business = useBusiness();
+    return (
+        <div className="flex justify-end pe-4">
+            <Button asChild size={'sm'} className="bg-green-800">
+                <Link href={`/me/${business.slug}/products/${item.id}`}>Editar</Link>
+            </Button>
+        </div>
+    )
+}
 
 export const columns: ColumnDef<Product>[] = [
     {
-        id: "select",
-        header: ({ table }) => (
+        id: 'select',
+        header: ({table}) => (
             <div className="flex items-center justify-center">
                 <Checkbox
                     checked={
-                        table.getIsAllPageRowsSelected() ||
+                    table.getIsAllPageRowsSelected() ||
                         (table.getIsSomePageRowsSelected() && "indeterminate")
                     }
                     onCheckedChange={(value) =>
@@ -52,7 +66,7 @@ export const columns: ColumnDef<Product>[] = [
             <span className="flex justify-center font-medium">{row.original.sku}</span>
         ),
         meta: {
-            headerClassName: "w-[120px]",
+            headerClassName: "w-[80px]",
         },
     },
     {
@@ -200,11 +214,7 @@ export const columns: ColumnDef<Product>[] = [
         accessorKey: "actions",
         header: "",
         cell: ({ row }) => (
-            <div className="flex justify-end pe-4">
-                <Button asChild size={'sm'} className='bg-green-800'>
-                    <Link href={`/me/products/${row.original.id}`}>Editar</Link>
-                </Button>
-            </div>
+            <ActionCell item={row.original}/>
         ),
         meta: {
             headerClassName: "w-[50px]",

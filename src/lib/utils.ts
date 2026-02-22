@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import {AuthError, PostgrestError} from '@supabase/supabase-js';
-import {ActionError, BusinessDiscount, ImageType, OptimizedImages, UploadFileError, type VehicleType} from '@/types';
+import {ActionError, BusinessDiscount, ImageType, OptimizedImages, Profile, UploadFileError, type VehicleType} from '@/types';
 import imageCompression from 'browser-image-compression';
 import {z} from 'zod';
 import {Business} from '@/types/business';
@@ -148,8 +148,12 @@ export const getTimeBySeconds = (secondsTime: number) => {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 }
 
-export const isProfileComplete = (profile: Business) => {
-    return profile.name && profile.province && profile.municipality;
+export const isProfileActive = (profile: Profile) => {
+    return profile.is_active;
+}
+
+export const isProfileComplete = (profile: Profile) => {
+    return !!profile.name;
 }
 
 export const isBusinessActive = (business: Business) => {

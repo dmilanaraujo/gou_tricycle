@@ -14,6 +14,7 @@ import {Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTr
 import {useIsMobile} from '@/hooks/use-mobile';
 import {ProductFormValues, ProductSchema} from '@/lib/schemas/product';
 import {ProductForm} from '@/components/product/product-form';
+import {useBusiness} from '@/providers/business-provider';
 
 const initialValues: Partial<ProductFormValues> = {
 	id: '',
@@ -30,6 +31,7 @@ const initialValues: Partial<ProductFormValues> = {
 export function ProductSheet() {
 	const { openSheet, setOpenSheet, isEditing, closeSheet, openForCreate, editingProduct } = useProductStore();
 	const isMobile = useIsMobile();
+	const business = useBusiness();
 	const { mutateAsync: createProduct, isPending: isCreatingProduct } = useCreateProduct();
 	const { mutateAsync: updateProduct, isPending: isUpdatingProduct } = useUpdateProduct();
 	
@@ -60,7 +62,7 @@ export function ProductSheet() {
 			if (isEditing()) {
 				result = await updateProduct({  ...editingProduct, ...data})
 			} else {
-				result = await createProduct(data)
+				result = await createProduct({...data, business_id: business.id})
 			}
 			if (!result.success) {
 				showActionErrors(result.errors, toastId)

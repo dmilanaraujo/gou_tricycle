@@ -3,17 +3,11 @@ import {ActionResponse} from '@/types';
 import {createClient} from '@/lib/supabase/server';
 import {formatSupabaseFunctionErrors, formatSupabasePostgrestErrors, formatZodErrors} from '@/lib/utils';
 import {cookies} from 'next/headers';
-import {UpdateProfileSchema, UpdateProfileValues} from '@/lib/schemas/auth';
-import {Business} from '@/types/business';
+import {Profile} from '@/types';
 import {cache} from 'react';
-import {BusinessSettingsCatalogSchema, BusinessSettingsCatalogValues} from '@/lib/schemas/business';
+import {ProfileFormValues, ProfileSchema} from '@/lib/schemas/auth';
 
-const constraintMap = {
-  'businesses_section_id_fkey': 'La sección no existe',
-  'businesses_slug_key': 'Ya existe un negocio con este slug',
-}
-
-export const getProfile = async (cStore?: ReturnType<typeof cookies>): Promise<ActionResponse<Business>> => {
+export const getProfile = async (cStore?: ReturnType<typeof cookies>): Promise<ActionResponse<Profile>> => {
   try{
     const supabase = await createClient(cStore);
     const { data: { user } } = await supabase.auth.getUser();
@@ -21,27 +15,19 @@ export const getProfile = async (cStore?: ReturnType<typeof cookies>): Promise<A
       return { success: false, errors: [{ message: 'El usuario no está autenticado' }] }
     }
     const { data, error } = await supabase
-        .from('businesses')
+        .from('profiles')
         .select(`
             *,
-            vehicles:vehicles(
-              id,
-              vehicle_type
-            ),
-            section:sections(id, name, slug),
-            categories:business_system_categories(
-              category:system_categories(id, name, slug)
-            ),
-            images:business_images(*)
+            businesses(id, slug, name, logo, is_active)
         `)
         .eq("id", user.id)
         .single();
-    
+
     if (error) {
       const errors = await formatSupabaseFunctionErrors(error);
       return { success: false, errors }
     }
-    return { success: true, data: data || {} as Business };
+    return { success: true, data: data || {} as Profile };
   } catch (error) {
     console.log('Unexpected error in getProfile:', error);
     throw new Error('Ha ocurrido un error no especificado');
@@ -59,11 +45,12 @@ export const getProfileCachedData = cache(async () => {
   return res.data ?? null
 })
 
-export const updateProfile = async (params: UpdateProfileValues): Promise<ActionResponse<Business>> => {
-  const validatedFields = UpdateProfileSchema.safeParse(params);
+
+export const updateProfile = async (params: ProfileFormValues): Promise<ActionResponse<Profile>> => {
+  const validatedFields = ProfileSchema.safeParse(params);
   if (!validatedFields.success) {
-    // const errors = formatZodErrors(validatedFields.error);
-    return { success: false, errors: [] };
+    const errors = formatZodErrors(validatedFields.error);
+    return { success: false, errors };
   }
   try {
     const supabase = await createClient();
@@ -79,53 +66,17 @@ export const updateProfile = async (params: UpdateProfileValues): Promise<Action
     );
     
     const { data, error } = await supabase
-        .from("businesses")
+        .from("profiles")
         .update(cleanData)
         .eq("id", user.id)
         .select("*");
     
     if (error) {
-      return { success: false, errors: formatSupabasePostgrestErrors(error, constraintMap) }
+      return { success: false, errors: formatSupabasePostgrestErrors(error) }
     }
     return { success: true, data: data?.[0] };
   } catch (error) {
     console.log('Unexpected error in updateProfile:', error);
-    throw new Error('Ha ocurrido un error no especificado');
-  }
-};
-
-export const updateSettingsCatalog = async (businessId: string, params: BusinessSettingsCatalogValues): Promise<ActionResponse<Business>> => {
-  const validatedFields = BusinessSettingsCatalogSchema.safeParse(params);
-  if (!validatedFields.success) {
-    const errors = formatZodErrors(validatedFields.error);
-    return { success: false, errors };
-  }
-  try {
-    
-    const supabase = await createClient();
-    if (!businessId) {
-      return { success: false, errors: [{ message: 'ID del negocio es requerido para actualizar' }] };
-    }
-    
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    
-    if (userError || !user) {
-      return { success: false, errors: [{ message: 'Usuario no autenticado o no se pudo obtener el usuario.' }] };
-    }
-    const { slug } = validatedFields.data;
-    const { data, error } = await supabase
-        .from("businesses")
-        .update({ slug })
-        .eq("id", businessId)
-        .select("*");
-    
-    if (error) {
-      return { success: false, errors: formatSupabasePostgrestErrors(error, constraintMap) }
-    }
-    
-    return { success: true, data: data[0] };
-  } catch (error) {
-    console.log('Unexpected error in updateSettingsCatalog:', error);
     throw new Error('Ha ocurrido un error no especificado');
   }
 };

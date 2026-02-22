@@ -2,16 +2,24 @@ import {QueryKey, useInfiniteQuery, UseInfiniteQueryOptions, useMutation, useQue
 import {BusinessCategory, BusinessDiscount, PaginationRequest, ResultList} from '@/types';
 import {Business} from "@/types/business";
 import {
+  createBusiness,
   createBusinessCategory,
-  createBusinessDiscount,
+  createBusinessDiscount, deleteBusiness,
   deleteBusinessCategories, deleteBusinessDiscount,
   getBusinessCategories,
   getBusinessDiscounts,
-  getBusinesses,
-  updateBusinessCategory, updateBusinessDiscount
+  getBusinesses, updateBusiness,
+  updateBusinessCategory, updateBusinessDiscount, updateStatusBusiness
 } from '@/lib/actions/business';
-import {BusinessCategoryValues, BusinessDiscountValues, BusinessFiltersValues, BusinessSettingsCatalogValues} from '@/lib/schemas/business';
-import {updateSettingsCatalog} from '@/lib/actions/profile';
+import {
+  BusinessCategoryValues,
+  BusinessDiscountValues,
+  BusinessFiltersValues,
+  BusinessFormValues,
+  BusinessSettingsCatalogValues,
+  UpdateBusinessValues
+} from '@/lib/schemas/business';
+import {updateSettingsCatalog} from '@/lib/actions/business';
 
 type TDataResultBusiness = {
   pageParams: number[];
@@ -26,7 +34,7 @@ export const useInfinityBusinesses = (
   return useInfiniteQuery({
     queryKey: ['businesses', params],
     queryFn: async ({ pageParam = 0 }) => {
-      const response = await getBusinesses(({...params, page: pageParam}));
+      const response = await getBusinesses(({...params, is_active: true, page: pageParam}));
       return response.success ?  response.data! : { data: [] };
     },
     getNextPageParam: (lastPage, pages) => {
@@ -38,6 +46,69 @@ export const useInfinityBusinesses = (
   })
 };
 
+export const useGetMyBusinesses = (
+    options?: Partial<UseQueryOptions<ResultList<Business>, Error, ResultList<Business>, QueryKey>>
+) => {
+  return useQuery({
+    queryKey: ['businesses'],
+    queryFn: async () => {
+      const response = await getBusinesses({ only_logged_user: true, page: 0, limit: 100 });
+      return response.success ?  response.data! : { data: [] };
+    },
+    ...options
+  })
+};
+
+export const useCreateBusiness = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: BusinessFormValues) => {
+      return await createBusiness(input);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['businesses'] });
+    },
+  });
+};
+
+export const useUpdateBusiness = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (input: UpdateBusinessValues) => {
+      return await updateBusiness(input);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['businesses'] });
+    },
+  });
+};
+
+export const useDeleteBusiness = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (id: string) => {
+      return await deleteBusiness(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['businesses'] });
+    },
+  });
+};
+
+export const useUpdateStatusBusiness = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({businessId, active}: { businessId: string; active: boolean }) => {
+      return await updateStatusBusiness(businessId, active);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['businesses'] });
+    },
+  });
+};
 
 export const useGetBusinessCategories = (
     businessId?: string,

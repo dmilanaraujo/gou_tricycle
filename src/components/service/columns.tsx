@@ -2,10 +2,23 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Service } from "@/types/business"
+import {Service} from '@/types/business'
 import {NotesHoverCard} from '@/components/common/notes-nover-card';
 import {Button} from '@/components/ui/button';
 import Link from 'next/link';
+import {useBusiness} from '@/providers/business-provider';
+import * as React from 'react';
+
+function ActionCell({ item }: { item: Service }) {
+    const business = useBusiness();
+    return (
+        <div className="flex justify-end pe-4">
+            <Button asChild size={'sm'} className="bg-green-800">
+                <Link href={`/me/${business.slug}/services/${item.id}`}>Editar</Link>
+            </Button>
+        </div>
+    )
+}
 
 export const columns: ColumnDef<Service>[] = [
     {
@@ -40,7 +53,18 @@ export const columns: ColumnDef<Service>[] = [
             headerClassName: "w-[15px]",
         },
     },
-    
+    {
+        accessorKey: "sku",
+        header: () => (
+            <div className="flex justify-center font-medium">SKU</div>
+        ),
+        cell: ({ row }) => (
+            <span className="flex justify-center font-medium">{row.original.sku}</span>
+        ),
+        meta: {
+            headerClassName: "w-[80px]",
+        },
+    },
     {
         accessorKey: "name",
         header: "Nombre",
@@ -82,18 +106,6 @@ export const columns: ColumnDef<Service>[] = [
     },
     
     {
-        accessorKey: "sku",
-        header: () => (
-            <div className="flex justify-center font-medium">Identificador</div>
-        ),
-        cell: ({ row }) => (
-            <span className="flex justify-center font-medium">{row.original.sku}</span>
-        ),
-        meta: {
-            headerClassName: "w-[120px]",
-        },
-    },
-    {
         accessorKey: "description",
         header: "",
         cell: ({ row }) => (
@@ -109,11 +121,7 @@ export const columns: ColumnDef<Service>[] = [
         accessorKey: "actions",
         header: "",
         cell: ({ row }) => (
-            <div className="flex justify-end pe-4">
-                <Button asChild size={'sm'} className='bg-green-800'>
-                    <Link href={`/me/services/${row.original.id}`}>Editar</Link>
-                </Button>
-            </div>
+           <ActionCell item={row.original}/>
         ),
         meta: {
             headerClassName: "w-[50px]",

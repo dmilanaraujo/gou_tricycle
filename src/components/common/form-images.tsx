@@ -24,7 +24,7 @@ import {setDefaultImage} from '@/lib/actions/drivers';
 import {useLoadingRouter} from '@/providers/navigation-loading-provider';
 import {ImageType} from '@/types/business';
 import {getPublicImageUrl} from '@/lib/utils';
-import {useProfile} from '@/providers/profile-provider';
+import {useBusiness} from '@/providers/business-provider';
 
 interface ImagesFormProps {
 	bucket: string;
@@ -34,7 +34,7 @@ interface ImagesFormProps {
 }
 
 export function ImagesForm({ bucket, images, extraMetadata, extraPath }: ImagesFormProps) {
-	const profile = useProfile()
+	const business = useBusiness()
 	const router = useLoadingRouter();
 	const [files, setFiles] = React.useState<FileImage[]>(
 		images?.map(image => ({
@@ -78,7 +78,7 @@ export function ImagesForm({ bucket, images, extraMetadata, extraPath }: ImagesF
 					try {
 						const result = await uploadImage({
 							bucket,
-							userId: profile.id,
+							businessId: business.id,
 							file: file.file!,
 							type: ImageType.normal,
 							extraMetadata,

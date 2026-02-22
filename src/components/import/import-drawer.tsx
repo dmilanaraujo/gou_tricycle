@@ -38,6 +38,7 @@ import {useUpdateStocks} from '@/hooks/api/product';
 import {ImportResult} from '@/types';
 import {Label} from '@/components/ui/label';
 import {CellSkeletonWrapper} from '@/components/import/cell-skeleton-wrapper';
+import {useBusiness} from '@/providers/business-provider';
 
 interface ImportDrawerProps {
   open: boolean
@@ -52,6 +53,7 @@ export function ImportDrawer({
   initialRows,
   onImportComplete,
 }: ImportDrawerProps) {
+  const business = useBusiness();
   const [rows, setRows] = useState<ImportServiceRow[]>(initialRows)
   const [updateOnlyStock, setUpdateOnlyStock] = useState(false)
   const [disableOtherToImport, setDisableOtherToImport] = useState(false)
@@ -173,7 +175,8 @@ export function ImportDrawer({
   const someSelected = rows.some((r) => r._selected) && !allSelected
 
   const handleImport = useCallback(async () => {
-    if (hasErrors || selectedRows.length === 0) return
+    if (hasErrors || selectedRows.length === 0) return;
+    const business_id = business.id;
     try {
       let result: ImportResult;
       if (updateOnlyStock) {
@@ -200,7 +203,7 @@ export function ImportDrawer({
               format: r.format,
               format_value: r.format_value,
           }))
-          result = await importServices({ services, disable_others: disableOtherToImport });
+          result = await importServices({ business_id, services, disable_others: disableOtherToImport });
       }
 
       setImportResult({

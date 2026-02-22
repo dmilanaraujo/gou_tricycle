@@ -14,11 +14,11 @@ import {DataTableColumnFilters} from '@/components/service/data-table-column-fil
 import {ServicesFilterValues} from '@/lib/schemas/service';
 import {showActionErrors} from '@/lib/utils';
 import {useServiceStore} from '@/store/service';
-import {useProfile} from '@/providers/profile-provider';
 import ExportButton from '@/components/service/export-button';
+import {useBusiness} from '@/providers/business-provider';
 
 export default function ServiceTable() {
-	const profile = useProfile()
+	const business = useBusiness()
 	const pathname = usePathname()
 	const { openForEdit } = useServiceStore()
 	const { setIsNavigating } = useNavigationLoading();
@@ -31,7 +31,7 @@ export default function ServiceTable() {
 	const [filter, setFilter] = useState<ServicesFilterValues>({
 		columnId: null,
 		value: "",
-		business_id: profile.id,
+		business_id: business.id,
 		statusFilters: {
 			[ActiveStatus.active]: true,
 			[ActiveStatus.inactive]: true,
