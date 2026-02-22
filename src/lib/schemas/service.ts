@@ -3,6 +3,7 @@ import {ActiveStatus} from '@/types';
 
 export const ServiceSchema = z.object({
     id: z.string().optional(),
+    business_id: z.string().optional(),
     name: z.string().min(1, "El nombre es obligatorio"),
     description: z.string().optional(),
     price: z.number().optional(),

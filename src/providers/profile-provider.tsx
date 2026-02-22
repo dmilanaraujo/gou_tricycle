@@ -1,13 +1,13 @@
 'use client'
 import { createContext, useContext } from 'react'
-import {Business} from '@/types';
+import {Profile} from '@/types';
 import * as React from 'react';
 
-const ProfileContext = createContext<any>(null)
+const ProfileContext = createContext<Profile>({} as Profile);
 
 export const useProfile = () => useContext(ProfileContext)
 
-export const ProfileProvider = ({ profile, children }: { profile: Business, children: React.ReactNode }) => {
+export const ProfileProvider = ({ profile, children }: { profile: Profile, children: React.ReactNode }) => {
 	return (
 		<ProfileContext.Provider value={profile}>
 			{children}

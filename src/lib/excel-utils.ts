@@ -181,6 +181,7 @@ export function parseExcelFile(file: File): Promise<ImportServiceRow[]> {
         
         const rows: ImportServiceRow[] = dataRows.map((row, index) => {
           const parsed = ImportProductSchema.safeParse({
+            // business_id: String(row.business_id ?? ""),
             name: String(row.name ?? ""),
             description: String(row.description ?? ""),
             price: row.price ?? 0,
@@ -205,6 +206,7 @@ export function parseExcelFile(file: File): Promise<ImportServiceRow[]> {
           const serviceData: ImportProductValues = parsed.success
                                           ? parsed.data
                                           : {
+                // business_id: String(row.business_id ?? ""),
                 name: String(row.name ?? ""),
                 description: String(row.description ?? ""),
                 price: Number(row.price) || 0,

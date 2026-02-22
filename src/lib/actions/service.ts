@@ -148,7 +148,7 @@ export async function createService(input: ServiceFormValues): Promise<ActionRes
                 product_discounts_id: input.product_discounts_id || null,
                 sku: input.sku,
                 item_type: 'service',
-                business_id: user.id,
+                business_id: input.business_id,
             })
             .select("*");
         
@@ -281,7 +281,7 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
         const { data: allServices, error: fetchError } = await supabase
             .from("services")
             .select("id, sku")
-            .eq('business_id', user.id);
+            .eq('business_id', payload.business_id);
         
         if (fetchError) {
             return formatError(['Error obteniendo los productos y servicios']);
@@ -346,7 +346,7 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
                 format_value: s.format_value,
                 min_buy: s.min_buy,
                 sku: null,
-                business_id: user.id
+                business_id: payload.business_id
             }))
             
             const { error } = await supabase
@@ -392,7 +392,7 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
                     format_value: s.format_value,
                     min_buy: s.min_buy,
                     sku: s.sku!.trim(),
-                    business_id: user.id
+                    business_id: payload.business_id
                 }))
                 
                 const { error } = await supabase

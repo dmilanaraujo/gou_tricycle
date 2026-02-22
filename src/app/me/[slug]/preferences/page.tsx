@@ -1,5 +1,4 @@
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs';
-import {ProfileForm} from '@/components/preferences/form-profile';
 import {ImagesForm} from '@/components/common/form-images';
 import {UpdatePasswordForm} from '@/components/preferences/form-update-password';
 import * as React from 'react';
@@ -9,13 +8,16 @@ import {HeaderSection} from '@/components/layout/header-section';
 import {Main} from '@/components/layout/main';
 import {Wrench, Key, Images, LayoutGrid} from 'lucide-react';
 import {LogoBannerForm} from '@/components/preferences/form-logo-banner';
-import {getProfileCachedData} from '@/lib/actions/profile';
 import {CatalogForm} from '@/components/preferences/form-catalog';
+import {BusinessParamsProps} from '@/types';
+import {getBusinessBySlugCachedData} from '@/lib/actions/business';
+import {BusinessEdit} from '@/components/business/business-edit';
 
 export const dynamic = "force-dynamic";
 
-export default async function PreferencesPage() {
-	const business = await getProfileCachedData();
+export default async function PreferencesPage({ params }: { params: Promise<BusinessParamsProps> }) {
+	const { slug } = await params;
+	const business = await getBusinessBySlugCachedData(slug);
 	
 	const tabs =  [
 		{
@@ -27,7 +29,7 @@ export default async function PreferencesPage() {
 					title='Perfil'
 					desc='Datos del perfil de su negocio'
 				>
-					<ProfileForm/>
+					<BusinessEdit/>
 				</ContentSection>
 			)
 		},

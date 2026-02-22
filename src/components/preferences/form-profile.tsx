@@ -13,36 +13,29 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { UpdateProfileSchema, UpdateProfileValues} from '@/lib/schemas/auth';
 import {toast} from 'sonner';
 import {LoaderCircle} from 'lucide-react';
 import React from 'react';
-import {updateProfile} from '@/lib/actions/profile';
-import {NativeSelect, NativeSelectOption} from '@/components/ui/native-select';
-import {municipalities, provinces} from '@/lib/data/locations';
 import {useLoadingRouter} from '@/providers/navigation-loading-provider';
-import {Textarea} from '@/components/ui/textarea';
-import {PhoneInput} from '@/components/ui/phone-input';
 import {useProfile} from '@/providers/profile-provider';
+import {updateProfile} from '@/lib/actions/profile';
+import {ProfileFormValues, ProfileSchema} from '@/lib/schemas/auth';
 
 export function ProfileForm() {
 	const profile = useProfile()
 	const router = useLoadingRouter();
-	const form = useForm<UpdateProfileValues>({
-		resolver: zodResolver(UpdateProfileSchema),
+	const form = useForm<ProfileFormValues>({
+		resolver: zodResolver(ProfileSchema),
 		defaultValues: {
 			name: profile.name  || '',
-			province: profile.province || '',
-			municipality: profile.municipality || '',
-			address: profile.address || '',
-			whatsapp: profile.whatsapp || '',
+			phone: profile.phone || '',
 		},
 	});
 	
 	const { isValid, isSubmitting, isDirty, errors} = form.formState;
-	const provinceValue = form.watch('province');
+
 	// 2. Define a submit handler.
-	async function onSubmit(values: UpdateProfileValues) {
+	async function onSubmit(values: ProfileFormValues) {
 		// Do something with the form values.
 		// ✅ This will be type-safe and validated.
 		try {
@@ -77,105 +70,12 @@ export function ProfileForm() {
 							name='name'
 							render={({field}) => (
 								<FormItem>
-									<FormLabel>Nombre del negocio<span className="text-red-600">*</span></FormLabel>
+									<FormLabel>Su alias<span className="text-red-600">*</span></FormLabel>
 									<FormControl>
 										<Input placeholder='Entre su alias' {...field} />
 									</FormControl>
 									<FormDescription>
-										Nombre que saldrá visible en las búsquedas
-									</FormDescription>
-									<FormMessage/>
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="whatsapp"
-							render={({field}) => (
-								<FormItem className="space-y-0 mt-0">
-									<FormLabel>Número de contacto<span className="text-red-600">*</span></FormLabel>
-									<FormControl>
-										<PhoneInput value={field.value} onChange={field.onChange} defaultCountry="CU" countries={['CU']}
-										            international={false} placeholder='Entre el WhatsApp'/>
-									</FormControl>
-									<FormDescription>
-										Número de contacto de WhatsApp
-									</FormDescription>
-									<FormMessage/>
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name='province'
-							render={({field}) => (
-								<FormItem>
-									<FormLabel>Provincia<span className="text-red-600">*</span></FormLabel>
-									<FormControl>
-										<NativeSelect {...field} classNameContainer={'col-span-2 w-full'}>
-											<NativeSelectOption value="">Seleccione...</NativeSelectOption>
-											{provinces.map(p => (
-												<NativeSelectOption key={p.value} value={p.value}>{p.label}</NativeSelectOption>
-											))}
-										</NativeSelect>
-									</FormControl>
-									<FormDescription>
-										Provincia actual donde operará
-									</FormDescription>
-									<FormMessage/>
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name='municipality'
-							render={({field}) => (
-								<FormItem>
-									<FormLabel>Municipio<span className="text-red-600">*</span></FormLabel>
-									<FormControl>
-										<NativeSelect {...field} classNameContainer={'col-span-2 w-full'}>
-											<NativeSelectOption value="">Seleccione...</NativeSelectOption>
-											{(!!provinceValue && municipalities[provinceValue] || []).map(m => (
-												<NativeSelectOption key={m.value} value={m.value}>{m.label}</NativeSelectOption>
-											))}
-										</NativeSelect>
-									</FormControl>
-									<FormDescription>
-										Municipio actual donde operará
-									</FormDescription>
-									<FormMessage/>
-								</FormItem>
-							)}
-						/>
-					</div>
-					<div className='grid grid-cols-1 gap-4'>
-						<FormField
-							control={form.control}
-							name='description'
-							render={({field}) => (
-								<FormItem>
-									<FormLabel>Descripción</FormLabel>
-									<FormControl>
-										<Textarea placeholder='Entre la descripción' {...field} />
-									</FormControl>
-									<FormDescription>
-										Descripción de su negocio
-									</FormDescription>
-									<FormMessage/>
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name='address'
-							render={({field}) => (
-								<FormItem>
-									<FormLabel>Dirección</FormLabel>
-									<FormControl>
-										<Textarea placeholder='Entre la dirección' {...field} />
-									</FormControl>
-									<FormDescription>
-										Dirección física de su negocio si la tiene
+										Alias para su usuario
 									</FormDescription>
 									<FormMessage/>
 								</FormItem>

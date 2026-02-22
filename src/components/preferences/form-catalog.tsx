@@ -9,19 +9,19 @@ import {BusinessSettingsCatalogSchema, BusinessSettingsCatalogValues} from '@/li
 import {zodResolver} from '@hookform/resolvers/zod';
 import {toast} from 'sonner';
 import {useUpdateSettingsCatalog} from '@/hooks/api/business';
-import {useProfile} from '@/providers/profile-provider';
+import {useBusiness} from '@/providers/business-provider';
 import {InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText} from '@/components/ui/input-group';
 import {getPublicUrl} from '@/lib/utils';
 import {useCopyToClipboard} from '@/hooks/use-copy-to-clipboard';
 
 export function CatalogForm() {
-	const profile = useProfile();
+	const business = useBusiness();
 	const baseUrl = getPublicUrl();
 	const [ copyToClipboard, isCopied ]= useCopyToClipboard()
 	const form = useForm<BusinessSettingsCatalogValues>({
 		resolver: zodResolver(BusinessSettingsCatalogSchema),
 		defaultValues: {
-			slug: profile.slug || '',
+			slug: business.slug || '',
 		},
 		mode: 'all'
 	});
@@ -33,7 +33,7 @@ export function CatalogForm() {
 		// Do something with the form values.
 		try {
 			const response = await updateSettingsCatalog({
-				businessId: profile.id,
+				businessId: business.id,
 				params: values
 			});
 			if (!response.success) {

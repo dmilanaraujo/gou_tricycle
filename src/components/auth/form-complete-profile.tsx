@@ -12,11 +12,10 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CompleteProfileSchema, CompleteProfileValues} from '@/lib/schemas/auth';
 import {toast} from 'sonner';
 import {LoaderCircle} from 'lucide-react';
 import React from 'react';
-import {updateProfile} from '@/lib/actions/profile';
+import {updateBusiness} from '@/lib/actions/business';
 import {NativeSelect, NativeSelectOption} from '@/components/ui/native-select';
 import {municipalities, provinces} from '@/lib/data/locations';
 import {useLoadingRouter} from '@/providers/navigation-loading-provider';
@@ -24,11 +23,12 @@ import {Business} from '@/types/business';
 import {Textarea} from '@/components/ui/textarea';
 import {PhoneInput} from '@/components/ui/phone-input';
 import {useGetSections} from '@/hooks/api/section';
+import {BusinessFormValues, BusinessSchema} from '@/lib/schemas/business';
 
 export function FormProfileForm({ business }: { business: Business; }) {
 	const router = useLoadingRouter();
-	const form = useForm<CompleteProfileValues>({
-		resolver: zodResolver(CompleteProfileSchema),
+	const form = useForm<BusinessFormValues>({
+		resolver: zodResolver(BusinessSchema),
 		defaultValues: {
 			name: business.name  || '',
 			description: business.description  || '',
@@ -44,11 +44,11 @@ export function FormProfileForm({ business }: { business: Business; }) {
 	const { isValid, isSubmitting, isDirty, errors} = form.formState;
 	const provinceValue = form.watch('province');
 	// 2. Define a submit handler.
-	async function onSubmit(values: CompleteProfileValues) {
+	async function onSubmit(values: BusinessFormValues) {
 		// Do something with the form values.
 		// ✅ This will be type-safe and validated.
 		try {
-			const response = await updateProfile(values);
+			const response = await updateBusiness({id: business.id, ...values});
 			if (!response.success) {
 				response.errors?.forEach((error) => {
 					toast.error('Error', {

@@ -18,12 +18,14 @@ import {BusinessCategoryList} from '@/components/business-category/business-cate
 import {ScrollArea} from '@/components/ui/scroll-area';
 import {BusinessCategoryForm} from '@/components/business-category/business-category-form';
 import {Separator} from '@/components/ui/separator';
+import {useBusiness} from '@/providers/business-provider';
 
 const initialValues: Partial<BusinessCategoryValues> = {
 	name: '',
 	icon: undefined,
 }
 export function BusinessCategoryDialog() {
+	const business = useBusiness();
 	const { opened, setOpenDialog, closeDialog } = useBusinessCategoryStore();
 	const isMobile = useIsMobile();
 	const { mutateAsync: createBusinessCategory, isPending: isCreatingBusinessCategory } = useCreateBusinessCategory();
@@ -48,7 +50,7 @@ export function BusinessCategoryDialog() {
 		const toastId = toast.loading("Guardando categoria...")
 		
 		try {
-			const result = await createBusinessCategory(data)
+			const result = await createBusinessCategory({...data, business_id: business.id})
 			if (!result.success) {
 				showActionErrors(result.errors, toastId)
 				return;

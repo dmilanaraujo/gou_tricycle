@@ -20,26 +20,26 @@ import {useConfirm} from '@/components/common/confirm-dialog-provider';
 import {useLoadingRouter} from '@/providers/navigation-loading-provider';
 import {ImageType} from '@/types/business';
 import {getPublicImageUrl} from '@/lib/utils';
-import {useProfile} from '@/providers/profile-provider';
+import {useBusiness} from '@/providers/business-provider';
 
 interface LogoBannerFormProps {
 	bucket: string;
 }
 
 export function LogoBannerForm({ bucket }: LogoBannerFormProps) {
-	const profile = useProfile()
+	const business = useBusiness()
 	const router = useLoadingRouter();
-	const [logo, setLogo] = React.useState<FileImage[]>(profile.logo ? [{
+	const [logo, setLogo] = React.useState<FileImage[]>(business.logo ? [{
 		isRemote: true,
-		path: profile.logo,
+		path: business.logo,
 		primary: false,
-		fullPublicUrl: getPublicImageUrl(bucket, profile.logo),
+		fullPublicUrl: getPublicImageUrl(bucket, business.logo),
 	}] : []);
-	const [banner, setBanner] = React.useState<FileImage[]>(profile.banner ?[{
+	const [banner, setBanner] = React.useState<FileImage[]>(business.banner ?[{
 		isRemote: true,
-		path: profile.banner,
+		path: business.banner,
 		primary: false,
-		fullPublicUrl: getPublicImageUrl(bucket, profile.banner),
+		fullPublicUrl: getPublicImageUrl(bucket, business.banner),
 	}] : []);
 
 	const { uploadImage, removeImage } = useImageUpload();
@@ -67,7 +67,7 @@ export function LogoBannerForm({ bucket }: LogoBannerFormProps) {
 						const result = await uploadImage({
 							bucket,
 							file: file.file!,
-							userId: profile.id,
+							businessId: business.id,
 							type,
 						    onProgress:	(file, progress) => onProgress({ file, path: file.name, primary: false }, progress)
 						});

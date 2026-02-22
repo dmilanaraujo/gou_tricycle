@@ -104,6 +104,14 @@ export type IdParamsProps = {
   id: string;
 };
 
+export interface BusinessParamsProps {
+  slug: string
+}
+
+export interface ServiceParamsProps extends BusinessParamsProps {
+  id: string
+}
+
 export type ImportResult = {
   success: boolean
   created: number
@@ -115,5 +123,21 @@ export type ImportResult = {
 export type ServiceRow = {
   [key: string]: any;
 };
+
+export type BasicBusiness = {
+  id: string;
+  slug: string;
+  name: string;
+  logo: string;
+  is_active: boolean;
+}
+
+export type Profile = {
+  id: string;
+  name: string;
+  phone: string;
+  businesses: BasicBusiness[];
+  is_active: boolean;
+}
 
 export * from './business';

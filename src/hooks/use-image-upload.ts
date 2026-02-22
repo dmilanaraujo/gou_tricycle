@@ -5,7 +5,7 @@ import {createClient} from '@/lib/supabase/client';
 
 type UploadImageParams = {
 	bucket: string,
-	userId: string,
+	businessId: string,
 	file: File,
 	type: ImageType,
 	onProgress?: (file: File, progress: number) => void;
@@ -26,7 +26,7 @@ export function useImageUpload(): UseImageUploadReturn {
 	const [progress, setProgress] = useState(0);
 	const [error, setError] = useState<string | null>(null);
 	
-	const uploadImage = async ({ bucket, file, userId, type, onProgress, extraMetadata, extraPath }: UploadImageParams	): Promise<UploadedImage> => {
+	const uploadImage = async ({ bucket, file, businessId, type, onProgress, extraMetadata, extraPath }: UploadImageParams	): Promise<UploadedImage> => {
 		setIsUploading(true);
 		setProgress(0);
 		setError(null);
@@ -38,7 +38,7 @@ export function useImageUpload(): UseImageUploadReturn {
 			setProgress(10);
 			onProgress?.(file, 10);
 			
-			const optimizedImage = await optimizeImage(file, userId, type, extraPath)
+			const optimizedImage = await optimizeImage(file, businessId, type, extraPath)
 			setProgress(20);
 			onProgress?.(file, 20);
 			
@@ -64,7 +64,7 @@ export function useImageUpload(): UseImageUploadReturn {
 						cacheControl: '31536000',
 						upsert: false,
 						metadata: {
-							business_id: userId,
+							business_id: businessId,
 							logo: type == ImageType.logo,
 							banner: type == ImageType.banner,
 							...(extraMetadata || {})

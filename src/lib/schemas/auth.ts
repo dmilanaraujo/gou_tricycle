@@ -2,7 +2,7 @@ import * as z from "zod";
 import {isValidPhoneNumber} from 'libphonenumber-js';
 
 
-const PhoneSchema = z.string().min(10, "Número de teléfono inválido")
+export const PhoneSchema = z.string().min(10, "Número de teléfono inválido")
 	.refine(isValidPhoneNumber, { message: "Número de teléfono inválido" })
 
 const PasswordSchema = z.string({ error: "Contraseña requerida" })
@@ -23,17 +23,10 @@ export const SignUpSchema = z.object({
 	path: ["confirm_password"],
 });
 
-export const CompleteProfileSchema = z.object({
+export const ProfileSchema = z.object({
 	name: z.string(),
-	section_id: z.string({ error: 'El tipo de negocio es requerido'}).min(1),
-	whatsapp: PhoneSchema,
-	province: z.string({ error: 'La provincia es requerida'}).min(1),
-	municipality: z.string({ error: 'El municipio es requerido' }).min(1),
-	description: z.string().optional(),
-	address: z.string().optional(),
+	phone: PhoneSchema,
 });
-
-export const UpdateProfileSchema = CompleteProfileSchema.partial();
 
 export const UpdatePasswordSchema = z.object({
 	password: z.string({ error: "Valor requerido" })
@@ -60,16 +53,7 @@ export const ForgotPasswordSchema = z.object({
 	// captcha_token: z.string().optional().describe("Token del captcha"),
 })
 
-export const VerifyOtpSchema = z.object({
-	phone: z.string({ error: "Valor requerido" }),
-	otp: z.string({ error: "Valor requerido" }).describe("Codigo enviado via sms o whatsapp"),
-	captcha_token: z.string().optional().describe("Token del captcha"),
-})
-
 export type SignUpFormValues = z.infer<typeof SignUpSchema>;
+export type ProfileFormValues = z.infer<typeof ProfileSchema>;
 export type UpdatePasswordValues = z.infer<typeof UpdatePasswordSchema>;
-export type UpdateProfileValues = z.infer<typeof UpdateProfileSchema>;
-export type CompleteProfileValues = z.infer<typeof CompleteProfileSchema>;
-export type ImageFormValues = z.infer<typeof ImageSchema>;
 export type ForgotPasswordFormValues = z.infer<typeof ForgotPasswordSchema>;
-export type VerifyOtpFormValues = z.infer<typeof VerifyOtpSchema>;
