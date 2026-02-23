@@ -59,9 +59,9 @@ export async function UserButton() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                    <a href={'/me'} className={'px-3 cursor-pointer'}>
+                    <Link href={'/me'} className={'px-3 cursor-pointer'}>
                         Mi panel
-                    </a>
+                    </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                     <LogoutButton className={'bg-transparent text-blue-900 hover:bg-transparent cursor-pointer px-5'}>

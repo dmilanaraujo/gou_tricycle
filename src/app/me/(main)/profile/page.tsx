@@ -1,74 +1,55 @@
+import {FormProfile} from '@/components/auth/form-profile';
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs';
-import {ImagesForm} from '@/components/common/form-images';
 import {UpdatePasswordForm} from '@/components/preferences/form-update-password';
 import * as React from 'react';
 import {ContentSection} from '@/components/layout/content-section';
 import {ScrollArea} from '@/components/ui/scroll-area';
 import {HeaderSection} from '@/components/layout/header-section';
 import {Main} from '@/components/layout/main';
-import {Wrench, Key, Images, LayoutGrid} from 'lucide-react';
-import {LogoBannerForm} from '@/components/preferences/form-logo-banner';
-import {CatalogForm} from '@/components/preferences/form-catalog';
-import {BusinessParamsProps} from '@/types';
-import {getBusinessBySlugCachedData} from '@/lib/actions/business';
-import {BusinessEdit} from '@/components/business/business-edit';
+import {Wrench, Key, Phone} from 'lucide-react';
+import {UpdatePhoneForm} from '@/components/auth/form-update-phone';
 
 export const dynamic = "force-dynamic";
 
-export default async function PreferencesPage({ params }: { params: Promise<BusinessParamsProps> }) {
-	const { slug } = await params;
-	const business = await getBusinessBySlugCachedData(slug);
+export default async function ProfilePage() {
 	
 	const tabs =  [
 		{
-			name: 'Información general',
+			name: 'Información de perfil',
 			value: 'general_info',
 			icon: <Wrench size={18} />,
 			content: (
 				<ContentSection
 					title='Perfil'
-					desc='Datos del perfil de su negocio'
+					desc='Datos del perfil de su usuario'
 				>
-					<BusinessEdit/>
+					<FormProfile/>
 				</ContentSection>
 			)
 		},
 		{
-			name: 'Logo y Banner',
-			value: 'logo_banner',
-			icon: <Wrench size={18} />,
+			name: 'Actualizar contraseña',
+			value: 'change_password',
+			icon: <Key size={18} />,
 			content: (
 				<ContentSection
-					title='Logo y banner de su negocio'
-					desc='Suba las imágenes del logo y banner de su negocio'
+					title='Contraseña'
+					desc='Cambie su contraseña'
 				>
-					<LogoBannerForm bucket='business_images'/>
+					<UpdatePasswordForm/>
 				</ContentSection>
 			)
 		},
 		{
-			name: 'Imágenes',
-			value: 'images',
-			icon: <Images size={18} />,
+			name: 'Actualizar teléfono',
+			value: 'change_phone',
+			icon: <Phone size={18} />,
 			content: (
 				<ContentSection
-					title='Imágenes'
-					desc='Gestione las imágenes para hacer visible su negocio'
+					title='Teléfono'
+					desc='Actualice su número de teléfono'
 				>
-					<ImagesForm bucket='business_images' images={business?.images || []}/>
-				</ContentSection>
-			)
-		},
-		{
-			name: 'Catálogo',
-			value: 'update_settings_catalog',
-			icon: <LayoutGrid size={18}/>,
-			content: (
-				<ContentSection
-					title='Catálogo'
-					desc='Actualice las preferencias de su catálogo'
-				>
-					<CatalogForm/>
+					<UpdatePhoneForm/>
 				</ContentSection>
 			)
 		}
@@ -77,8 +58,8 @@ export default async function PreferencesPage({ params }: { params: Promise<Busi
 	return (
 		<Main fixed>
 			<HeaderSection
-				title='Preferencias'
-				desc='Gestione los datos de su negocio aquí.'
+				title='Actualizar perfil del usuario'
+				desc='Actualice los datos de su perfil aquí.'
 			/>
 			<div className='flex justify-center flex-col items-center'>
 				<Tabs defaultValue='general_info' className='flex gap-4 w-full flex-col md:flex-row md:w-4xl'>

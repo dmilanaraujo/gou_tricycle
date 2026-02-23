@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import {
-	Form,
 	FormControl, FormDescription,
 	FormField,
 	FormItem,
@@ -14,28 +13,28 @@ import {
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {toast} from 'sonner';
-import {LoaderCircle} from 'lucide-react';
+import {Loader2} from 'lucide-react';
 import React from 'react';
 import {useLoadingRouter} from '@/providers/navigation-loading-provider';
 import {useProfile} from '@/providers/profile-provider';
-import {updateProfile} from '@/lib/actions/profile';
 import {ProfileFormValues, ProfileSchema} from '@/lib/schemas/auth';
+import {ReusableForm} from '@/components/common/reusable-form';
+import {useUpdateProfile} from '@/hooks/api/profile';
 
-export function ProfileForm() {
+export function FormProfile() {
 	const profile = useProfile()
 	const router = useLoadingRouter();
 	const form = useForm<ProfileFormValues>({
 		resolver: zodResolver(ProfileSchema),
 		defaultValues: {
 			name: profile.name  || '',
-			phone: profile.phone || '',
 		},
 	});
 	
-	const { isValid, isSubmitting, isDirty, errors} = form.formState;
-
+	const { mutateAsync: updateProfile, isPending } = useUpdateProfile();
+	
 	// 2. Define a submit handler.
-	async function onSubmit(values: ProfileFormValues) {
+	async function handleSave(values: ProfileFormValues) {
 		// Do something with the form values.
 		// ✅ This will be type-safe and validated.
 		try {
@@ -62,8 +61,9 @@ export function ProfileForm() {
 	}
 	
 	return (
-			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+		<div className='w-full'>
+			<div className="no-scrollbar overflow-y-auto px-0">
+				<ReusableForm form={form} className='w-full space-y-6'>
 					<div className='grid grid-cols-1 gap-4'>
 						<FormField
 							control={form.control}
@@ -82,16 +82,20 @@ export function ProfileForm() {
 							)}
 						/>
 					</div>
-					<Button type='submit' className='w-full' disabled={!isValid || isSubmitting || !isDirty}>
-						{isSubmitting ? (
-							<span className="flex items-center">
-								<LoaderCircle className="mr-3 animate-spin"/>
-								{'Enviando...'}
-							</span>
-						) : 'Actualizar'
-						}
-					</Button>
-				</form>
-			</Form>
+				</ReusableForm>
+			</div>
+			
+			<div className="flex justify-end py-4">
+				<Button
+					size="sm"
+					disabled={isPending}
+					onClick={form.handleSubmit(handleSave)}
+					className={'w-full'}
+				>
+					{isPending && <Loader2 className="h-4 w-4 animate-spin"/>}
+					{isPending ? 'Actualizando...' : 'Actualizar'}
+				</Button>
+			</div>
+		</div>
 	);
 }

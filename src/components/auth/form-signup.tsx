@@ -55,7 +55,7 @@ export function SignupForm() {
           toast.success('Hecho', {
               description: 'Cuenta creada correctamente',
           });
-          router.push("/complete-profile");
+          router.push("/me");
       } catch (e) {
           toast.error('Error', {
               // @ts-expect-error only

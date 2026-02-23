@@ -1,8 +1,9 @@
 "use client"
 
 import {
+	UserCircle2,
 	ChevronsUpDown,
-} from "lucide-react"
+} from 'lucide-react'
 
 import {
 	Avatar,
@@ -10,11 +11,11 @@ import {
 } from "@/components/ui/avatar"
 import {
 	DropdownMenu,
-	DropdownMenuContent,
+	DropdownMenuContent, DropdownMenuGroup,
 	DropdownMenuItem,
-	DropdownMenuLabel,
+	DropdownMenuLabel, DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from '@/components/ui/dropdown-menu'
 import {
 	SidebarMenu,
 	SidebarMenuButton,
@@ -22,8 +23,9 @@ import {
 	useSidebar,
 } from "@/components/ui/sidebar"
 import {LogoutButton} from '@/components/auth/logout-button';
-import {getInitials, getPublicBusinessImageUrl} from '@/lib/utils';
+import {getInitials} from '@/lib/utils';
 import {useProfile} from '@/providers/profile-provider';
+import Link from 'next/link';
 
 export function NavUser() {
 	const { isMobile } = useSidebar()
@@ -68,24 +70,16 @@ export function NavUser() {
 							</div>
 						</DropdownMenuLabel>
 						{/*<DropdownMenuSeparator />*/}
-						{/*<DropdownMenuGroup>*/}
-						{/*	/!*<DropdownMenuItem>*!/*/}
-						{/*	/!*	<BadgeCheck />*!/*/}
-						{/*	/!*	Account*!/*/}
-						{/*	/!*</DropdownMenuItem>*!/*/}
-						{/*	<DropdownMenuItem>*/}
-						{/*		<CreditCard />*/}
-						{/*		Pago*/}
-						{/*	</DropdownMenuItem>*/}
-						{/*	<DropdownMenuItem>*/}
-						{/*		<Bell />*/}
-						{/*		Notificationes*/}
-						{/*	</DropdownMenuItem>*/}
-						{/*</DropdownMenuGroup>*/}
-						{/*<DropdownMenuSeparator />*/}
+						<DropdownMenuGroup>
+							<DropdownMenuItem asChild>
+								<Link href='/me/profile'  className='mx-3'>
+									<UserCircle2 />
+									Perfil
+								</Link>
+							</DropdownMenuItem>
+						</DropdownMenuGroup>
+						<DropdownMenuSeparator />
 						<DropdownMenuItem>
-							{/*<LogOut />*/}
-							{/*Log out*/}
 							<LogoutButton className={'bg-transparent text-blue-900 hover:bg-transparent cursor-pointer'}>
 								Cerrar
 							</LogoutButton>

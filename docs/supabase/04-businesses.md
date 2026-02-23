@@ -8,7 +8,6 @@ create table public.businesses (
   description text null,
   province character varying null,
   municipality character varying null,
-  phone text null,
   whatsapp text null,
   is_active boolean null default false,
   created_at timestamp with time zone null default now(),

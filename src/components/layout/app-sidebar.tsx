@@ -19,6 +19,7 @@ import {useProfile} from '@/providers/profile-provider';
 import {BusinessSelector} from '@/components/layout/business-selector';
 import {useMemo} from 'react';
 import {useBusiness} from '@/providers/business-provider';
+import Link from 'next/link';
 
 // This is sample data
 const sidebarNavs = [
@@ -88,10 +89,10 @@ export function AppSidebar({ ...props } : React.ComponentProps<typeof Sidebar>) 
 								                   }}
 								                   isActive={activeItem?.title === item.title}
 								>
-									<a href={item.url.replace('[slug]', business.slug)}>
+									<Link href={item.url.replace('[slug]', business.slug)}>
 										<item.icon />
 										<span>{item.title}</span>
-									</a>
+									</Link>
 								</SidebarMenuButton>
 							</SidebarMenuItem>
 						))}
