@@ -7,9 +7,9 @@ export type ServiceItems = {
     description: string
     image_url: string
     price: number
-    final_price: string
+    final_price: string | number
     price_usd: number
-    final_price_usd: string
+    final_price_usd: string | number
     category?: BusinessCategory
     discount_label?: string
     is_featured: boolean

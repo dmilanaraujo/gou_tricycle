@@ -12,7 +12,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { getPublicImageUrl } from '@/lib/utils'
+import {formatPrice, getPublicImageUrl} from '@/lib/utils'
 import { ServiceItems } from '@/types/service-items'
 
 interface ServiceCardProps {
@@ -119,39 +119,9 @@ export function ServiceDetailedCard({ service }: ServiceCardProps) {
                                 </span>
                             </div>
                         )}
-                    </div>
-                    <CardFooter className="flex flex-col items-start text-left w-full gap-1 p-0">
-                        {service.discount_label && (
-                            <Badge variant="destructive" className="text-xs rounded-sm text-white">
-                                {service.discount_label}
-                            </Badge>
-                        )}
-
-                        <div className="flex items-center gap-1 text-sm">
-                            <span className="font-semibold">{service.final_price}</span>
-                            <span className="text-muted-foreground">CUP</span>
-                            <Dot className="h-4 w-4"/>
-                            <span className="font-semibold">{service.final_price_usd}</span>
-                            <span className="text-muted-foreground">USD</span>
-                        </div>
-
-                        {service.discount_label && (
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                        <span className="relative">
-                                            {service.price} CUP
-                                            <span className="absolute inset-x-0 top-1/2 h-px bg-muted-foreground"/>
-                                        </span>
-                                <Dot className="h-3 w-3"/>
-                                <span className="relative">
-                                            {service.price_usd} USD
-                                            <span className="absolute inset-x-0 top-1/2 h-px bg-muted-foreground"/>
-                                        </span>
-                            </div>
-                        )}
-                    </CardFooter>
-                    <div className="flex flex-row gap-1">
-                        {service.format && (
-                            <div>
+                        <div className="flex flex-row gap-1">
+                            {service.format && (
+                                <div>
                                 <span
                                     className="
                                     inline-flex
@@ -168,9 +138,43 @@ export function ServiceDetailedCard({ service }: ServiceCardProps) {
                                   ">
                                   {service.format} {service.format_value}u
                                 </span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <CardFooter className="flex flex-col items-start text-left w-full gap-1 p-0">
+                        {service.discount_label && (
+                            <Badge variant="destructive" className="text-xs rounded-sm text-white">
+                                {service.discount_label}
+                            </Badge>
+                        )}
+
+                        {Number(service.final_price) > 0 && (
+                            <div className="flex items-center gap-1 text-sm">
+                                <span className="font-semibold">{formatPrice(Number(service.final_price), "CUP")}</span>
+                                <span className="text-muted-foreground">CUP</span>
+                                {service.discount_label && (
+                                    <span className="relative ml-1 text-xs font-semibold text-muted-foreground">
+                                    {service.price} CUP
+                                    <span className="absolute inset-x-0 top-1/2 h-px bg-muted-foreground"/>
+                                </span>
+                                )}
+                            </div>
+                         )}
+
+                        {Number(service.final_price_usd) > 0 && (
+                            <div className="flex items-center gap-1 text-sm">
+                                <span className="font-semibold">{formatPrice(Number(service.final_price_usd), "USD")}</span>
+                                <span className="text-muted-foreground">USD</span>
+                                {service.discount_label && (
+                                    <span className="relative ml-1 text-xs font-semibold text-muted-foreground">
+                                    {service.price_usd} USD
+                                    <span className="absolute inset-x-0 top-1/2 h-px bg-muted-foreground"/>
+                                </span>
+                                )}
                             </div>
                         )}
-                    </div>
+                    </CardFooter>
                 </div>
             </div>
         </Card>

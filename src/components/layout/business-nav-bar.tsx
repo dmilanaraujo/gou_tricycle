@@ -31,6 +31,9 @@ interface BusinessNavBarProps {
 
 export default function BusinessNavBar({ business }: BusinessNavBarProps) {
     const [infoOpen, setInfoOpen] = useState(false)
+    const cleanPhone = business.whatsapp.replace(/\D/g, "");
+
+    const whatsappUrl = `https://wa.me/${cleanPhone}`;
 
     const sortedHours = useMemo(() => {
         if (!business.hours?.length) return [];
@@ -60,6 +63,26 @@ export default function BusinessNavBar({ business }: BusinessNavBarProps) {
             currentTime <= (today.close_time ?? "00:00:00")
         );
     }, [business.hours]);
+
+    const handleShare = async () => {
+        const url = `https://cubox.goucorp.com/c/${business.slug}`;
+
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: business.name,
+                    text: `Mira el catálogo de ${business.name}`,
+                    url,
+                });
+            } catch (err) {
+                console.error("Error compartiendo:", err);
+            }
+        } else {
+            // Fallback si el navegador no soporta Web Share
+            navigator.clipboard.writeText(url);
+            alert("Enlace copiado al portapapeles");
+        }
+    };
 
     return (
         <>
@@ -93,7 +116,7 @@ export default function BusinessNavBar({ business }: BusinessNavBarProps) {
                                 className="bg-[#25D366] hover:bg-[#1DA851] text-white border-none"
                             >
                                 <a
-                                    href={`https://wa.me/${business.phone}`}
+                                    href={whatsappUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="flex items-center gap-2"
@@ -103,7 +126,7 @@ export default function BusinessNavBar({ business }: BusinessNavBarProps) {
                                 </a>
                             </Button>
 
-                            <Button variant="outline">
+                            <Button variant="outline" onClick={handleShare} className="cursor-pointer">
                                 <Share2 className="w-4 h-4 mr-2" />
                                 Compartir
                             </Button>
@@ -129,7 +152,7 @@ export default function BusinessNavBar({ business }: BusinessNavBarProps) {
 
                                     <DropdownMenuItem asChild>
                                         <a
-                                            href={`https://wa.me/${business.phone}`}
+                                            href={whatsappUrl}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="flex items-center text-base py-2"
@@ -139,7 +162,7 @@ export default function BusinessNavBar({ business }: BusinessNavBarProps) {
                                         </a>
                                     </DropdownMenuItem>
 
-                                    <DropdownMenuItem className="text-base py-2">
+                                    <DropdownMenuItem className="text-base py-2" onClick={handleShare}>
                                         <Share2 className="w-8 h-8" />
                                         Compartir
                                     </DropdownMenuItem>
