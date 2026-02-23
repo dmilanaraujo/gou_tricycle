@@ -25,6 +25,9 @@ export const SignUpSchema = z.object({
 
 export const ProfileSchema = z.object({
 	name: z.string(),
+});
+
+export const UpdatePhoneSchema = z.object({
 	phone: PhoneSchema,
 });
 
@@ -55,5 +58,6 @@ export const ForgotPasswordSchema = z.object({
 
 export type SignUpFormValues = z.infer<typeof SignUpSchema>;
 export type ProfileFormValues = z.infer<typeof ProfileSchema>;
+export type UpdatePhoneFormValues = z.infer<typeof UpdatePhoneSchema>;
 export type UpdatePasswordValues = z.infer<typeof UpdatePasswordSchema>;
 export type ForgotPasswordFormValues = z.infer<typeof ForgotPasswordSchema>;

@@ -3,7 +3,7 @@ import {
   LoginSchema, SignUpSchema, ForgotPasswordFormValues, ForgotPasswordSchema,
   UpdatePasswordSchema,
   UpdatePasswordValues,
-  SignUpFormValues
+  SignUpFormValues, UpdatePhoneFormValues, UpdatePhoneSchema
 } from '@/lib/schemas/auth';
 import {createAdminClient, createClient} from '@/lib/supabase/server';
 import {SignInWithPasswordCredentials, User} from '@supabase/auth-js';
@@ -80,6 +80,9 @@ export const createUser = async (params: SignUpFormValues): Promise<ActionRespon
       phone,
       password
     });
+    
+    // todo: Se inserta en la tabla profiles con el trigger: `on_auth_user_created_profiles`, funcion: fn_handle_new_user_profiles
+    
     if (errorAuth) {
       redirect('/sign-in');
     }
@@ -140,3 +143,30 @@ export const forgotPassword = async (params: ForgotPasswordFormValues, redirectT
   }
 };
 
+export const updatePhone = async (params: UpdatePhoneFormValues): Promise<ActionResponse<void>> => {
+  const validatedFields = UpdatePhoneSchema.safeParse(params);
+  if (!validatedFields.success) {
+    const errors = formatZodErrors(validatedFields.error);
+    return { success: false, errors };
+  }
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return { success: false, errors: [{ message: 'El usuario no está autenticado' }] }
+    }
+    const { phone } = validatedFields.data;
+    
+    const { error, data } = await supabase.auth.updateUser({ phone });
+    
+    // todo: El phone en la tabla profiles se actualiza con el trigger: `on_auth_user_phone_updated`, funcion: fn_handle_update_phone_user
+    
+    if (error) {
+      return { success: false, errors: formatSupabaseAuthErrors(error) }
+    }
+    return { success: true };
+  } catch (error) {
+    console.log('Unexpected error in updatePhone:', error);
+    throw new Error('Ha ocurrido un error no especificado');
+  }
+};
