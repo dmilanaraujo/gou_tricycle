@@ -301,8 +301,8 @@ export function applyDiscount(
 ) {
     if (!discount || !discount.is_active) {
         return {
-            finalPrice: formatPrice(price, "CUP"),
-            finalPriceUsd: formatPrice(priceUsd, "CUP"),
+            finalPrice: price,
+            finalPriceUsd: priceUsd,
             label: null,
         }
     }
@@ -312,9 +312,9 @@ export function applyDiscount(
         const finalUsd = priceUsd - (priceUsd * discount.value) / 100
 
         return {
-            finalPrice: formatPrice(final, "CUP"),
-            finalPriceUsd: formatPrice(finalUsd, "CUP"),
-            label: `-${discount.value}%`,
+            finalPrice: final,
+            finalPriceUsd: finalUsd,
+            label: `DESCUENTO ${discount.value}%`,
         }
     }
 
@@ -323,20 +323,20 @@ export function applyDiscount(
         const finalUsd = priceUsd - discount.value
 
         return {
-            finalPrice: formatPrice(final, "CUP"),
-            finalPriceUsd: formatPrice(finalUsd, "CUP"),
-            label: `-$${discount.value}`,
+            finalPrice: final,
+            finalPriceUsd: finalUsd,
+            label: `DESCUENTO ${discount.value}%`,
         }
     }
 
     return {
-        finalPrice: formatPrice(price, "CUP"),
-        finalPriceUsd: formatPrice(priceUsd, "CUP"),
+        finalPrice: price,
+        finalPriceUsd: priceUsd,
         label: null,
     }
 }
 
-function formatPrice(value: number, currency: "USD" | "CUP" = "USD",) {
+export function formatPrice(value: number, currency: "USD" | "CUP" = "USD",) {
     return new Intl.NumberFormat('es-CU', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
