@@ -132,7 +132,7 @@ export function downloadTemplate() {
       15,
       5,
       "Servicio",
-      // "SI",
+      "",
       "NO",
       "SVC-00001"
     ],
@@ -142,7 +142,7 @@ export function downloadTemplate() {
       25,
       8,
       "Producto",
-      // "SI",
+      "Dulces test",
       "SI",
       "PRD-00001",
       "unidad",
@@ -190,6 +190,7 @@ export function parseExcelFile(file: File): Promise<ImportServiceRow[]> {
             // is_active: parseBool(row.is_active),
             is_featured: parseBool(row.is_featured),
             sku: String(row.sku ?? ""),
+            business_category_name: String(row.business_category_name ?? ""),
           })
           
           const errors: Record<string, string> = {}
@@ -215,6 +216,7 @@ export function parseExcelFile(file: File): Promise<ImportServiceRow[]> {
                 // is_active: parseBool(row.is_active),
                 is_featured: parseBool(row.is_featured),
                 sku: String(row.sku ?? ""),
+                business_category_name: String(row.business_category_name ?? ""),
               }
           
           const hasExternalId = serviceData.sku && serviceData.sku.trim() !== ""

@@ -7,7 +7,7 @@ import {
     ServicesFilterSchema,
     ServicesFilterValues
 } from '@/lib/schemas/service';
-import {formatSupabaseFunctionErrors, formatSupabasePostgrestErrors, formatZodErrors} from '@/lib/utils';
+import {formatSupabaseFunctionErrors, formatSupabasePostgrestErrors, formatZodErrors, slugify} from '@/lib/utils';
 import {createClient} from '@/lib/supabase/server';
 import {ImportPayloadSchema, ImportPayloadValues} from '@/lib/schemas/product';
 import {z} from 'zod';
@@ -265,13 +265,43 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
     try {
         const parsed = ImportPayloadSchema.safeParse(payload)
         
+      
         if (!parsed.success) {
             return formatError(parsed.error.issues.map(issue => issue.message));
         }
-        
-        const { services, disable_others } = parsed.data
         const supabase = await createClient();
-
+        
+        const { services: servicesAll, disable_others } = parsed.data
+        console.log('servicesAll', servicesAll);
+        const newCategories = servicesAll
+            .filter(s => !!s.business_category_name)
+            .filter(s => !s.business_category_id || s.business_category_id == s.business_category_name)
+            .map(s => ({
+                name: s.business_category_name,
+                slug: slugify(s.business_category_name!),
+                business_id: payload.business_id
+            }));
+        console.log('newCategories', newCategories);
+        
+        const { data: categoriesCreated, error: errorCreatingCategories } = await supabase
+            .from("business_categories")
+            .insert(newCategories)
+            .select("id, name");
+        
+        console.log('categoriesCreated', categoriesCreated);
+        if (errorCreatingCategories) {
+            return formatError(['Error creando las categorias']);
+        }
+        
+        const services = servicesAll.map(s => {
+            const { business_category_name, ...rest } = s;
+            if (s.business_category_id && s.business_category_id != s.business_category_name) return rest;
+            return {
+                ...rest,
+                business_category_id: categoriesCreated?.find(c => c.name === business_category_name)?.id,
+            }
+        })
+        console.log('services', services);
         const { data: { user }, error: userError } = await supabase.auth.getUser();
         
         if (userError || !user) {
@@ -346,6 +376,7 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
                 format_value: s.format_value,
                 min_buy: s.min_buy,
                 sku: null,
+                business_category_id: s.business_category_id,
                 business_id: payload.business_id
             }))
             
@@ -392,6 +423,7 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
                     format_value: s.format_value,
                     min_buy: s.min_buy,
                     sku: s.sku!.trim(),
+                    business_category_id: s.business_category_id,
                     business_id: payload.business_id
                 }))
                 
@@ -425,6 +457,7 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
                         um_value: service.um_value,
                         format: service.format,
                         format_value: service.format_value,
+                        business_category_id: service.business_category_id,
                         min_buy: service.min_buy,
                     })
                     .eq("sku", eid)

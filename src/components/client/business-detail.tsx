@@ -169,7 +169,7 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
                     </div>
 
                     <span>• {business.section?.name}</span>
-                    <span>• {business.categories?.[0]?.name}</span>
+                    <span>• {business.system_categories?.[0]?.name}</span>
                 </div>
 
                 <p className="text-md text-muted-foreground">{business.description}</p>
