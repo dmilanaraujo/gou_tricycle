@@ -28,7 +28,7 @@ import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { EditableCell } from "@/components/import/editable-cell"
-import {type ImportServiceRow, MetaDataService, ProductSchema, UpdateProductStockSchema} from '@/lib/schemas/product'
+import {ImportProductSchema, type ImportServiceRow, MetaDataService, UpdateProductStockSchema} from '@/lib/schemas/product'
 import { Loader2, Upload, AlertCircle } from "lucide-react"
 import {formatZodErrors} from '@/lib/utils';
 import {useImportServices} from '@/hooks/api/service';
@@ -98,7 +98,7 @@ export function ImportDrawer({
                               sku: updated.sku,
                               stock: updated.stock || 0,
                          }) :
-                         ProductSchema.safeParse({
+                         ImportProductSchema.safeParse({
                             name: updated.name,
                             description: updated.description,
                             price: updated.price,
@@ -113,6 +113,8 @@ export function ImportDrawer({
                             min_buy: updated.min_buy,
                             format: updated.format,
                             format_value: updated.format_value,
+                            business_category_id: updated.business_category_id,
+                            business_category_name: updated.business_category_name,
                          })
 
           const errors: Record<string, string> = {}
@@ -202,6 +204,8 @@ export function ImportDrawer({
               min_buy: r.min_buy,
               format: r.format,
               format_value: r.format_value,
+              business_category_id: r.business_category_id,
+              business_category_name: r.business_category_name,
           }))
           result = await importServices({ business_id, services, disable_others: disableOtherToImport });
       }
@@ -243,22 +247,7 @@ export function ImportDrawer({
         ),
         size: 40,
       },
-      // {
-      //   id: "status",
-      //   header: "Estado",
-      //   cell: ({ row }) => (
-      //     <Badge
-      //       variant={
-      //         row.original._status === "update" ? "default" : "secondary"
-      //       }
-      //       className="text-[10px]"
-      //     >
-      //       {row.original._status === "update" ? "Actualizar" : "Nuevo"}
-      //     </Badge>
-      //   ),
-      //   size: 90,
-      // },
-        {
+      {
         accessorKey: "sku",
         header: "SKU",
         cell: ({ row }) => (
@@ -368,6 +357,25 @@ export function ImportDrawer({
                 error={row.original._errors.item_type}
               />
             // </CellSkeletonWrapper>
+        ),
+        size: 120,
+      },
+      {
+        accessorKey: "business_category_id",
+        header: "Categoria",
+        cell: ({ row }) => (
+            <CellSkeletonWrapper  disabled={row.original.item_type == 'service' || updateOnlyStock}>
+              <EditableCell
+                value={String(row.original.business_category_id)}
+                defaultBusinessCategory={row.original.business_category_name || ''}
+                onChange={(v) =>
+                  updateRow(row.original._rowIndex, "business_category_id", v)
+                }
+                type="business_category"
+                disabled={updateOnlyStock}
+                error={row.original._errors.business_category_id}
+              />
+            </CellSkeletonWrapper>
         ),
         size: 120,
       },

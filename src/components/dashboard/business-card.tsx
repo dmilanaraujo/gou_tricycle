@@ -112,7 +112,7 @@ export function BusinessCard({ business, onDelete, onDisable }: BusinessCardProp
 						Destacado
 					</Badge>
 				)}
-				{business.categories.map((cat) => (
+				{business.system_categories.map((cat) => (
 					<Badge
 						key={cat.id}
 						variant="outline"

@@ -46,7 +46,7 @@ export function BusinessCard({business}: BusinessCardProps) {
     const fullLocationLabel = `${municipalityLabel}, ${provinceLabel}`;
     const promotionLabel = promotions.find(pr => pr.value === business.promotion)?.label || business.promotion;
 
-    const categoryName = business.categories?.[0]?.name
+    const categoryName = business.system_categories?.[0]?.name
     const sectionName = business.section?.name
 
     const badgeLabel =
@@ -84,7 +84,7 @@ export function BusinessCard({business}: BusinessCardProps) {
                     )}
 
                     {/* Chip de sección o categoría */}
-                    {(business.section || business.categories?.length) && (
+                    {(business.section || business.system_categories?.length) && (
                         <div className="absolute bottom-2 left-2">
                             <Badge className="text-xs bg-primary/40 text-white backdrop-blur">
                                 {badgeLabel}

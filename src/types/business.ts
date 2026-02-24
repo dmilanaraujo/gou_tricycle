@@ -26,7 +26,8 @@ export type Business = {
     featured: boolean;
     is_active: boolean;
     section: BusinessSection;
-    categories: BusinessSystemCategory[];
+    system_categories: BusinessSystemCategory[];
+    business_categories: BusinessCategory[];
     vehicles?: {
         id: string
         vehicle_type: VehicleTypeEnum

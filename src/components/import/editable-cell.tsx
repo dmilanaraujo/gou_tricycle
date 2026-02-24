@@ -1,8 +1,6 @@
 "use client"
 
-import React from "react"
-
-import { useState, useCallback, useEffect, useRef } from "react"
+import React,{ useState, useCallback, useEffect, useRef } from "react"
 import { Input } from "@/components/ui/input"
 import {
   Select,
@@ -12,16 +10,19 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
-import { cn } from "@/lib/utils"
+import {cn, slugify} from '@/lib/utils'
 import {MeasureUnit} from '@/types';
+import {useBusiness} from '@/providers/business-provider';
+import {Badge} from '@/components/ui/badge';
 
 interface EditableCellProps {
   value: string | number | boolean
   onChange: (value: string | number | boolean) => void
-  type: "text" | "number" | "boolean" | "item_type" | "um"
+  type: "text" | "number" | "boolean" | "item_type" | "um" | "business_category"
   error?: string
   disabled?: boolean
   underline?: boolean
+  defaultBusinessCategory?: string
 }
 
 const measureUnitArray = Object.entries(MeasureUnit).map(([, value]) => ({
@@ -35,7 +36,8 @@ export function EditableCell({
   type,
   error,
   disabled,
-  underline
+  underline,
+  defaultBusinessCategory
 }: EditableCellProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValue] = useState(String(value))
@@ -120,6 +122,12 @@ export function EditableCell({
       </Select>
     )
   }
+  
+  if (type === "business_category") {
+    return (
+      <BusinessCategoryCell value={value.toString()} onChange={(v) => onChange(v)} disabled={disabled || false} defaultValueName={defaultBusinessCategory}/>
+    )
+  }
 
   if (isEditing) {
     return (
@@ -160,5 +168,50 @@ export function EditableCell({
         String(value)
       )}
     </button>
+  )
+}
+
+function BusinessCategoryCell({ value, onChange, disabled, defaultValueName }: { value: string, onChange: (v: string) => void, disabled: boolean, defaultValueName?: string}) {
+  const business = useBusiness();
+  const [valueSelected, setValueSelected] = useState(value);
+  const [categories, setCategories] = useState(business.business_categories || []);
+  
+  useEffect(() => {
+    const defaultCategory = categories.find(c => c.name == defaultValueName);
+    if (defaultCategory) {
+      setValueSelected(defaultCategory.id)
+    } else {
+      if (defaultValueName) {
+        setCategories([{ id: defaultValueName, name: defaultValueName, slug: slugify(defaultValueName) }, ...categories] )
+        setValueSelected(defaultValueName);
+      }
+    }
+  }, []);
+
+  return (
+      <Select
+          value={String(valueSelected)}
+          onValueChange={(v) => {
+            setValueSelected(v);
+            onChange(v)
+          }}
+          disabled={disabled}
+      >
+        <SelectTrigger className="h-8 w-[110px] text-xs">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {categories.map((ft, i) => (
+              <SelectItem key={`cat-${i}`} value={ft.id} className='flex justify-between w-full'>
+                {ft.name}
+                {ft.id == ft.name && (
+                    <Badge variant='outline' className='bg-green-500'>
+                      Nuevo
+                    </Badge>
+                )}
+              </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
   )
 }

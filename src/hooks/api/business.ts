@@ -3,13 +3,9 @@ import {BusinessCategory, BusinessDiscount, PaginationRequest, ResultList} from 
 import {Business} from "@/types/business";
 import {
   createBusiness,
-  createBusinessCategory,
-  createBusinessDiscount, deleteBusiness,
-  deleteBusinessCategories, deleteBusinessDiscount,
-  getBusinessCategories,
-  getBusinessDiscounts,
+  deleteBusiness,
   getBusinesses, updateBusiness,
-  updateBusinessCategory, updateBusinessDiscount, updateStatusBusiness
+  updateStatusBusiness
 } from '@/lib/actions/business';
 import {
   BusinessCategoryValues,
@@ -20,6 +16,8 @@ import {
   UpdateBusinessValues
 } from '@/lib/schemas/business';
 import {updateSettingsCatalog} from '@/lib/actions/business';
+import {createBusinessCategory, deleteBusinessCategories, getBusinessCategories, updateBusinessCategory} from '@/lib/actions/business_category';
+import {createBusinessDiscount, deleteBusinessDiscount, getBusinessDiscounts, updateBusinessDiscount} from '@/lib/actions/business_discount';
 
 type TDataResultBusiness = {
   pageParams: number[];

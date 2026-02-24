@@ -47,6 +47,7 @@ export const ProductsFilterSchema = z.object({
 
 export const ImportProductSchema = ProductSchema.extend({
     item_type: z.enum(["service", "product"]).default("service"),
+    business_category_name: z.string().optional().nullable(),
 });
 
 export const ImportPayloadSchema = z.object({
@@ -92,6 +93,7 @@ export const TEMPLATE_COLUMNS = [
     { header: "price", description: "Precio (número)" },
     { header: "price_usd", description: "Precio en USD (número)" },
     { header: "item_type", description: "Tipo: Servicio o Producto" },
+    { header: "business_category_name", description: "Nombre de la categoría" },
     // { header: "is_active", description: "Activo: SI o NO" },
     { header: "is_featured", description: "Destacado: SI o NO" },
     { header: "sku", description: "SKU - Identificador único (para actualizar existentes, Ej: PRD-00001 o SRV-00002)" },
