@@ -18,6 +18,7 @@ import {
 import {updateSettingsCatalog} from '@/lib/actions/business';
 import {createBusinessCategory, deleteBusinessCategories, getBusinessCategories, updateBusinessCategory} from '@/lib/actions/business_category';
 import {createBusinessDiscount, deleteBusinessDiscount, getBusinessDiscounts, updateBusinessDiscount} from '@/lib/actions/business_discount';
+import {generateMenuPdf} from '@/lib/actions/pdf';
 
 type TDataResultBusiness = {
   pageParams: number[];
@@ -217,6 +218,14 @@ export const useUpdateSettingsCatalog = () => {
   return useMutation({
     mutationFn: async ({ businessId, params }: { businessId: string, params: BusinessSettingsCatalogValues}) => {
       return await updateSettingsCatalog(businessId, params);
+    }
+  });
+};
+
+export const useGenerateMenuPdf = () => {
+  return useMutation({
+    mutationFn: async (input: Business) => {
+      return await generateMenuPdf(input);
     }
   });
 };

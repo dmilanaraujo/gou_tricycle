@@ -183,7 +183,7 @@ export const getBusinessByIdCachedData = cache(async (id: string) => {
   return res.data ?? null
 })
 
-export const getBusinessBySlug = async (slug: string) => {
+export const getBusinessBySlug = async (slug: string): Promise<ActionResponse<Business>> => {
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -205,8 +205,8 @@ export const getBusinessBySlug = async (slug: string) => {
       .eq("is_active", true)
       .single();
 
-  if (error || !data) {
-    return { success: false, data: null };
+  if (error) {
+    return { success: false, errors: formatSupabasePostgrestErrors(error) };
   }
 
   return {

@@ -12,6 +12,7 @@ import {SidebarInset, SidebarProvider, SidebarTrigger} from '@/components/ui/sid
 import {Separator} from '@/components/ui/separator';
 import {LoadingOverlay} from '@/components/common/loading-overlay';
 import {getProfileCachedData} from '@/lib/actions/profile';
+import GenerateMenuPdfButton from '@/components/common/pdf/generate-menu-pdf-button';
 
 interface ManagerBusinessLayoutProps {
   children: React.ReactNode;
@@ -48,14 +49,15 @@ export default async function ManagerBusinessLayout({ params, children }: Readon
             <SidebarProvider>
                 <AppSidebar/>
                 <SidebarInset>
-                    <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-                        <div className="flex items-center gap-2 px-4">
+                    <header className="flex justify-between h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 pr-4">
+                        <div className="flex items-center gap-2 px-4 ">
                             <SidebarTrigger className="-ml-1" />
                             <Separator
                                 orientation="vertical"
                                 className="mr-2 data-[orientation=vertical]:h-4"
                             />
                         </div>
+                        <GenerateMenuPdfButton/>
                     </header>
                     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                         <LoadingOverlay/>
