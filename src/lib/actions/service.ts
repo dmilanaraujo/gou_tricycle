@@ -272,7 +272,7 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
         const supabase = await createClient();
         
         const { services: servicesAll, disable_others } = parsed.data
-        console.log('servicesAll', servicesAll);
+
         const newCategories = servicesAll
             .filter(s => !!s.business_category_name)
             .filter(s => !s.business_category_id || s.business_category_id == s.business_category_name)
@@ -281,14 +281,12 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
                 slug: slugify(s.business_category_name!),
                 business_id: payload.business_id
             }));
-        console.log('newCategories', newCategories);
         
         const { data: categoriesCreated, error: errorCreatingCategories } = await supabase
             .from("business_categories")
             .insert(newCategories)
             .select("id, name");
         
-        console.log('categoriesCreated', categoriesCreated);
         if (errorCreatingCategories) {
             return formatError(['Error creando las categorias']);
         }
@@ -301,7 +299,7 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
                 business_category_id: categoriesCreated?.find(c => c.name === business_category_name)?.id,
             }
         })
-        console.log('services', services);
+
         const { data: { user }, error: userError } = await supabase.auth.getUser();
         
         if (userError || !user) {

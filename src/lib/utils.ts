@@ -272,6 +272,10 @@ export function getPublicServiceImageUrl(path: string) {
     return getPublicImageUrl('service_images', path);
 }
 
+export function getPublicMenuUrl(slug: string) {
+    return getPublicImageUrl('restaurant_menus', `${slug}/menu.pdf`);
+}
+
 export const showActionErrors = (errors?: ActionError[], toastId?: string|number) => {
     errors?.forEach((error) => {
         toast.error('Error', {
