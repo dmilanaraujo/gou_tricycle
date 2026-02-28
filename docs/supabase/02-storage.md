@@ -39,8 +39,7 @@ CREATE POLICY "Negocios pueden subir imágenes de sus servicios y productos"
 ON storage.objects FOR INSERT
 TO authenticated
 WITH CHECK (
-  bucket_id = 'service_images' AND
-  (storage.foldername(name))[1] = auth.uid()::text
+  bucket_id = 'service_images'
 );
 
 -- Política para leer imágenes (público)
@@ -54,7 +53,6 @@ CREATE POLICY "Negocios pueden eliminar las imágenes de sus servicios y product
 ON storage.objects FOR DELETE
 TO authenticated
 USING (
-  bucket_id = 'service_images' AND
-  (storage.foldername(name))[1] = auth.uid()::text
+  bucket_id = 'service_images'
 );
 ```

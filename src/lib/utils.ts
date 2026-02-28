@@ -179,7 +179,7 @@ export const combustionTypes: { value: VehicleType; label: string }[] = [
 
 export async function optimizeImage(
     file: File,
-    userId: string,
+    businessId: string,
     type: ImageType,
     extraPath?: string,
     imageIndex?: number
@@ -220,8 +220,8 @@ export async function optimizeImage(
         
         // Crear nombres únicos para Supabase
         const timestamp = Date.now();
-        const thumbnailName = `${userId}${extraPath}/thumb_${!!imageIndex ? imageIndex + '_' : ''}${timestamp}.webp`;
-        const fullSizeName = `${userId}${extraPath}/full_${!!imageIndex ? imageIndex + '_' : ''}${timestamp}.webp`;
+        const thumbnailName = `${businessId}${extraPath}/thumb_${!!imageIndex ? imageIndex + '_' : ''}${timestamp}.webp`;
+        const fullSizeName = `${businessId}${extraPath}/full_${!!imageIndex ? imageIndex + '_' : ''}${timestamp}.webp`;
         
         // Convertir Blobs a Files
         const thumbnailFile = type == ImageType.normal ? new File([thumbnailBlob], thumbnailName, {
