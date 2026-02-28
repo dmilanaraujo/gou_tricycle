@@ -54,7 +54,7 @@ export function ImportDrawer({
   onImportComplete,
 }: ImportDrawerProps) {
   const business = useBusiness();
-  const [rows, setRows] = useState<ImportServiceRow[]>(initialRows)
+  const [rows, setRows] = useState<ImportServiceRow[]>([])
   const [updateOnlyStock, setUpdateOnlyStock] = useState(false)
   const [disableOtherToImport, setDisableOtherToImport] = useState(false)
   const [importResult, setImportResult] = useState<{
@@ -66,15 +66,25 @@ export function ImportDrawer({
   const { mutateAsync: importServices, isPending: isPendingImport } = useImportServices();
   const { mutateAsync: updateStocks, isPending: isPendingUpdateStocks } = useUpdateStocks();
 
+  const formattedRows = useMemo(() => {
+      return initialRows.map((row) => {
+          const defaultCategory = business.business_categories.find(c => c.name == row.business_category_name);
+          return {
+              ...row,
+              business_category_id: defaultCategory ? defaultCategory.id : '',
+          }
+      })
+  }, [initialRows])
+
   // Reset rows when drawer opens with new data
   useState(() => {
-    setRows(initialRows)
+    setRows(formattedRows)
   })
 
   // Keep rows in sync with initialRows
   useMemo(() => {
-    if (initialRows.length > 0) {
-      setRows(initialRows)
+    if (formattedRows.length > 0) {
+      setRows(formattedRows)
       setImportResult(null)
     }
   }, [initialRows])

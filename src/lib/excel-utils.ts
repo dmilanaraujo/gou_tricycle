@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx-js-style'
 import {type ImportServiceRow, ImportProductSchema, TEMPLATE_COLUMNS, ImportProductValues,} from './schemas/product'
 import {formatZodErrors} from '@/lib/utils';
-import {ServiceRow} from '@/types';
+import {MeasureUnit, ServiceRow} from '@/types';
 
 const headerStyle = {
   fill: {
@@ -181,7 +181,6 @@ export function parseExcelFile(file: File): Promise<ImportServiceRow[]> {
         
         const rows: ImportServiceRow[] = dataRows.map((row, index) => {
           const parsed = ImportProductSchema.safeParse({
-            // business_id: String(row.business_id ?? ""),
             name: String(row.name ?? ""),
             description: String(row.description ?? ""),
             price: row.price ?? 0,
@@ -191,6 +190,12 @@ export function parseExcelFile(file: File): Promise<ImportServiceRow[]> {
             is_featured: parseBool(row.is_featured),
             sku: String(row.sku ?? ""),
             business_category_name: String(row.business_category_name ?? ""),
+            stock: row.stock ?? 0,
+            um: String(row.um ?? ""),
+            um_value: row.um_value ?? 0,
+            format: String(row.format ?? ""),
+            format_value: row.format_value ?? 0,
+            min_buy: row.min_buy ?? 0,
           })
           
           const errors: Record<string, string> = {}
@@ -217,6 +222,12 @@ export function parseExcelFile(file: File): Promise<ImportServiceRow[]> {
                 is_featured: parseBool(row.is_featured),
                 sku: String(row.sku ?? ""),
                 business_category_name: String(row.business_category_name ?? ""),
+                stock: Number(row.stock) || 0,
+                um: row.um ? row.um as MeasureUnit : undefined,
+                um_value: Number(row.um_value) || 0,
+                format: row.format ? row.format as MeasureUnit : undefined,
+                format_value: Number(row.format_value) || 0,
+                min_buy: Number(row.min_buy) || 0,
               }
           
           const hasExternalId = serviceData.sku && serviceData.sku.trim() !== ""

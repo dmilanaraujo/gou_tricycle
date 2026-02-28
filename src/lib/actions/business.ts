@@ -125,7 +125,7 @@ export const getBusinesses = async (
   }
 }
 
-export const getBusinessById = async (id: string) => {
+export const getBusinessById = async (id: string): Promise<ActionResponse<Business>> => {
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -141,7 +141,7 @@ export const getBusinessById = async (id: string) => {
         name,
         slug
       ),
-      system_categories:business_system_categories!inner(
+      system_categories:business_system_categories(
         category:system_categories!inner(
           id,
           name,
@@ -157,7 +157,7 @@ export const getBusinessById = async (id: string) => {
       .single();
 
   if (error || !data) {
-    return { success: false, data: null };
+    return { success: false };
   }
 
   return {
