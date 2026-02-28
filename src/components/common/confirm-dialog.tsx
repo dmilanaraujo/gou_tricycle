@@ -1,41 +1,39 @@
 'use client'
 
 import {
-	AlertDialog,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogOverlay,
-	AlertDialogTitle,
-	AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
-import {Button} from '@/components/ui/button'
-import {Loader2, LucideIcon, X} from 'lucide-react'
-import {ReactNode} from 'react'
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Loader2, LucideIcon, X } from 'lucide-react'
+import { ReactNode } from 'react'
 
-export interface ConfirmDialogProps
-{
-	/** controla si el diálogo está abierto */
+export interface ConfirmDialogProps {
 	isOpen: boolean
-	/** callback cuando cambia el estado del diálogo */
 	onOpenChange: (open: boolean) => void
-	/** número de items seleccionados */
 	itemsCount?: number
-	/** callback cuando se confirma eliminar */
 	onConfirm: () => void
 	onCancel?: () => void
-	/** si está en proceso de eliminar */
 	isLoading?: boolean
-	/** etiqueta del botón trigger */
 	dialogTitle?: string
 	triggerLabel?: string
 	loadingText?: string
 	okButtonText?: string
 	cancelButtonText?: string
-	buttonTriggerVariant?:  'link' | 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | null | undefined
-	/** contenido adicional en la descripción */
+	buttonTriggerVariant?:
+		| 'link'
+		| 'default'
+		| 'destructive'
+		| 'outline'
+		| 'secondary'
+		| 'ghost'
+		| null
+		| undefined
 	description?: ReactNode
 	ButtonIcon?: LucideIcon
 	hideTrigger?: boolean
@@ -46,6 +44,7 @@ export function ConfirmDialog({
 	                              onOpenChange,
 	                              itemsCount,
 	                              onConfirm,
+	                              onCancel,
 	                              isLoading = false,
 	                              triggerLabel = 'Realizar la acción sobre',
 	                              dialogTitle,
@@ -55,48 +54,43 @@ export function ConfirmDialog({
 	                              cancelButtonText,
 	                              buttonTriggerVariant,
 	                              ButtonIcon,
-	                              hideTrigger
+	                              hideTrigger,
                               }: ConfirmDialogProps) {
 	return (
-		<AlertDialog open={isOpen} onOpenChange={onOpenChange}>
+		<Dialog open={isOpen} onOpenChange={onOpenChange}>
 			{!hideTrigger && (
-				<AlertDialogTrigger asChild>
+				<DialogTrigger asChild>
 					<Button variant={buttonTriggerVariant || 'outline'} size="sm">
-						{!!ButtonIcon && <ButtonIcon className="h-4 w-4"/>}
-						{triggerLabel} {(itemsCount || 0) > 0 ? `${itemsCount} registro(s)` : ''}
+						{!!ButtonIcon && <ButtonIcon className="h-4 w-4 mr-2" />}
+						{triggerLabel}{' '}
+						{(itemsCount || 0) > 0 ? `${itemsCount} registro(s)` : ''}
 					</Button>
-				</AlertDialogTrigger>
+				</DialogTrigger>
 			)}
 			
-			<AlertDialogOverlay className="backdrop-blur-0"/>
-			
-			<AlertDialogContent className="rounded-lg p-0">
-				<AlertDialogCancel
-					asChild
-					className="border-0 shadow-none cursor-pointer"
-				>
-					<button
-						className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100 transition-colors"
-						onClick={() => onOpenChange(false)}
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle className="py-2">
+						{dialogTitle || '¿Estás completamente seguro?'}
+					</DialogTitle>
+					
+					<DialogDescription>
+						{description}
+					</DialogDescription>
+				</DialogHeader>
+				
+				<DialogFooter>
+					<Button
+						variant="outline"
+						onClick={() => {
+							onCancel?.()
+							onOpenChange(false)
+						}}
 						disabled={isLoading}
 					>
-						<X className="h-5 w-5 text-gray-500"/>
-					</button>
-				</AlertDialogCancel>
-				
-				<AlertDialogHeader>
-					<AlertDialogTitle className="border-b p-4">
-						{dialogTitle || '¿Estás completamente seguro?'}
-					</AlertDialogTitle>
-					<AlertDialogDescription className="p-4">
-						{description}
-					</AlertDialogDescription>
-				</AlertDialogHeader>
-				
-				<AlertDialogFooter className="border-t p-4">
-					<AlertDialogCancel className="cursor-pointer" disabled={isLoading}>
 						{cancelButtonText || 'Cancelar'}
-					</AlertDialogCancel>
+					</Button>
+					
 					<Button
 						variant="destructive"
 						onClick={onConfirm}
@@ -104,14 +98,15 @@ export function ConfirmDialog({
 					>
 						{isLoading ? (
 							<div className="flex items-center gap-2">
-								<Loader2 className="h-4 w-4 text-red-600 animate-spin"/>
-								{loadingText}...
+								<Loader2 className="h-4 w-4 text-white animate-spin" />
+								{loadingText || 'Procesando'}...
 							</div>
-						) : (okButtonText || 'Aceptar')
-						}
+						) : (
+							 okButtonText || 'Aceptar'
+						 )}
 					</Button>
-				</AlertDialogFooter>
-			</AlertDialogContent>
-		</AlertDialog>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
 	)
 }
