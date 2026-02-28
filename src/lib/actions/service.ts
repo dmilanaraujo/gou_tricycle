@@ -10,7 +10,8 @@ import {
 import {formatSupabaseFunctionErrors, formatSupabasePostgrestErrors, formatZodErrors, slugify} from '@/lib/utils';
 import {createClient} from '@/lib/supabase/server';
 import {ImportPayloadSchema, ImportPayloadValues} from '@/lib/schemas/product';
-import {z} from 'zod';
+import {revalidatePath} from 'next/cache';
+import {getBusinessById} from '@/lib/actions/business';
 
 const constraintMap = {
     'services_business_id_fkey': 'El negocio que desea asociar no existe',
@@ -272,23 +273,40 @@ export async function importServices(payload: ImportPayloadValues): Promise<Impo
         const supabase = await createClient();
         
         const { services: servicesAll, disable_others } = parsed.data
+        
+        const response = await getBusinessById(payload.business_id);
+        if (!response.success || !response.data) {
+            console.log('getBusinnes error', response);
+            return formatError(['No se pudo obtener el negocio']);
+        }
+        const uniqueNames = Array.from(
+            new Set(
+                servicesAll
+                    .filter(s => !!s.business_category_name)
+                    .filter(s => !s.business_category_id || s.business_category_id == s.business_category_name)
+                    .map(s => s.business_category_name!)
+            )
+        );
 
-        const newCategories = servicesAll
-            .filter(s => !!s.business_category_name)
-            .filter(s => !s.business_category_id || s.business_category_id == s.business_category_name)
-            .map(s => ({
-                name: s.business_category_name,
-                slug: slugify(s.business_category_name!),
-                business_id: payload.business_id
-            }));
+        const newCategories = uniqueNames.map(name => ({
+            name,
+            slug: slugify(name),
+            business_id: payload.business_id
+        }));
         
-        const { data: categoriesCreated, error: errorCreatingCategories } = await supabase
-            .from("business_categories")
-            .insert(newCategories)
-            .select("id, name");
-        
-        if (errorCreatingCategories) {
-            return formatError(['Error creando las categorias']);
+        const categoriesCreated: {id: string; name: string}[] = [];
+        if (newCategories.length > 0) {
+            const { data, error: errorCreatingCategories } = await supabase
+                .from("business_categories")
+                .insert(newCategories)
+                .select("id, name");
+            
+            if (errorCreatingCategories) {
+                console.log('errorCreatingCategories', errorCreatingCategories);
+                return formatError(['No se pudieron crear las categorias']);
+            }
+            categoriesCreated.push(...data);
+            revalidatePath(`/me/${response.data.slug}`, 'layout');
         }
         
         const services = servicesAll.map(s => {
