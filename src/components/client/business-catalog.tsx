@@ -1,21 +1,10 @@
 "use client"
 
-import Image from "next/image"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { FeaturedPromoCard } from "@/components/client/featured-promo-card"
-import {ArrowDownIcon, MapPin, Share, Share2, StarIcon} from "lucide-react"
-import { getPublicImageUrl } from "@/lib/utils"
 import { municipalities, provinces } from "@/lib/data/locations"
 import * as React from "react";
-import {ReviewInput} from "@/components/client/review-input";
-import {FeaturedOffersCarousel} from "@/components/client/featured-offers-carousel";
-import {ScrollableTabs} from "@/components/client/scrollable-tabs";
 import {useState} from "react";
-import {Business, Product} from "@/types";
-import {Reviews} from "@/types/reviews";
+import {Business} from "@/types";
 import {ServiceItems} from "@/types/service-items";
-import {ServiceCard} from "@/components/client/service-card";
 import {ServiceDetailedCard} from "@/components/client/service-detailed-card";
 
 export default function BusinessCatalog({ business, products }: {business: Business, products: ServiceItems[]}) {
@@ -179,6 +168,7 @@ export default function BusinessCatalog({ business, products }: {business: Busin
                             {category.products.map(product => (
                                 <ServiceDetailedCard
                                     key={product.id}
+                                    business={business}
                                     service={product}
                                 />
                             ))}

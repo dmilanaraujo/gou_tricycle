@@ -31,7 +31,7 @@ export function UpdatePhoneForm() {
 	const form = useForm<UpdatePhoneFormValues>({
 		resolver: zodResolver(UpdatePhoneSchema),
 		defaultValues: {
-			phone: formatPhone(profile.phone),
+			phone: formatPhone(profile?.phone || ''),
 		},
 	});
 	
@@ -92,10 +92,9 @@ export function UpdatePhoneForm() {
 			
 			<div className="flex justify-end py-4">
 				<Button
-					size="sm"
 					disabled={isPending}
 					onClick={form.handleSubmit(handleSave)}
-					className={'w-full'}
+					className={'w-full md:w-auto'}
 				>
 					{isPending && <Loader2 className="h-4 w-4 animate-spin"/>}
 					{isPending ? 'Actualizando...' : 'Actualizar'}

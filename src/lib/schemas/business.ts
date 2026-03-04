@@ -1,5 +1,5 @@
 import {z} from 'zod'
-import {VehicleTypeEnum} from '@/types';
+import {ActiveStatus, VehicleTypeEnum} from '@/types';
 import {isAfterOrEqual, isAfterToday} from '@/lib/utils';
 import {startOfDay} from 'date-fns';
 import {PhoneSchema} from '@/lib/schemas/auth';
@@ -12,6 +12,7 @@ export const BusinessSchema = z.object({
 	municipality: z.string({ error: 'El municipio es requerido' }).min(1),
 	description: z.string().optional(),
 	address: z.string().optional(),
+	profile_id: z.string().optional(),
 });
 
 export const UpdateBusinessSchema = BusinessSchema.partial().extend({
@@ -28,6 +29,12 @@ export const BusinessFiltersSchema = z.object({
 	q: z.string().optional().nullable(),
 	is_active: z.boolean().optional().nullable(),
 	only_logged_user: z.boolean().optional().nullable(),
+	profile_id: z.string().optional().nullable(),
+	name: z.string().optional().nullable(),
+	statusFilters: z.object({
+		[ActiveStatus.active]: z.boolean().optional().nullable(),
+		[ActiveStatus.inactive]: z.boolean().optional().nullable(),
+	}).optional().nullable(),
 })
 
 export const BusinessCategorySchema = z.object({

@@ -1,7 +1,7 @@
 "use client";
 
 import {cn} from '@/lib/utils';
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import {
 	FileArchiveIcon,
 	FileAudioIcon,
@@ -601,7 +601,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
 			[onFilesChange],
 		);
 		
-		const RootPrimitive = asChild ? Slot : "div";
+		const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 		
 		return (
 			<DirectionContext.Provider value={dir}>
@@ -754,7 +754,7 @@ const FileUploadDropzone = React.forwardRef<
 		[context.inputRef, propsRef.current.onKeyDown],
 	);
 	
-	const DropzonePrimitive = asChild ? Slot : "div";
+	const DropzonePrimitive = asChild ? SlotPrimitive.Slot : "div";
 	
 	return (
 		<DropzonePrimitive
@@ -810,7 +810,7 @@ const FileUploadTrigger = React.forwardRef<
 		[context.inputRef, propsRef.current],
 	);
 	
-	const TriggerPrimitive = asChild ? Slot : "button";
+	const TriggerPrimitive = asChild ? SlotPrimitive.Slot : "button";
 	
 	return (
 		<TriggerPrimitive
@@ -850,7 +850,7 @@ const FileUploadList = React.forwardRef<HTMLDivElement, FileUploadListProps>(
 		
 		if (!shouldRender) return null;
 		
-		const ListPrimitive = asChild ? Slot : "div";
+		const ListPrimitive = asChild ? SlotPrimitive.Slot : "div";
 		
 		return (
 			<ListPrimitive
@@ -939,7 +939,7 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
 		                       ? "Upload complete"
 		                       : "Ready to upload";
 		
-		const ItemPrimitive = asChild ? Slot : "div";
+		const ItemPrimitive = asChild ? SlotPrimitive.Slot : "div";
 		
 		return (
 			<FileUploadItemContext.Provider value={itemContext}>
@@ -1096,7 +1096,7 @@ const FileUploadItemPreview = React.forwardRef<
 	
 	if (!itemContext.fileState) return null;
 	
-	const ItemPreviewPrimitive = asChild ? Slot : "div";
+	const ItemPreviewPrimitive = asChild ? SlotPrimitive.Slot : "div";
 	
 	return (
 		<ItemPreviewPrimitive
@@ -1133,7 +1133,7 @@ const FileUploadItemMetadata = React.forwardRef<
 	
 	if (!itemContext.fileState) return null;
 	
-	const ItemMetadataPrimitive = asChild ? Slot : "div";
+	const ItemMetadataPrimitive = asChild ? SlotPrimitive.Slot : "div";
 	
 	return (
 		<ItemMetadataPrimitive
@@ -1189,7 +1189,7 @@ const FileUploadItemProgress = React.forwardRef<
 	
 	if (!itemContext.fileState) return null;
 	
-	const ItemProgressPrimitive = asChild ? Slot : "div";
+	const ItemProgressPrimitive = asChild ? SlotPrimitive.Slot : "div";
 	
 	if (circular) {
 		if (!!itemContext.fileState.file.image || itemContext.fileState.status === "success") return null;
@@ -1337,7 +1337,7 @@ const FileUploadItemDelete = React.forwardRef<
 	
 	if (!itemContext.fileState) return null;
 	
-	const ItemDeletePrimitive = asChild ? Slot : "button";
+	const ItemDeletePrimitive = asChild ? SlotPrimitive.Slot : "button";
 	if (isDeleting) {
 		return null;
 	}
@@ -1388,7 +1388,7 @@ const FileUploadClear = React.forwardRef<
 	
 	if (!shouldRender) return null;
 	
-	const ClearPrimitive = asChild ? Slot : "button";
+	const ClearPrimitive = asChild ? SlotPrimitive.Slot : "button";
 	
 	return (
 		<ClearPrimitive
@@ -1404,7 +1404,6 @@ const FileUploadClear = React.forwardRef<
 	);
 });
 FileUploadClear.displayName = CLEAR_NAME;
-
 
 interface FileUploadItemPrimaryProps
 	extends React.ComponentPropsWithoutRef<"span"> {
@@ -1426,7 +1425,7 @@ const FileUploadItemPrimary = React.forwardRef<
 	// 	return null;
 	// }
 	
-	const ItemPrimaryPrimitive = asChild ? Slot : "span";
+	const ItemPrimaryPrimitive = asChild ? SlotPrimitive.Slot : "span";
 	
 	const isFilePrimary = itemContext.fileState.file.primary || itemContext.fileState.file.image?.primary;
 	return (

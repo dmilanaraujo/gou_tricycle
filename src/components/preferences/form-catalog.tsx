@@ -82,7 +82,7 @@ export function CatalogForm() {
 													await copyToClipboard(`${baseUrl}/c/${field.value}`)
 												}}
 											>
-												{isCopied ? <Check /> : <Copy />}
+												{isCopied ? <Check/> : <Copy/>}
 											</InputGroupButton>
 										</InputGroupAddon>
 									</InputGroup>
@@ -92,15 +92,17 @@ export function CatalogForm() {
 						)}
 					/>
 				</div>
-				<Button type="submit" className="w-full" disabled={!isValid || isSubmitting}>
-					{isSubmitting ? (
-						<span className="flex items-center">
-						<LoaderCircle  className="mr-3 animate-spin"/>
+				<div className="flex justify-end py-4">
+					<Button type="submit" className="w-full md:w-auto" disabled={!isValid || isSubmitting}>
+						{isSubmitting ? (
+							<span className="flex items-center">
+						<LoaderCircle className="mr-3 animate-spin"/>
 							Enviando...
 					</span>
-					) : 'Actualizar' }
-				</Button>
+						) : 'Actualizar'}
+					</Button>
+				</div>
 			</form>
 		</Form>
-	);
+);
 }

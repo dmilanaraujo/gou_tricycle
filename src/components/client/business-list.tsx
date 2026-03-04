@@ -1,8 +1,5 @@
 import { Frown } from 'lucide-react';
-import { DriverCard } from './driver-card';
 import { Skeleton } from '../ui/skeleton';
-import type { Driver } from '@/types';
-import {Item, ItemActions, ItemContent, ItemGroup, ItemMedia, ItemTitle} from '@/components/ui/item';
 import {BusinessCard} from "@/components/client/business-card";
 import {Business} from "@/types/business";
 

@@ -1,25 +1,18 @@
-import { notFound } from "next/navigation"
-import { getServiceById } from "@/lib/actions/service"
-import {Business, Product} from "@/types"
-import { Metadata } from "next"
-import ProductPageClient from "@/components/client/product-page-client";
-import {getBusinessById} from "@/lib/actions/business";
+import {getBusinessBySlugCachedData} from '@/lib/actions/business';
 import {listProducts} from "@/lib/actions/product";
 import {applyDiscount} from "@/lib/utils";
 import BusinessCatalog from "@/components/client/business-catalog";
-import NavBar from "@/components/layout/nav-bar";
-import FooterSection from "@/components/layout/footer-section";
 
 /* PAGE */
 export default async function Page({
                                        params,
                                    }: {
-    params: Promise<{ businessId: string }>
+    params: Promise<{ slug: string }>
 }) {
-    const { businessId } = await params
+    const { slug } = await params
 
-    const res = await getBusinessById(businessId)
-    const response = await listProducts({business_id: businessId, page: 0, limit: 1000})
+    const business = await getBusinessBySlugCachedData(slug)
+    const response = await listProducts({business_id: business?.id, page: 0, limit: 1000})
 
     const rawProducts = response.success
         ? response.data
@@ -32,7 +25,7 @@ export default async function Page({
             const name = p.name ?? ""
 
             const { finalPrice, finalPriceUsd, label } = applyDiscount(price, price_usd, p.discount)
-            const primaryImage = p.images?.find(img => img.primary === true)
+            const primaryImage = p.images?.find(img => img.primary)
 
             return {
                 id: p.id,
@@ -57,6 +50,6 @@ export default async function Page({
         }) : [];
 
     return (
-        <BusinessCatalog products={allProducts} business={res.data}/>
+        <BusinessCatalog products={allProducts} business={business!}/>
     )
 }

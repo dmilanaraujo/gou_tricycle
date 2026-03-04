@@ -15,7 +15,6 @@ import {useState} from "react";
 import {Business, Product} from "@/types";
 import {Reviews} from "@/types/reviews";
 import {ServiceItems} from "@/types/service-items";
-import {ServiceCard} from "@/components/client/service-card";
 import {ServiceDetailedCard} from "@/components/client/service-detailed-card";
 
 const WhatsAppIcon = () => (
@@ -329,7 +328,7 @@ export default function BusinessDetail({ business, reviews, products, featuredIt
 
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 items-stretch">
                                 {category.products.map(product => (
-                                    <ServiceDetailedCard key={product.id} service={product}/>
+                                    <ServiceDetailedCard key={product.id} business={business} service={product}/>
                                 ))}
                             </div>
                         </section>

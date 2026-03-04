@@ -17,6 +17,7 @@ import {NavUser} from '@/components/auth/nav-user';
 import {LayoutDashboard, Plus} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {getProfileCachedData} from '@/lib/actions/profile';
+import {getBusinessesCachedData} from '@/lib/actions/business';
 
 interface ManagerLayoutProps {
   children: React.ReactNode;
@@ -24,7 +25,11 @@ interface ManagerLayoutProps {
 
 export default async function CreateBusinessLayout({ children }: Readonly<ManagerLayoutProps>) {
   const profile = await getProfileCachedData();
-  const hasBusiness = (profile?.businesses?.length || 0) > 0;
+  const businesses = await getBusinessesCachedData({
+      only_logged_user: !profile?.is_admin,
+      limit: 100
+  });
+  const hasBusiness = (businesses?.length || 0) > 0;
   return (
           <SidebarProvider>
               <Sidebar collapsible="icon">
@@ -38,7 +43,7 @@ export default async function CreateBusinessLayout({ children }: Readonly<Manage
                                           <Plus className="size-4" />
                                       </div>
                                       <div className="grid flex-1 text-left text-sm leading-tight">
-                                          <a className="truncate font-medium" href='/me/create'>{hasBusiness ? 'Crear negocio' : 'Crear su primer negocio'}</a>
+                                          <a className="truncate font-medium" href='/me/create'>{hasBusiness || profile?.is_admin ? 'Crear negocio' : 'Crear su primer negocio'}</a>
                                           {/*<span className="truncate text-xs">Enterprise</span>*/}
                                       </div>
                                   </Button>
@@ -54,7 +59,7 @@ export default async function CreateBusinessLayout({ children }: Readonly<Manage
                                       <SidebarMenuButton asChild>
                                           <a href={'/me'}>
                                               <LayoutDashboard />
-                                              <span>Mis negocios</span>
+                                              <span>{profile?.is_admin ? 'Negocios' : 'Mis negocios'}</span>
                                           </a>
                                       </SidebarMenuButton>
                                   </SidebarMenuItem>

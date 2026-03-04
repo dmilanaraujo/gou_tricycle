@@ -2,7 +2,6 @@
 
 import { UseFormReturn} from 'react-hook-form';
 
-import { Button } from '@/components/ui/button';
 import {
 	FormControl, FormDescription,
 	FormField,
@@ -11,7 +10,6 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {LoaderCircle} from 'lucide-react';
 import React from 'react';
 import {NativeSelect, NativeSelectOption} from '@/components/ui/native-select';
 import {municipalities, provinces} from '@/lib/data/locations';
@@ -20,19 +18,40 @@ import {PhoneInput} from '@/components/ui/phone-input';
 import {BusinessFormValues} from '@/lib/schemas/business';
 import { ReusableForm } from '../common/reusable-form';
 import {useGetSections} from '@/hooks/api/section';
+import {useProfile} from '@/providers/profile-provider';
+import {ProfileSelector} from '@/components/common/profile-selector';
 
 interface BusinessFormProps {
 	form: UseFormReturn<BusinessFormValues>
+	isEdit?: boolean
 }
 
-export function BusinessForm({form}: BusinessFormProps) {
+export function BusinessForm({form, isEdit = false}: BusinessFormProps) {
+	const profile = useProfile();
 	const { data: sections, isLoading: isLoadingSections } = useGetSections();
-	// const { isValid, isSubmitting, isDirty, errors} = form.formState;
 	const provinceValue = form.watch('province');
 	
 	return (
 		<ReusableForm form={form} className='w-full space-y-6'>
 			<div className='grid grid-cols-1 gap-4'>
+				{(profile.is_admin && !isEdit) && (
+					<FormField
+						control={form.control}
+						name="profile_id"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Usuario</FormLabel>
+								<FormControl>
+									<ProfileSelector
+										value={field.value}
+										onChange={field.onChange}
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+				)}
 				<FormField
 					control={form.control}
 					name='name'
@@ -58,7 +77,7 @@ export function BusinessForm({form}: BusinessFormProps) {
 						<FormItem>
 							<FormLabel>Tipo de negocio<span className="text-red-600">*</span></FormLabel>
 							<FormControl>
-								<NativeSelect {...field} classNameContainer={'col-span-2 w-full'}>
+								<NativeSelect {...field} className={'col-span-2 w-full'}>
 									<NativeSelectOption value="">Seleccione...</NativeSelectOption>
 									{sections?.map(p => (
 										<NativeSelectOption key={p.id} value={p.id}>{p.name}</NativeSelectOption>
@@ -98,7 +117,7 @@ export function BusinessForm({form}: BusinessFormProps) {
 						<FormItem>
 							<FormLabel>Provincia<span className="text-red-600">*</span></FormLabel>
 							<FormControl>
-								<NativeSelect {...field} classNameContainer={'col-span-2 w-full'}>
+								<NativeSelect {...field} className={'col-span-2 w-full'}>
 									<NativeSelectOption value="">Seleccione...</NativeSelectOption>
 									{provinces.map(p => (
 										<NativeSelectOption key={p.value} value={p.value}>{p.label}</NativeSelectOption>
@@ -119,7 +138,7 @@ export function BusinessForm({form}: BusinessFormProps) {
 						<FormItem>
 							<FormLabel>Municipio<span className="text-red-600">*</span></FormLabel>
 							<FormControl>
-								<NativeSelect {...field} classNameContainer={'col-span-2 w-full'}>
+								<NativeSelect {...field} className={'col-span-2 w-full'}>
 									<NativeSelectOption value="">Seleccione...</NativeSelectOption>
 									{(!!provinceValue && municipalities[provinceValue] || []).map(m => (
 										<NativeSelectOption key={m.value} value={m.value}>{m.label}</NativeSelectOption>

@@ -33,7 +33,7 @@ export const useInfinityBusinesses = (
   return useInfiniteQuery({
     queryKey: ['businesses', params],
     queryFn: async ({ pageParam = 0 }) => {
-      const response = await getBusinesses(({...params, is_active: true, page: pageParam}));
+      const response = await getBusinesses(({...params, page: pageParam}));
       return response.success ?  response.data! : { data: [] };
     },
     getNextPageParam: (lastPage, pages) => {

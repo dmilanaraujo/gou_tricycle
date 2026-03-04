@@ -21,7 +21,7 @@ import {
     SheetTitle,
     SheetDescription,
 } from "@/components/ui/sheet"
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
+import {VisuallyHidden} from 'radix-ui';
 import {WhatsAppFlatIcon, WhatsAppIcon} from "@/components/common/whatsapp-icon";
 import {DAYS} from "@/components/common/days";
 
@@ -186,9 +186,9 @@ export default function BusinessNavBar({ business }: BusinessNavBarProps) {
                     "
                 >
                     {/* Título accesible oculto */}
-                    <VisuallyHidden>
+                    <VisuallyHidden.Root>
                         <SheetTitle/>
-                    </VisuallyHidden>
+                    </VisuallyHidden.Root>
 
                     {/* Header con botón atrás */}
                     <div className="flex items-center px-4 py-4">

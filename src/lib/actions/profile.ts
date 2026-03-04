@@ -1,11 +1,68 @@
 'use server';
 import {ActionResponse} from '@/types';
 import {createClient} from '@/lib/supabase/server';
-import {formatSupabaseFunctionErrors, formatSupabasePostgrestErrors, formatZodErrors} from '@/lib/utils';
+import {fillProfileData, formatSupabaseFunctionErrors, formatSupabasePostgrestErrors, formatZodErrors, isProfileAdmin, isProfileBusinessAdmin} from '@/lib/utils';
 import {cookies} from 'next/headers';
 import {Profile} from '@/types';
 import {cache} from 'react';
-import {ProfileFormValues, ProfileSchema} from '@/lib/schemas/auth';
+import {ProfileFormValues, ProfileSchema, ProfilesFilterValues} from '@/lib/schemas/auth';
+
+export async function getProfiles(params: ProfilesFilterValues, includeBusiness = false): Promise<ActionResponse<Profile[]>> {
+  try {
+    const supabase = await createClient()
+    let select = ['*'];
+    if (includeBusiness) {
+      select.push(`
+                  businesses(
+                      id,
+                      slug,
+                      name,
+                      logo,
+                      is_active,
+                      section:sections(id, name, slug),
+                      system_categories:business_system_categories(
+                        category:system_categories!inner(id, name, slug)
+                      )
+                  )`
+      )
+    }
+    let query = supabase
+        .from("profiles")
+        .select(select.join(','))
+        .order('name', { ascending: true });
+    
+    const { statusFilters, name, profileId } = params;
+    
+    if (!!profileId) {
+      query = query.eq('id', profileId);
+    }
+    if (!!name) {
+      query = query.ilike('name', `%${name}%`);
+    }
+    
+    if (statusFilters) {
+      const { active, inactive } = statusFilters;
+      if (active && !inactive) {
+        query = query.eq('is_active', true);
+      } else if (inactive && !active) {
+        query = query.eq('is_active', false);
+      }
+    }
+    
+    const { data, error } = await query;
+    
+    if (error) {
+      return { success: false, errors: formatSupabasePostgrestErrors(error) }
+    }
+    /* @ts-expect-error only */
+    const profiles: Profile[] = data?.map(p => fillProfileData(p))
+    
+    return { success: true, data: profiles };
+  } catch (error) {
+    console.log('Unexpected error in getBusinessCategories:', error);
+    throw new Error('Error no especificado');
+  }
+}
 
 export const getProfile = async (cStore?: ReturnType<typeof cookies>): Promise<ActionResponse<Profile>> => {
   try{
@@ -16,10 +73,7 @@ export const getProfile = async (cStore?: ReturnType<typeof cookies>): Promise<A
     }
     const { data, error } = await supabase
         .from('profiles')
-        .select(`
-            *,
-            businesses(id, slug, name, logo, is_active)
-        `)
+        .select(`*`)
         .eq("id", user.id)
         .single();
 
@@ -27,7 +81,9 @@ export const getProfile = async (cStore?: ReturnType<typeof cookies>): Promise<A
       const errors = await formatSupabaseFunctionErrors(error);
       return { success: false, errors }
     }
-    return { success: true, data: data || {} as Profile };
+    const profile: Profile = fillProfileData(data);
+    
+    return { success: true, data: profile };
   } catch (error) {
     console.log('Unexpected error in getProfile:', error);
     throw new Error('Ha ocurrido un error no especificado');
@@ -74,7 +130,7 @@ export const updateProfile = async (params: ProfileFormValues): Promise<ActionRe
     if (error) {
       return { success: false, errors: formatSupabasePostgrestErrors(error) }
     }
-    return { success: true, data: data?.[0] };
+    return { success: true, data: fillProfileData(data?.[0]) };
   } catch (error) {
     console.log('Unexpected error in updateProfile:', error);
     throw new Error('Ha ocurrido un error no especificado');

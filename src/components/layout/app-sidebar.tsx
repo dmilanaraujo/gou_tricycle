@@ -15,57 +15,59 @@ import {
 	SidebarMenuItem, SidebarRail,
 	useSidebar,
 } from '@/components/ui/sidebar'
-import {useProfile} from '@/providers/profile-provider';
+import {useBusinesses, useProfile} from '@/providers/profile-provider';
 import {BusinessSelector} from '@/components/layout/business-selector';
 import {useMemo} from 'react';
 import {useBusiness} from '@/providers/business-provider';
 import Link from 'next/link';
 
-// This is sample data
-const sidebarNavs = [
-	{
-		title: "Mis negocios",
-		url: "/me",
-		icon: LayoutDashboard,
-		isActive: true,
-	},
-	{
-		title: "Importar",
-		url: "/me/[slug]/import",
-		icon: CloudUpload,
-		isActive: false,
-	},
-	{
-		title: "Mis servicios",
-		url: "/me/[slug]/services",
-		icon: Grid,
-		isActive: false,
-	},
-	{
-		title: "Mis productos",
-		url: "/me/[slug]/products",
-		icon: ListOrdered,
-		isActive: false,
-	},
-	{
-		title: "Preferencias",
-		url: "/me/[slug]/preferences",
-		icon: Settings,
-		isActive: false,
-	}
-]
-
 export function AppSidebar({ ...props } : React.ComponentProps<typeof Sidebar>) {
 	const profile = useProfile();
+	const businesses = useBusinesses();
 	const business = useBusiness();
+	
+	const sidebarNavs = useMemo(() => {
+		return  [
+			{
+				title: profile.is_admin ? 'Negocios' : 'Mis negocios',
+				url: "/me",
+				icon: LayoutDashboard,
+				isActive: true,
+			},
+			{
+				title: "Importar",
+				url: `/me/${business.slug}/import`,
+				icon: CloudUpload,
+				isActive: false,
+			},
+			{
+				title: profile.is_admin ? 'Servicios' : 'Mis servicios',
+				url: `/me/${business.slug}/services`,
+				icon: Grid,
+				isActive: false,
+			},
+			{
+				title: profile.is_admin ? 'Productos' : 'Mis productos',
+				url: `/me/${business.slug}/products`,
+				icon: ListOrdered,
+				isActive: false,
+			},
+			{
+				title: "Preferencias",
+				url: `/me/${business.slug}/preferences`,
+				icon: Settings,
+				isActive: false,
+			}
+		]
+	},[profile.is_admin, business.slug])
 	// Note: I'm using state to show active item.
 	// IRL you should use the url/router.
 	const [activeItem, setActiveItem] = React.useState(sidebarNavs[0])
 	const { setOpen } = useSidebar()
 	
 	const navItems = useMemo(() => {
-		return profile.businesses.length == 0 ? [sidebarNavs[0]] : sidebarNavs;
-	}, [profile.businesses]);
+		return businesses.length == 0 ? [sidebarNavs[0]] : sidebarNavs;
+	}, [businesses]);
 	
 	return (
 		<Sidebar collapsible="icon" {...props}>
@@ -89,7 +91,7 @@ export function AppSidebar({ ...props } : React.ComponentProps<typeof Sidebar>) 
 								                   }}
 								                   isActive={activeItem?.title === item.title}
 								>
-									<Link href={item.url.replace('[slug]', business.slug)}>
+									<Link href={item.url}>
 										<item.icon />
 										<span>{item.title}</span>
 									</Link>

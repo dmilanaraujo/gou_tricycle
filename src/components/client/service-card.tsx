@@ -11,6 +11,7 @@ import Image from 'next/image';
 import * as React from 'react';
 import {useRouter} from "next/navigation";
 import {ServiceItems} from "@/types/service-items";
+import {useBusiness} from '@/providers/business-provider';
 
 interface ServiceCardProps {
     service: ServiceItems;
@@ -18,10 +19,11 @@ interface ServiceCardProps {
 
 export function ServiceCard({service}: ServiceCardProps) {
     const router = useRouter();
-
+    const business = useBusiness();
+    
     return (
-        <Card onClick={() => router.push(`/business/${service.id}`)}
-              className="max-w-md pt-0 shadow-none border-none hover:cursor-pointer"
+        <Card onClick={() => router.push(`/business/${business.slug}/service/${service.id}`)}
+              className="max-w-md pt-0 shadow-none border-none hover:cursor-pointer ring-0"
         >
             <CardContent className="px-0 pb-0">
                 <div className="relative w-full h-[180px] rounded-xl overflow-hidden bg-muted">
@@ -46,7 +48,7 @@ export function ServiceCard({service}: ServiceCardProps) {
                         {service.name}
                     </span>
                     {service.discount_label && (
-                        <Badge variant="destructive" className="text-xs text-white rounded-sm">
+                        <Badge variant="destructive" className="text-xs text-white rounded-sm mt-1">
                             {service.discount_label}
                         </Badge>
                     )}

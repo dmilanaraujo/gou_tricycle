@@ -75,7 +75,7 @@ export function CategoryGroup({ section, value, onCategoryChange }: Props) {
             spacing={2}
             value={value ?? ""}
             onValueChange={(value) => onCategoryChange(value || null)}
-            className={'w-full'}
+            className={'w-full flex justify-center'}
         >
         {options.map(({ value, label, icon }) => (
                 <ToggleGroupItem

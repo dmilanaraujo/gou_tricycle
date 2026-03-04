@@ -1,9 +1,9 @@
 import * as React from 'react';
 import {BusinessParamsProps} from '@/types';
-import {getBusinessBySlugCachedData} from '@/lib/actions/business';
+import {getBusinessBySlugCachedData, getBusinessesCachedData} from '@/lib/actions/business';
 import BusinessNotFound from '@/components/layout/business-not-found';
 import {BusinessProvider} from '@/providers/business-provider';
-import {isBusinessActive} from '@/lib/utils';
+import {isBusinessActive, showGenerateRestaurantMenu} from '@/lib/utils';
 import {Button} from '@/components/ui/button';
 import Link from 'next/link';
 import {LayoutDashboard} from 'lucide-react';
@@ -23,8 +23,12 @@ export default async function ManagerBusinessLayout({ params, children }: Readon
     const { slug } = await params;
     const profile = await getProfileCachedData();
     const business = await getBusinessBySlugCachedData(slug);
+    const businesses = await getBusinessesCachedData({
+        only_logged_user: !profile?.is_admin,
+        limit: 100
+    });
 
-    if (!business || !profile?.businesses?.some(b =>b.slug == slug)) {
+    if (!business || (!profile?.is_admin && !businesses?.some(b =>b.slug == slug))) {
       return <BusinessNotFound/>
     }
   
@@ -57,7 +61,7 @@ export default async function ManagerBusinessLayout({ params, children }: Readon
                                 className="mr-2 data-[orientation=vertical]:h-4"
                             />
                         </div>
-                        <GenerateMenuPdfButton/>
+                        {showGenerateRestaurantMenu(business) && <GenerateMenuPdfButton/>}
                     </header>
                     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                         <LoadingOverlay/>

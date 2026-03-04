@@ -1,4 +1,4 @@
-import {VehicleTypeEnum} from "@/types/index";
+import {Profile, VehicleTypeEnum} from '@/types/index';
 import {BucketImage} from '@/components/ui/file-upload';
 import {IconName} from 'lucide-react/dynamic';
 
@@ -28,12 +28,13 @@ export type Business = {
     section: BusinessSection;
     system_categories: BusinessSystemCategory[];
     business_categories: BusinessCategory[];
-    vehicles?: {
-        id: string
-        vehicle_type: VehicleTypeEnum
-    }[];
+    // vehicles?: {
+    //     id: string
+    //     vehicle_type: VehicleTypeEnum
+    // }[];
     images: BucketImage[];
     hours?: BusinessHours[];
+    profiles: Profile[];
 };
 
 export const promotions = [
@@ -132,3 +133,11 @@ export enum MeasureUnit {
     paquete = 'paquete',
     caja = 'caja',
 }
+
+export type GroupedBusinesses = Record<
+    string,
+    {
+        profile: Profile;
+        businesses: Business[];
+    }
+>;

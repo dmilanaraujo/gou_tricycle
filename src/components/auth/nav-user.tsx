@@ -26,10 +26,16 @@ import {LogoutButton} from '@/components/auth/logout-button';
 import {getInitials} from '@/lib/utils';
 import {useProfile} from '@/providers/profile-provider';
 import Link from 'next/link';
+import {useMemo} from 'react';
+import {Badge} from '@/components/ui/badge';
 
 export function NavUser() {
 	const { isMobile } = useSidebar()
 	const profile = useProfile();
+	
+	const name = useMemo(() => {
+		return profile?.name || profile.phone || profile.email || 'Desconocido';
+	}, [profile.name, profile.phone, profile.email]);
 	
 	return (
 		<SidebarMenu>
@@ -42,10 +48,10 @@ export function NavUser() {
 						>
 							<Avatar className="h-8 w-8 rounded-lg">
 								{/*<AvatarImage src={getPublicBusinessImageUrl(profile.logo)} alt={profile.name} />*/}
-								<AvatarFallback className="rounded-lg">{getInitials(profile.name)}</AvatarFallback>
+								<AvatarFallback className="rounded-lg">{getInitials(name)}</AvatarFallback>
 							</Avatar>
 							<div className="grid flex-1 text-left text-sm leading-tight">
-								<span className="truncate font-medium">{profile.name}</span>
+								<span className="truncate font-medium">{name}</span>
 								{/*<span className="truncate text-xs">{profile.phone}</span>*/}
 							</div>
 							<ChevronsUpDown className="ml-auto size-4" />
@@ -61,12 +67,17 @@ export function NavUser() {
 							<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
 								<Avatar className="h-8 w-8 rounded-lg">
 									{/*<AvatarImage src={getPublicBusinessImageUrl(profile.logo)} alt={profile.name} />*/}
-									<AvatarFallback className="rounded-lg">{getInitials(profile.name)}</AvatarFallback>
+									<AvatarFallback className="rounded-lg">{getInitials(name)}</AvatarFallback>
 								</Avatar>
 								<div className="grid flex-1 text-left text-sm leading-tight">
-									{/*<span className="truncate font-medium">{profile.name}</span>*/}
-									<span className="truncate text-xs">{profile.phone}</span>
+									{!!profile.phone && (
+										<span className="truncate text-xs">{profile.phone}</span>
+									)}
+									{!!profile.email && (
+										<span className="truncate text-xs">{profile.email}</span>
+									)}
 								</div>
+								{profile.is_admin && <Badge className='bg-green-600 py-0'>admin</Badge>}
 							</div>
 						</DropdownMenuLabel>
 						{/*<DropdownMenuSeparator />*/}

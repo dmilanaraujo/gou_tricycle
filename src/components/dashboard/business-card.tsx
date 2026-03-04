@@ -14,18 +14,23 @@ import {
 	PowerOff,
 	Trash2,
 	MoreVertical,
-	PauseCircle,
-	Star,
-} from "lucide-react"
-import {getPublicBusinessImageUrl} from '@/lib/utils';
+	Power, Users,
+} from 'lucide-react'
+import {getProfileShowName, getPublicBusinessImageUrl} from '@/lib/utils';
 import {useLoadingRouter} from '@/providers/navigation-loading-provider';
+import {useProfile} from '@/providers/profile-provider';
+import {AvatarGroupCount} from '@/components/ui/avatar';
+import {Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger} from '@/components/ui/popover';
 
 interface BusinessCardProps {
 	business: Business;
 	onDelete?: (business: Business) => void
 	onDisable?: (business: Business) => void
+	onEnable?: (business: Business) => void
+	showUsernames?: boolean
 }
-export function BusinessCard({ business, onDelete, onDisable }: BusinessCardProps) {
+export function BusinessCard({ business, onDelete, onEnable, onDisable, showUsernames = false }: BusinessCardProps) {
+	const profile = useProfile();
 	const [open, setOpen] = useState(false)
 	const router = useLoadingRouter();
 	
@@ -72,6 +77,15 @@ export function BusinessCard({ business, onDelete, onDisable }: BusinessCardProp
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end" className="w-44">
+						{profile.is_admin && !business.is_active && (
+							<DropdownMenuItem onClick={(e) => {
+								e.stopPropagation()
+								onEnable?.(business)
+							}}>
+								<Power className="size-4" />
+								Activar
+							</DropdownMenuItem>
+						)}
 						{business.is_active && (
 							<DropdownMenuItem onClick={(e) => {
 								e.stopPropagation()
@@ -121,21 +135,60 @@ export function BusinessCard({ business, onDelete, onDisable }: BusinessCardProp
 						{cat.name}
 					</Badge>
 				))}
+				{/*{business.business_categories.map((cat) => (*/}
+				{/*	<Badge*/}
+				{/*		key={cat.id}*/}
+				{/*		variant="outline"*/}
+				{/*		className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground"*/}
+				{/*	>*/}
+				{/*		{cat.name}*/}
+				{/*	</Badge>*/}
+				{/*))}*/}
 			</div>
 			
 			{/* Paused warning */}
-			{!business.is_active && (
-				<div className="flex items-center gap-2 rounded-md text-xs text-muted-foreground">
-					<PauseCircle className="size-3.5 shrink-0" />
-					<span>El negocio está inactivo</span>
-				</div>
-			)}
+			{/*{!business.is_active && (*/}
+			{/*	<div className="flex items-center gap-2 rounded-md text-xs text-muted-foreground">*/}
+			{/*		<PauseCircle className="size-3.5 shrink-0" />*/}
+			{/*		<span>El negocio está inactivo</span>*/}
+			{/*	</div>*/}
+			{/*)}*/}
 			
+			{/*/!* Featured indicator *!/*/}
+			{/*{business.featured && business.is_active && (*/}
+			{/*	<div className="flex items-center gap-2 rounded-md text-xs text-muted-foreground">*/}
+			{/*		<Star className="size-3.5 shrink-0 text-sky-400" />*/}
+			{/*		<span>Negocio destacado</span>*/}
+			{/*	</div>*/}
+			{/*)}*/}
 			{/* Featured indicator */}
-			{business.featured && business.is_active && (
+			{showUsernames && business.profiles.length > 0 && (
 				<div className="flex items-center gap-2 rounded-md text-xs text-muted-foreground">
-					<Star className="size-3.5 shrink-0 text-sky-400" />
-					<span>Negocio destacado</span>
+					<Users className="size-3.5 shrink-0 text-sky-400"/>
+					<span>{getProfileShowName(business.profiles[0])}</span>
+					{business.profiles.length > 2 && (
+						<Popover>
+							<PopoverTrigger asChild>
+								<AvatarGroupCount
+									className={'size-5 text-xs bg-sky-400 text-white'}
+									title={`${business.profiles.length - 1} usuarios más`}
+									onClick={(e) => e.stopPropagation()}
+								>
+									+{business.profiles.length - 1}
+								</AvatarGroupCount>
+							</PopoverTrigger>
+							<PopoverContent align="start">
+								<PopoverHeader>
+									<PopoverTitle>Otros usuarios que gestionan este negocio</PopoverTitle>
+									<PopoverDescription>
+										{business.profiles.slice(1).map(p => (
+											<div>{getProfileShowName(p)}</div>
+										))}
+									</PopoverDescription>
+								</PopoverHeader>
+							</PopoverContent>
+						</Popover>
+					)}
 				</div>
 			)}
 		</div>

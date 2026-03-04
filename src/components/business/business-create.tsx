@@ -63,7 +63,6 @@ export function BusinessCreate() {
 			
 			<div className="flex justify-end py-4">
 				<Button
-					size="sm"
 					disabled={isCreatingBusiness}
 					onClick={form.handleSubmit(handleSave)}
 					className={'w-full md:w-auto'}

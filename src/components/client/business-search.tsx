@@ -50,7 +50,7 @@ export default function BusinessSearch({
             try {
                 const res = await getBusinessById(selectedBusinessId)
                 if (res?.success) {
-                    setSingleBusiness(res.data)
+                    setSingleBusiness(res.data!)
                 }
             } finally {
                 setSingleBusinessLoading(false)
@@ -89,6 +89,7 @@ export default function BusinessSearch({
             vehicleType: vehicleType ?? undefined,
             section: activeTab ?? undefined,
             category: category ?? undefined,
+            is_active: true,
             q: searchQuery ?? undefined,
             limit: 20,
         }),

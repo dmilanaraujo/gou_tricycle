@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { login } from '@/lib/actions/auth';
+import { loginPhone } from '@/lib/actions/auth';
 import React, {useState} from 'react';
 import {toast} from 'sonner';
 import {LoaderCircle} from 'lucide-react';
@@ -19,7 +19,7 @@ import {PhoneInput} from '@/components/ui/phone-input';
 import * as z from 'zod';
 import Link from "next/link";
 import {useLoadingRouter} from '@/providers/navigation-loading-provider';
-import {LoginSchema} from '@/lib/schemas/auth';
+import {PhoneLoginSchema} from '@/lib/schemas/auth';
 
 
 export function LoginForm() {
@@ -27,10 +27,10 @@ export function LoginForm() {
   // const siteTheme = useTheme().resolvedTheme as CaptchaTheme | undefined
   const [errorAuth] = useState('');
   
-  type LogInFormValues = z.infer<typeof LoginSchema>;
+  type LogInFormValues = z.infer<typeof PhoneLoginSchema>;
   
   const form = useForm<LogInFormValues>({
-    resolver: zodResolver(LoginSchema),
+    resolver: zodResolver(PhoneLoginSchema),
     defaultValues: {
       phone: '',
       password: '',
@@ -42,7 +42,7 @@ export function LoginForm() {
 
   async function onSubmit(values: LogInFormValues) {
     try {
-      const response = await login(values);
+      const response = await loginPhone(values);
         if (!response.success) {
             response.errors?.forEach((error) => {
                 if (error.code == 'phone_not_confirmed') {
@@ -71,7 +71,7 @@ export function LoginForm() {
               <div className="flex flex-col items-center gap-2 text-center">
                   <h1 className="text-4xl font-bold text-slate-900 mb-2">Iniciar sesión</h1>
                   <p className="text-muted-foreground text-sm text-balance">
-                      Inicie sesión si ya es un chofer registrado
+                      Inicie sesión si ya es un usuario registrado
                   </p>
               </div>
               <div className='grid'>

@@ -5,6 +5,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useEffect} from 'react';
 
 type TabItem = {
     value: string
@@ -19,37 +20,54 @@ type Props = {
     onChange?: (value: string) => void
 }
 
+const catProdId = (index: number) => {
+    return `cat-prod-${index}`;
+}
+
 export function ScrollableTabs({ title, tabs, defaultValue, value, onChange }: Props) {
     const listRef = React.useRef<HTMLDivElement>(null)
 
     const [canScrollLeft, setCanScrollLeft] = React.useState(false)
     const [canScrollRight, setCanScrollRight] = React.useState(false)
+    const [currentActiveTab, setCurrentActiveTab] = React.useState(0)
 
     const updateScrollState = () => {
         const el = listRef.current
         if (!el) return
-
-        const maxScrollLeft = el.scrollWidth - el.clientWidth
-
-        setCanScrollLeft(el.scrollLeft > 0)
-        setCanScrollRight(el.scrollLeft < maxScrollLeft - 1) // margen de error
+        // const maxScrollLeft = el.scrollWidth - el.clientWidth
+        setCanScrollLeft(currentActiveTab > 0 )
+        setCanScrollRight(currentActiveTab < tabs.length - 1)
     }
+    
+    const scrollToId = (index: number) => {
+        const element = document.getElementById(catProdId(index));
+        element?.scrollIntoView({
+            block: 'center',
+            behavior: "smooth",
+            inline: "start"
+        });
+        // listRef.current?.scrollBy({
+        //     left: element?.offsetLeft,
+        //     behavior: "smooth",
+        // });
+    };
+    
+    useEffect(() => {
+        scrollToId(currentActiveTab);
+    }, [currentActiveTab]);
 
     const scroll = (dir: "left" | "right") => {
         if (!listRef.current) return
-
-        listRef.current.scrollBy({
-            left: dir === "left" ? -200 : 200,
-            behavior: "smooth",
-        })
-
-        // Recalcular estado tras la animación
-        setTimeout(updateScrollState, 350)
+        if (dir === "left" && currentActiveTab > 0) {
+            setCurrentActiveTab(currentActiveTab - 1)
+        } else if (dir === "right" && currentActiveTab < tabs.length - 1) {
+            setCurrentActiveTab(currentActiveTab + 1)
+        }
     }
 
     React.useEffect(() => {
         updateScrollState()
-    }, [tabs])
+    }, [tabs, currentActiveTab])
 
     React.useEffect(() => {
         const el = listRef.current
@@ -74,40 +92,17 @@ export function ScrollableTabs({ title, tabs, defaultValue, value, onChange }: P
                         <TabsList
                             ref={listRef}
                             onScroll={updateScrollState}
-                            className={cn(
-                                "relative flex gap-0 pl-0 pr-0 rounded-none justify-start",
-                                "bg-transparent whitespace-nowrap",
-
-                                // 👇 IMPORTANT: override estilos default de shadcn
-                                "!h-auto !p-0 items-end",
-
-                                // 👇 no recortes la línea
-                                "overflow-x-hidden overflow-y-visible",
-
-                                // 👇 reserva espacio para la línea (mismo grosor)
-                                "pb-[5px]",
-
-                                // 👇 línea base muted
-                                "after:absolute after:bottom-0 after:left-0 after:w-full after:h-[5px] after:bg-muted after:z-0"
-                            )}
+                            variant='line'
+                            className='group-data-horizontal/tabs:h-10'
                         >
                         {tabs.map((tab, i) => (
                             <TabsTrigger
                                 key={tab.value}
                                 value={tab.value}
+                                id={catProdId(i)}
                                 className={cn(
-                                    "relative rounded-none px-4 pt-2 pb-4",
-                                    "!h-auto", // 👈 override h-9 de shadcn
-
+                                    "rounded-none",
                                     "cursor-pointer text-md hover:bg-muted",
-                                    "data-[state=active]:shadow-none",
-
-                                    // underline activo
-                                    "after:absolute after:bottom-0 after:left-0 after:h-[5px]",
-                                    "after:bg-primary after:w-0",
-                                    "after:transition-[width] after:duration-300 after:ease-out",
-                                    "data-[state=active]:after:w-full",
-                                    "after:z-10"
                                 )}
                             >
                                 {tab.label}

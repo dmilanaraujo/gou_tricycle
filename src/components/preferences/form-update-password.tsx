@@ -80,15 +80,17 @@ export function UpdatePasswordForm() {
 						)}
 					/>
 				</div>
-				<Button type="submit" className="w-full" disabled={!isValid || isSubmitting}>
-					{isSubmitting ? (
-						<span className="flex items-center">
-						<LoaderCircle  className="mr-3 animate-spin"/>
+				<div className="flex justify-end py-4">
+					<Button type="submit" className="w-full md:w-auto" disabled={!isValid || isSubmitting}>
+						{isSubmitting ? (
+							<span className="flex items-center">
+						<LoaderCircle className="mr-3 animate-spin"/>
 							Enviando...
 					</span>
-					) : 'Actualizar contraseña' }
-				</Button>
+						) : 'Actualizar contraseña'}
+					</Button>
+				</div>
 			</form>
 		</Form>
-	);
+);
 }
