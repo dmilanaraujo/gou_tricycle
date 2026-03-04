@@ -1,5 +1,6 @@
 import {BucketImage} from '@/components/ui/file-upload';
 import {SortingState} from '@tanstack/react-table';
+import {Business} from '@/types/business';
 
 export const VEHICLE_TYPES = ['electric', 'combustion', 'hybrid'] as const
 
@@ -124,20 +125,16 @@ export type ServiceRow = {
   [key: string]: any;
 };
 
-export type BasicBusiness = {
-  id: string;
-  slug: string;
-  name: string;
-  logo: string;
-  is_active: boolean;
-}
+export * from './business';
 
 export type Profile = {
   id: string;
   name: string;
-  phone: string;
-  businesses: BasicBusiness[];
+  phone?: string;
+  email?: string;
+  role: string;
+  businesses: Business[];
   is_active: boolean;
+  is_admin: boolean;
+  is_business_admin: boolean;
 }
-
-export * from './business';

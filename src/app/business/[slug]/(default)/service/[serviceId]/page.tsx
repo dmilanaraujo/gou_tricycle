@@ -1,35 +1,33 @@
 import { notFound } from "next/navigation"
 import { getServiceById } from "@/lib/actions/service"
-import {Business, Product} from "@/types"
+import { Product} from "@/types"
 import { buildServiceMetadata } from "./service.metadata"
 import { Metadata } from "next"
 import ProductPageClient from "@/components/client/product-page-client";
-import {getBusinessById} from "@/lib/actions/business";
+import { getBusinessBySlugCachedData} from '@/lib/actions/business';
 
 /* SEO */
 export async function generateMetadata({
                                            params,
                                        }: {
-    params: Promise<{ businessId: string; serviceId: string }>
+    params: Promise<{ slug: string; serviceId: string }>
 }): Promise<Metadata> {
     const { serviceId } = await params
     return buildServiceMetadata(serviceId)
 }
 
 /* PAGE */
-export default async function Page({
-                                       params,
-                                   }: {
-    params: Promise<{ businessId: string; serviceId: string }>
+export default async function Page({ params }: {
+    params: Promise<{ slug: string; serviceId: string }>
 }) {
-    const { businessId, serviceId } = await params
+    const { slug, serviceId } = await params
 
     const product = await getServiceById<Product>(serviceId)
-    const business = await getBusinessById(businessId)
+    const business = await getBusinessBySlugCachedData(slug)
 
-    if (!product || product.business_id !== businessId || !business.success) {
+    if (!product || product.business_id !== business!.id) {
         notFound()
     }
 
-    return <ProductPageClient product={product} business={business.data} />
+    return <ProductPageClient product={product} business={business!} />
 }

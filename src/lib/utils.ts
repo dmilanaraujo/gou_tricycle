@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import {AuthError, PostgrestError} from '@supabase/supabase-js';
-import {ActionError, BusinessDiscount, ImageType, OptimizedImages, Profile, UploadFileError, type VehicleType} from '@/types';
+import {ActionError, BusinessDiscount, GroupedBusinesses, ImageType, OptimizedImages, Profile, UploadFileError, type VehicleType} from '@/types';
 import imageCompression from 'browser-image-compression';
 import {z} from 'zod';
 import {Business} from '@/types/business';
@@ -153,7 +153,20 @@ export const isProfileActive = (profile: Profile) => {
 }
 
 export const isProfileComplete = (profile: Profile) => {
+    if (profile.is_admin) return true;
     return !!profile.name;
+}
+
+export const isProfileBusinessAdmin = (profile: Profile) => {
+    return profile?.role == 'business_admin';
+}
+
+export const isProfileAdmin = (profile: Profile) => {
+    return profile?.role == 'app_admin';
+}
+
+export const getProfileShowName = (profile: Profile) => {
+    return profile.name || profile.phone || profile.email || '';
 }
 
 export const isBusinessActive = (business: Business) => {
@@ -164,11 +177,23 @@ export const isBusinessActive = (business: Business) => {
     return business.is_active;
 }
 
+export const showGenerateRestaurantMenu = (business: Business) => {
+    return business.section.slug == 'restaurant';
+}
+
 export const isBusinessProducts = (business: Business) => {
     if (business.section.slug == 'transport'){
         return false;
     }
     return true;
+}
+
+export const fillProfileData = (profile: Profile) => {
+    return {
+        ...profile,
+        is_admin: isProfileAdmin(profile),
+        is_business_admin: isProfileBusinessAdmin(profile),
+    }
 }
 
 export const combustionTypes: { value: VehicleType; label: string }[] = [
@@ -289,6 +314,11 @@ export function getInitials(...words: string[]) {
     return words.filter(n => !!n).map(w => w.charAt(0).toUpperCase()).join('');
 }
 
+export function getInitialsByString(word: string) {
+    const words = word.split(' ');
+    return getInitials(...words);
+}
+
 export function slugify(name: string) {
     const schema = z.string().slugify();
     return schema.parse(name);
@@ -360,4 +390,27 @@ export function isAfterToday(date: Date) {
 export function getPublicUrl() {
     const url = process.env.NEXT_PUBLIC_SITE_URL! || '';
     return url.endsWith('/') ? url.slice(-1) : url;
+}
+
+export const emptyToUndefined = (value: unknown) => value === '' ? undefined : value;
+
+export function groupBusinessesByProfiles(
+    businesses: Business[]
+): GroupedBusinesses {
+    return businesses.reduce((acc, business) => {
+        for (const profile of business.profiles) {
+            const profileId = profile.id;
+            
+            if (!acc[profileId]) {
+                acc[profileId] = {
+                    profile,
+                    businesses: [],
+                };
+            }
+            
+            acc[profileId].businesses.push(business);
+        }
+        
+        return acc;
+    }, {} as GroupedBusinesses);
 }

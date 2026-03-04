@@ -1,9 +1,7 @@
 'use client'
 
-import { Dot } from 'lucide-react'
 import {
     Card,
-    CardContent,
     CardHeader,
     CardTitle,
     CardFooter,
@@ -14,19 +12,21 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import {formatPrice, getPublicImageUrl} from '@/lib/utils'
 import { ServiceItems } from '@/types/service-items'
+import {Business} from '@/types';
 
 interface ServiceCardProps {
+    business: Business;
     service: ServiceItems
 }
 
-export function ServiceDetailedCard({ service }: ServiceCardProps) {
+export function ServiceDetailedCard({ business, service }: ServiceCardProps) {
     const router = useRouter()
 
     return (
         <Card
             onClick={() => {
                 if (service.stock === 0) return
-                router.push(`/business/${service.business_id}/service/${service.id}`)
+                router.push(`/business/${business.slug}/service/${service.id}`)
             }}
             className="
                 h-full w-full
@@ -71,7 +71,7 @@ export function ServiceDetailedCard({ service }: ServiceCardProps) {
                     )}
                 </div>
                 {/* Contenido derecho */}
-                <div className="flex flex-col flex-1 h-full items-start text-left gap-1 p-2">
+                <div className="flex flex-col flex-1 h-full items-start text-left gap-2 p-2">
                     <CardHeader className="px-0 w-full items-start text-left">
                         <CardTitle className="text-base leading-tight line-clamp-2">
                             {service.name}
@@ -81,7 +81,7 @@ export function ServiceDetailedCard({ service }: ServiceCardProps) {
                             {service.description}
                         </CardDescription>
                     </CardHeader>
-                    <div className="flex flex-row gap-1">
+                    <div className="flex flex-row gap-1 items-center">
                         {service.um && (
                             <div>
                                 <span className="
@@ -142,7 +142,7 @@ export function ServiceDetailedCard({ service }: ServiceCardProps) {
                             )}
                         </div>
                     </div>
-                    <CardFooter className="flex flex-col items-start text-left w-full gap-1 p-0">
+                    <CardFooter className="flex flex-col items-start text-left w-full gap-1 p-0 border-0">
                         {service.discount_label && (
                             <Badge variant="destructive" className="text-xs rounded-sm text-white">
                                 {service.discount_label}

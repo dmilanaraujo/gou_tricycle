@@ -1,14 +1,13 @@
 "use client"
 
-import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
 import { Table as TanstackTable } from "@tanstack/react-table"
 import { Settings2 } from "lucide-react"
 import {
     DropdownMenu, DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuLabel,
-    DropdownMenuSeparator
-} from "@/components/ui/dropdown-menu";
+    DropdownMenuSeparator, DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 import {Button} from "@/components/ui/button";
 
 export function DataTableViewOptions<TData>({

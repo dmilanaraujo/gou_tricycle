@@ -31,7 +31,7 @@ export default function ProductPageClient({product, business}: {product: Product
             <nav className="text-sm text-muted-foreground mb-6">
                 <Link href="/" className="hover:underline cursor-pointer">Home</Link>
                 <span className="mx-2">/</span>
-                <Link href={`/business/${business.id}`} className="hover:underline cursor-pointer">{business.name}</Link>
+                <Link href={`/business/${business.slug}`} className="hover:underline cursor-pointer">{business.name}</Link>
                 <span className="mx-2">/</span>
                 <span className="text-foreground font-medium">
                     {product.name}

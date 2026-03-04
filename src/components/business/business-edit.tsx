@@ -59,12 +59,11 @@ export function BusinessEdit() {
 	return (
 		<div className='w-full'>
 			<div className="no-scrollbar overflow-y-auto px-0">
-				<BusinessForm form={form}/>
+				<BusinessForm form={form} isEdit={true}/>
 			</div>
 			
 			<div className="flex justify-end py-4">
 				<Button
-					size="sm"
 					disabled={isUpdatingBusiness}
 					onClick={form.handleSubmit(handleSave)}
 					className={'w-full md:w-auto'}

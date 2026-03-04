@@ -55,7 +55,7 @@ export function BusinessCard({business}: BusinessCardProps) {
             : categoryName ?? sectionName;
 
     return (
-        <Card onClick={() => router.push(`/business/${business.id}`)} className="max-w-md pt-0 shadow-none border-none hover:cursor-pointer">
+        <Card onClick={() => router.push(`/business/${business.slug}`)} className="max-w-md pt-0 shadow-none border-none hover:cursor-pointer ring-0">
             <CardContent className="px-0 pb-0">
                 <div className="relative w-full aspect-video h-[180px] rounded-xl overflow-hidden">
                     <Image

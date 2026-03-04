@@ -27,15 +27,16 @@ const ServiceBrowser = ({ activeTab, category, onTabChange, onCategoryChange }: 
     }
     
     return (
-        <Tabs value={activeTab ?? ""} onValueChange={onTabChange} className="gap-8 md:gap-4 w-full flex flex-col">
-            <TabsList className="bg-background gap-1 flex justify-center w-full flex-wrap">
+        <Tabs value={activeTab ?? ""} onValueChange={onTabChange} className="gap-8 md:gap-4 w-full flex flex-col items-center">
+            {/*<TabsList className="bg-background gap-1 flex justify-center w-full flex-wrap">*/}
+            <TabsList className="bg-background gap-1 flex justify-center items-center group-data-horizontal/tabs:h-10">
                 {sections?.map(tab => (
                     <TabsTrigger
                         key={tab.slug}
                         value={tab.slug}
-                        className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground hover:cursor-pointer"
+                        className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground hover:cursor-pointer p-3"
                     >
-                        {tab.name}
+                            {tab.name}
                     </TabsTrigger>
                 ))}
             </TabsList>
@@ -47,7 +48,7 @@ const ServiceBrowser = ({ activeTab, category, onTabChange, onCategoryChange }: 
             )}
 
             {sections?.map(tab => (
-                <TabsContent key={tab.slug} value={tab.slug} className={'w-full'}>
+                <TabsContent key={tab.slug} value={tab.slug} className={'w-full mt-2'}>
                     <ScrollArea className="whitespace-nowrap w-full">
                         <CategoryGroup
                             section={tab.slug as any}

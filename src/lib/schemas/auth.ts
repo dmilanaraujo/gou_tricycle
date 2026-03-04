@@ -1,17 +1,28 @@
 import * as z from "zod";
 import {isValidPhoneNumber} from 'libphonenumber-js';
+import {ActiveStatus} from '@/types';
 
 
-export const PhoneSchema = z.string().min(10, "Número de teléfono inválido")
+export const PhoneSchemaWithoutMin = z.string()
 	.refine(isValidPhoneNumber, { message: "Número de teléfono inválido" })
+
+export const PhoneSchema = PhoneSchemaWithoutMin.min(10, "Número de teléfono inválido. Mínimo de 10 dígitos")
 
 const PasswordSchema = z.string({ error: "Contraseña requerida" })
 	.min(6, "Debe tener un mínimo de 6 caracteres");
 
-export const LoginSchema = z.object({
+export const EmailSchema = z.email({ error: "Correo electrónico requerido" });
+
+export const PhoneLoginSchema = z.object({
 	phone: PhoneSchema,
 	password: PasswordSchema,
 });
+
+export const EmailLoginSchema = z.object({
+	email: EmailSchema,
+	password: PasswordSchema,
+});
+
 export const SignUpSchema = z.object({
 	phone: PhoneSchema,
 	name: z.string({ error: "El nombre es requerido" }).min(1, 'El nombre es requerido'),
@@ -29,6 +40,10 @@ export const ProfileSchema = z.object({
 
 export const UpdatePhoneSchema = z.object({
 	phone: PhoneSchema,
+});
+
+export const UpdateEmailSchema = z.object({
+	email: EmailSchema,
 });
 
 export const UpdatePasswordSchema = z.object({
@@ -56,8 +71,23 @@ export const ForgotPasswordSchema = z.object({
 	// captcha_token: z.string().optional().describe("Token del captcha"),
 })
 
+export const ProfilesFilterSchema = z.object({
+	columnId: z.string().nullable().optional(),
+	value: z.string().optional().nullable(),
+	name: z.string().optional(),
+	profileId: z.string().nullable().optional(),
+	statusFilters: z.object({
+		[ActiveStatus.active]: z.boolean().optional().nullable(),
+		[ActiveStatus.inactive]: z.boolean().optional().nullable(),
+	}).optional().nullable(),
+});
+
+export type PhoneLoginFormValues = z.infer<typeof PhoneLoginSchema>;
+export type EmailLoginFormValues = z.infer<typeof EmailLoginSchema>;
 export type SignUpFormValues = z.infer<typeof SignUpSchema>;
 export type ProfileFormValues = z.infer<typeof ProfileSchema>;
 export type UpdatePhoneFormValues = z.infer<typeof UpdatePhoneSchema>;
+export type UpdateEmailFormValues = z.infer<typeof UpdateEmailSchema>;
 export type UpdatePasswordValues = z.infer<typeof UpdatePasswordSchema>;
 export type ForgotPasswordFormValues = z.infer<typeof ForgotPasswordSchema>;
+export type ProfilesFilterValues = z.infer<typeof ProfilesFilterSchema>;

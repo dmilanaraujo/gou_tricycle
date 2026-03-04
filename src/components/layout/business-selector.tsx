@@ -2,14 +2,14 @@
 
 import {useState} from 'react'
 import { usePathname } from "next/navigation"
-import {useProfile} from '@/providers/profile-provider';
+import {useBusinesses, useProfile} from '@/providers/profile-provider';
 import {Button} from '@/components/ui/button';
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger} from '../ui/dropdown-menu';
 import {SidebarMenuButton, useSidebar} from '@/components/ui/sidebar';
 import {ChevronsUpDown, Plus} from 'lucide-react';
 import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
 import {cn, getInitials, getPublicBusinessImageUrl} from '@/lib/utils';
-import {BasicBusiness} from '@/types';
+import {Business} from '@/types';
 import {useLoadingRouter} from '@/providers/navigation-loading-provider';
 import {useBusiness} from '@/providers/business-provider';
 
@@ -17,10 +17,10 @@ export function BusinessSelector() {
 	const router = useLoadingRouter();
 	const pathname = usePathname()
 	const { isMobile } = useSidebar()
-	const { businesses} = useProfile()
+	const businesses = useBusinesses()
 	const business = useBusiness();
 	
-	const [activeBusiness, setActiveBusiness] = useState<BasicBusiness>(business)
+	const [activeBusiness, setActiveBusiness] = useState<Business>(business)
 	
 	// const businessId = params.businessId as string | undefined
 	
@@ -47,7 +47,7 @@ export function BusinessSelector() {
 		)
 	}
 	
-	const handleChange = (selectedBusiness: BasicBusiness) => {
+	const handleChange = (selectedBusiness: Business) => {
 		if (!selectedBusiness.is_active) return false;
 		
 		const { slug } = selectedBusiness;

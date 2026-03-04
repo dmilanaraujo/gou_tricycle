@@ -12,7 +12,7 @@ export async function UserButton() {
     const profile = await getProfileCachedData();
     if (!profile) {
         return (
-            <Button asChild>
+            <Button size={'lg'} asChild>
                 <Link href='/me'>
                     Entrar o Registrarse
                 </Link>

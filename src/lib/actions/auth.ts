@@ -1,9 +1,9 @@
 'use server';
 import {
-  LoginSchema, SignUpSchema, ForgotPasswordFormValues, ForgotPasswordSchema,
+  PhoneLoginSchema, SignUpSchema, ForgotPasswordFormValues, ForgotPasswordSchema,
   UpdatePasswordSchema,
   UpdatePasswordValues,
-  SignUpFormValues, UpdatePhoneFormValues, UpdatePhoneSchema
+  SignUpFormValues, UpdatePhoneFormValues, UpdatePhoneSchema, PhoneLoginFormValues, EmailLoginFormValues, EmailLoginSchema, UpdateEmailFormValues, UpdateEmailSchema
 } from '@/lib/schemas/auth';
 import {createAdminClient, createClient} from '@/lib/supabase/server';
 import {SignInWithPasswordCredentials, User} from '@supabase/auth-js';
@@ -11,16 +11,17 @@ import {ActionResponse} from '@/types';
 import {formatSupabaseAuthErrors, formatZodErrors} from '../utils';
 import {redirect} from 'next/navigation';
 
-export const login = async (params: unknown): Promise<ActionResponse<User>> => {
-  const validatedFields = LoginSchema.safeParse(params);
+export const loginPhone = async (params: PhoneLoginFormValues): Promise<ActionResponse<User>> => {
+  const validatedFields = PhoneLoginSchema.safeParse(params);
   if (!validatedFields.success) {
+    console.log('validatedFields.error', validatedFields.error);
     const errors = formatZodErrors(validatedFields.error);
     return { success: false, errors };
   }
   try{
     const { phone, password } = validatedFields.data;
     const body: SignInWithPasswordCredentials = {
-      phone: phone!,
+      phone,
       password,
     };
     
@@ -33,7 +34,35 @@ export const login = async (params: unknown): Promise<ActionResponse<User>> => {
     }
     return { success: true, data: data.user! };
   } catch (error) {
-    console.log('Unexpected error in login:', error);
+    console.log('Unexpected error in loginPhone:', error);
+    throw new Error('Ha ocurrido un error no especificado');
+  }
+};
+
+export const loginEmail = async (params: EmailLoginFormValues): Promise<ActionResponse<User>> => {
+  const validatedFields = EmailLoginSchema.safeParse(params);
+  if (!validatedFields.success) {
+    console.log('validatedFields.error', validatedFields.error);
+    const errors = formatZodErrors(validatedFields.error);
+    return { success: false, errors };
+  }
+  try{
+    const { email, password } = validatedFields.data;
+    const body: SignInWithPasswordCredentials = {
+      email: email ?? '',
+      password,
+    };
+    
+    const supabase = await createClient();
+    const { error, data } = await supabase.auth.signInWithPassword(body);
+    if (error) {
+      console.log('auth error', error);
+      const errors = formatSupabaseAuthErrors(error);
+      return { success: false, errors }
+    }
+    return { success: true, data: data.user! };
+  } catch (error) {
+    console.log('Unexpected error in loginEmail:', error);
     throw new Error('Ha ocurrido un error no especificado');
   }
 };
@@ -167,6 +196,34 @@ export const updatePhone = async (params: UpdatePhoneFormValues): Promise<Action
     return { success: true };
   } catch (error) {
     console.log('Unexpected error in updatePhone:', error);
+    throw new Error('Ha ocurrido un error no especificado');
+  }
+};
+
+export const updateEmail = async (params: UpdateEmailFormValues): Promise<ActionResponse<void>> => {
+  const validatedFields = UpdateEmailSchema.safeParse(params);
+  if (!validatedFields.success) {
+    const errors = formatZodErrors(validatedFields.error);
+    return { success: false, errors };
+  }
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return { success: false, errors: [{ message: 'El usuario no está autenticado' }] }
+    }
+    const { email } = validatedFields.data;
+    
+    const { error, data } = await supabase.auth.updateUser({ email });
+    
+    // todo: El phone en la tabla profiles se actualiza con el trigger: `on_auth_user_phone_updated`, funcion: fn_handle_update_phone_user
+    
+    if (error) {
+      return { success: false, errors: formatSupabaseAuthErrors(error) }
+    }
+    return { success: true };
+  } catch (error) {
+    console.log('Unexpected error in updateEmail:', error);
     throw new Error('Ha ocurrido un error no especificado');
   }
 };

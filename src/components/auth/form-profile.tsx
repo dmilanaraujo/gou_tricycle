@@ -87,10 +87,9 @@ export function FormProfile() {
 			
 			<div className="flex justify-end py-4">
 				<Button
-					size="sm"
 					disabled={isPending}
 					onClick={form.handleSubmit(handleSave)}
-					className={'w-full'}
+					className={'w-full md:w-auto'}
 				>
 					{isPending && <Loader2 className="h-4 w-4 animate-spin"/>}
 					{isPending ? 'Actualizando...' : 'Actualizar'}

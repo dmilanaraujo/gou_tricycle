@@ -24,17 +24,7 @@ export const getBusinesses = async (
 ): Promise<ActionResponse<ResultList<Business>>> => {
 
   // 🔹 Solo validamos filtros (no paginación)
-  const filtersParsed = BusinessFiltersSchema.safeParse({
-    province: params.province,
-    municipality: params.municipality,
-    rating: params.rating,
-    vehicleType: params.vehicleType,
-    section: params.section,
-    category: params.category,
-    q: params.q,
-    is_active: params.is_active,
-    only_logged_user: params.only_logged_user,
-  })
+  const filtersParsed = BusinessFiltersSchema.safeParse(params)
 
   if (!filtersParsed.success) {
     return { success: false, errors: formatZodErrors(filtersParsed.error) }
@@ -46,7 +36,20 @@ export const getBusinesses = async (
   const page = params.page ?? 0
   const limit = params.limit
 
-  const { province, municipality, rating, vehicleType, section, category, q, is_active, only_logged_user } = filtersParsed.data
+  const {
+    name,
+    province,
+    municipality,
+    rating,
+    vehicleType,
+    section,
+    category,
+    q,
+    is_active,
+    only_logged_user,
+    statusFilters,
+    profile_id
+  } = filtersParsed.data
 
   const from = page * limit
   const to = from + limit - 1
@@ -62,13 +65,23 @@ export const getBusinesses = async (
         ),
         business_categories(*),
         images:business_images(*),
-        profile_business!inner(profile_id)
+        profiles!inner(id, name, phone, email)
       `, { count: "exact" })
 
+  if (name) query = query.ilike("name", `%${name}%`)
   if (is_active) query = query.eq("is_active", is_active)
   if (province) query = query.eq("province", province)
   if (municipality) query = query.eq("municipality", municipality)
   if (rating) query = query.gte("rating", rating)
+  
+  if (statusFilters) {
+    const { active, inactive } = statusFilters;
+    if (active && !inactive) {
+      query = query.eq('is_active', true);
+    } else if (inactive && !active) {
+      query = query.eq('is_active', false);
+    }
+  }
 
   // 🔹 Filtro por sección (TAB)
   if (section) {
@@ -90,7 +103,11 @@ export const getBusinesses = async (
     if (userError || !user) {
       return { success: false, errors: [{ message: 'Usuario no autenticado o no se pudo obtener el usuario.' }] };
     }
-    query = query.eq("profile_business.profile_id", user.id)
+    query = query.eq("profiles.id", user.id)
+  }
+
+  if (profile_id) {
+    query = query.eq("profile.id", profile_id)
   }
 
   if (q) {
@@ -124,6 +141,17 @@ export const getBusinesses = async (
     },
   }
 }
+
+// Cachea solo para el mismo request
+export const getBusinessesCached = cache(getBusinesses);
+
+// Cachea solo para el mismo request (obtener solo el data)
+export const getBusinessesCachedData = cache(async (params: (BusinessFiltersValues & PaginationRequest)) => {
+  const res = await getBusinessesCached(params)
+  
+  if (!res.success) return []
+  return res.data?.data ?? []
+})
 
 export const getBusinessById = async (id: string): Promise<ActionResponse<Business>> => {
   const supabase = await createClient();
@@ -258,20 +286,19 @@ export async function createBusiness(input: BusinessFormValues): Promise<ActionR
       return { success: false, errors: [{ message: 'Usuario no autenticado o no se pudo obtener el usuario.' }] };
     }
     
-    const { data, error } = await supabase
-        .from("businesses")
-        .insert({
-          name: input.name,
-          description: input.description,
-          province: input.province,
-          municipality: input.municipality,
-          address: input.address,
-          section_id: input.section_id || null,
-          whatsapp: input.whatsapp,
-        })
-        .select("*");
-    
-    // todo - Con el trigger trg_link_profile_business (fn_link_profile_business) se crea la relacion entre el profile y el business insertado
+    const { data, error } = await supabase.rpc(
+        "fn_create_business",
+        {
+          p_name: input.name,
+          p_description: input.description,
+          p_province: input.province,
+          p_municipality: input.municipality,
+          p_address: input.address,
+          p_section_id: input.section_id || null,
+          p_whatsapp: input.whatsapp,
+          p_profile_id: input.profile_id || null
+        }
+    );
     
     if (error) {
       return { success: false, errors: formatSupabasePostgrestErrors(error, constraintMap) }

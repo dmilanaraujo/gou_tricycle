@@ -28,6 +28,71 @@ create table public.businesses (
 
 create index IF not exists idx_businesses_slug on public.businesses using btree (slug) TABLESPACE pg_default;
 
+------Funcion para crear negocios (fn_create_business)----
+
+create or replace function public.fn_create_business(
+    p_name text,
+    p_description text default null,
+    p_province varchar default null,
+    p_municipality varchar default null,
+    p_address text default null,
+    p_section_id uuid default null,
+    p_whatsapp text default null,
+    p_profile_id uuid default null
+)
+returns public.businesses
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+    v_business public.businesses;
+    v_profile_id uuid;
+begin
+
+    -- determinar profile_id
+    v_profile_id := coalesce(p_profile_id, auth.uid());
+
+    if v_profile_id is null then
+        raise exception 'No authenticated user found';
+    end if;
+
+    -- insertar business
+    insert into public.businesses (
+        name,
+        description,
+        province,
+        municipality,
+        address,
+        section_id,
+        whatsapp
+    )
+    values (
+        p_name,
+        p_description,
+        p_province,
+        p_municipality,
+        p_address,
+        p_section_id,
+        p_whatsapp
+    )
+    returning * into v_business;
+
+    -- insertar relación
+    insert into public.profile_business (
+        profile_id,
+        business_id
+    )
+    values (
+        v_profile_id,
+        v_business.id
+    );
+
+    return v_business;
+
+end;
+$$;
+
 -------------------Trigger para autogenerar el slug al insertar un nuevo negocio----------------------------------------
 
 CREATE OR REPLACE FUNCTION public.fn_set_business_slug()
@@ -91,40 +156,6 @@ BEFORE INSERT OR UPDATE OF name
 ON public.businesses
 FOR EACH ROW
 EXECUTE FUNCTION public.fn_set_business_slug();
-
-
---------------Trigger-para crear la asociacion entre el usuario y el negocio al insertar un nuevo negocio--------
-CREATE OR REPLACE FUNCTION public.fn_link_profile_business()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public
-AS $$
-DECLARE
-    current_user_id uuid;
-BEGIN
-    -- Obtener el usuario autenticado
-    current_user_id := auth.uid();
-
-    -- Seguridad extra
-    IF current_user_id IS NULL THEN
-        RAISE EXCEPTION 'No authenticated user found';
-    END IF;
-
-    -- Insertar relación
-    INSERT INTO public.profile_business (profile_id, business_id)
-    VALUES (current_user_id, NEW.id);
-
-    RETURN NEW;
-END;
-$$;
-
-DROP TRIGGER IF EXISTS trg_link_profile_business ON public.businesses;
-
-CREATE TRIGGER trg_link_profile_business
-AFTER INSERT ON public.businesses
-FOR EACH ROW
-EXECUTE FUNCTION public.fn_link_profile_business();
 
 ---------trigger Webhook telegram notification--------------
 

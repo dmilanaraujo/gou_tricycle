@@ -1,9 +1,5 @@
 "use client"
 
-import Image from "next/image"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { PlusIcon } from "lucide-react"
 import {
     Carousel,
     CarouselContent,
@@ -12,19 +8,8 @@ import {
     CarouselPrevious,
 } from "@/components/ui/carousel"
 import Autoplay from "embla-carousel-autoplay";
-import {FeaturedItems} from "@/types/featured-items";
 import {ServiceItems} from "@/types/service-items";
 import {ServiceCard} from "@/components/client/service-card";
-
-export type FeaturedOffer = {
-    id: string
-    name: string
-    image_url: string
-    price: number
-    final_price: number
-    discount_label?: string
-}
-
 
 type Props = {
     title: string
@@ -51,7 +36,7 @@ export function FeaturedOffersCarousel({ title, items }: Props) {
                 </div>
 
                 {/* Carrusel */}
-                <CarouselContent className="-ml-4">
+                <CarouselContent className="ml-0 md:-ml-4">
                     {items.map(item => (
                         <CarouselItem
                             key={item.id}

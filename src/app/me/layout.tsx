@@ -4,6 +4,7 @@ import {redirect} from 'next/navigation';
 import {getProfileCachedData} from '@/lib/actions/profile';
 import {ProfileProvider} from '@/providers/profile-provider';
 import ProfileNotFound from '@/components/layout/profile-not-found';
+import {getBusinessesCachedData} from '@/lib/actions/business';
 
 interface ManagerLayoutProps {
   children: React.ReactNode;
@@ -19,8 +20,13 @@ export default async function ManagerLayout({ children }: Readonly<ManagerLayout
       redirect('/inactive-profile')
   }
   
+  const businesses = await getBusinessesCachedData({
+      only_logged_user: !profile?.is_admin,
+      limit: 100
+  });
+  
   return (
-      <ProfileProvider profile={profile}>
+      <ProfileProvider profile={profile} businesses={businesses}>
           {children}
       </ProfileProvider>
   )

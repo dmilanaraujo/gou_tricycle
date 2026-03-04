@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import {
-	FormControl, FormDescription,
+	FormControl,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -16,33 +16,31 @@ import {Loader2} from 'lucide-react';
 import React from 'react';
 import {useLoadingRouter} from '@/providers/navigation-loading-provider';
 import {useProfile} from '@/providers/profile-provider';
-import {UpdatePhoneFormValues, UpdatePhoneSchema} from '@/lib/schemas/auth';
+import {UpdateEmailFormValues, UpdateEmailSchema} from '@/lib/schemas/auth';
 import {ReusableForm} from '@/components/common/reusable-form';
-import {useUpdatePhoneProfile} from '@/hooks/api/profile';
-import {PhoneInput} from '@/components/ui/phone-input';
+import {useUpdateEmailProfile} from '@/hooks/api/profile';
+import {Input} from '@/components/ui/input';
 
-const formatPhone = (phone: string) => {
-	return phone.startsWith('+') ? phone : `+${phone}`;
-}
-export function UpdatePhoneForm() {
+
+export function UpdateEmailForm() {
 	const profile = useProfile()
 	const router = useLoadingRouter();
 	
-	const form = useForm<UpdatePhoneFormValues>({
-		resolver: zodResolver(UpdatePhoneSchema),
+	const form = useForm<UpdateEmailFormValues>({
+		resolver: zodResolver(UpdateEmailSchema),
 		defaultValues: {
-			phone: formatPhone(profile?.phone || ''),
+			email: profile.email,
 		},
 	});
 	
-	const { mutateAsync: updatePhoneProfile, isPending } = useUpdatePhoneProfile();
+	const { mutateAsync: updateEmailProfile, isPending } = useUpdateEmailProfile();
 	
 	// 2. Define a submit handler.
-	async function handleSave(values: UpdatePhoneFormValues) {
+	async function handleSave(values: UpdateEmailFormValues) {
 		// Do something with the form values.
 		// ✅ This will be type-safe and validated.
 		try {
-			const response = await updatePhoneProfile(values);
+			const response = await updateEmailProfile(values);
 			if (!response.success) {
 				response.errors?.forEach((error) => {
 					toast.error('Error', {
@@ -71,17 +69,18 @@ export function UpdatePhoneForm() {
 					<div className='grid grid-cols-1 gap-4'>
 						<FormField
 							control={form.control}
-							name='phone'
+							name="email"
 							render={({field}) => (
 								<FormItem>
-									<FormLabel>Télefono<span className="text-red-600">*</span></FormLabel>
+									<FormLabel className="sr-only">Email</FormLabel>
 									<FormControl>
-										<PhoneInput value={field.value} onChange={field.onChange} defaultCountry="CU" countries={['CU']}
-										            international={false} placeholder='Entre el télefono'/>
+										<Input
+											placeholder='Entre el correo electrónico'
+											type="email"
+											{...field}
+											disabled={form.formState.isLoading}
+										/>
 									</FormControl>
-									<FormDescription>
-										Número de telénofo con que accede a su cuenta
-									</FormDescription>
 									<FormMessage/>
 								</FormItem>
 							)}
